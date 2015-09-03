@@ -1,0 +1,8 @@
+Discussion points with B. Miranda for Base-EDA Extension:
+
+1 - how do we deal with spill-over within the same site (cell)? Oaks get infected by the disease agent ONLY from surrounding hosts (e.g. UMCA, LIDE)
+    not directly. In other words, if a disease event kills X cohort of species Y, can this mortality cumulate/increase over time in the same site?
+	
+2 - we may have to (a) make sure that SHS uses all cohorts in the mean (not just the oldest), or (b) use biomass output to weigh the average toward more dominant species	
+
+3 - do we need to add climate in the Modifiers to decrease site vulnerability to disease agent? How/Where?
