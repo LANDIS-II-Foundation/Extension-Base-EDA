@@ -4,7 +4,7 @@
 
 using Edu.Wisc.Forest.Flel.Util;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     /// <summary>
     /// Extra Spp Paramaters
@@ -13,162 +13,82 @@ namespace Landis.Extension.BaseBDA
     {
         /// <summary>
         /// </summary>
-        int MinorHostAge { get; set; }
-        double MinorHostSRD { get; set; }
-        int SecondaryHostAge { get; set; }
-        double SecondaryHostSRD { get; set; }
-        int PrimaryHostAge { get; set; }
-        double PrimaryHostSRD { get; set; }
+        // Site Host Vulnerability (SHV) to DISEASE AGENT using 3 classes (Resistant, Tolerant, Vulnerable)
         int ResistantHostAge { get; set; }
-        double ResistantHostVuln { get; set; }
+        double ResistantHostVulnThrsh { get; set; }
         int TolerantHostAge { get; set; }
-        double TolerantHostVuln { get; set; }
+        double TolerantHostVulnThrsh { get; set; }
         int VulnerableHostAge { get; set; }
-        double VulnerableHostVuln { get; set; }
-        bool CFSConifer{get;set;}
+        double VulnerableHostVulnThrsh { get; set; }
+
+        // Site Host Susceptibility to DISEASE using 3 classes (Low, Medium, High)
+        int LowHostAge { get; set; }
+        double LowHostSusceptMortProb { get; set; }
+        int MediumHostAge { get; set; }
+        double MediumHostSusceptMortProb { get; set; }
+        int HighHostAge { get; set; }
+        double HighHostSusceptMortProb { get; set; }
+
+        //Conifer Flag for dead fuels
+        bool CFSConifer{ get; set; }
     }
 }
 
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     public class SppParameters
         : ISppParameters
     {
-        private int minorHostAge     ;
-        private double minorHostSRD;
-        private int secondaryHostAge;
-        private double secondaryHostSRD;
-        private int primaryHostAge;
-        private double primaryHostSRD;
+        // Site Host Vulnerability (SHV) to DISEASE AGENT using 3 classes (Resistant, Tolerant, Vulnerable)
         private int resistantHostAge;
-        private double resistantHostVuln;
+        private double resistantHostVulnThrsh;
         private int tolerantHostAge;
-        private double tolerantHostVuln;
+        private double tolerantHostVulnThrsh;
         private int vulnerableHostAge;
-        private double vulnerableHostVuln;
+        private double vulnerableHostVulnThrsh;
+
+        // Site Host Susceptibility to DISEASE using 3 classes (Low, Medium, High)
+        private int lowHostAge;
+        private double lowHostSusceptMortProb;
+        private int mediumHostAge;
+        private double mediumHostSusceptMortProb;
+        private int highHostAge;
+        private double highHostSusceptMortProb;
+
         private bool cfsConifer;
 
         //---------------------------------------------------------------------
 
+
         /// <summary>
+        /// AGE: age of resistant hosts
         /// </summary>
-        public int MinorHostAge
-        {
-            get {
-                return minorHostAge;
-            }
-            set {
-               if (value < 0)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be = or > 0.");
-               if (value > 999)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be = or < 999.");
-                minorHostAge = value;
-            }
-        }
-        public double MinorHostSRD
-        {
-            get
-            {
-                return minorHostSRD;
-            }
-            set
-            {
-                if (value < 0)
-                    throw new InputValueException(value.ToString(),
-                        "Value must be = or > 0.");
-                if (value > 1)
-                    throw new InputValueException(value.ToString(),
-                        "Value must be = or < 1.");
-                minorHostSRD = value;
-            }
-        }
-        public int SecondaryHostAge
-        {
-            get {
-                return secondaryHostAge;
-            }
-            set {
-                if (value < 0)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be = or > 0.");
-                if (value > 999)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be = or < 999.");
-                secondaryHostAge = value;
-            }
-        }
-        public double SecondaryHostSRD
-        {
-            get
-            {
-                return secondaryHostSRD;
-            }
-            set
-            {
-                if (value < 0)
-                    throw new InputValueException(value.ToString(),
-                        "Value must be = or > 0.");
-                if (value > 1)
-                    throw new InputValueException(value.ToString(),
-                        "Value must be = or < 1.");
-                secondaryHostSRD = value;
-            }
-        }
-        public int PrimaryHostAge
-        {
-            get {
-                return primaryHostAge;
-            }
-            set {
-                if (value < 0)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be = or > 0.");
-                if (value > 999)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be = or < 999.");
-                primaryHostAge = value;
-            }
-        }
-        public double PrimaryHostSRD
-        {
-            get
-            {
-                return primaryHostSRD;
-            }
-            set
-            {
-                if (value < 0)
-                    throw new InputValueException(value.ToString(),
-                        "Value must be = or > 0.");
-                if (value > 1)
-                    throw new InputValueException(value.ToString(),
-                        "Value must be = or < 1.");
-                primaryHostSRD = value;
-            }
-        }
         public int ResistantHostAge
         {
-            get {
+            get
+            {
                 return resistantHostAge;
             }
-            set {
+            set
+            {
                 if (value < 0)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be = or > 0.");
+                    throw new InputValueException(value.ToString(),
+                        "Value must be = or > 0.");
                 if (value > 999)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be = or < 999.");
+                    throw new InputValueException(value.ToString(),
+                        "Value must be = or < 999.");
                 resistantHostAge = value;
             }
         }
-        public double ResistantHostVuln
+        /// <summary>
+        /// THRESHOLD: threshold vulnerability value of resistant hosts
+        /// </summary>
+        public double ResistantHostVulnThrsh
         {
             get
             {
-                return resistantHostVuln;
+                return resistantHostVulnThrsh;
             }
             set
             {
@@ -178,24 +98,32 @@ namespace Landis.Extension.BaseBDA
                 if (value > 1)
                     throw new InputValueException(value.ToString(),
                         "Value must be = or < 1.");
-                resistantHostVuln = value;
+                resistantHostVulnThrsh = value;
             }
         }
+        /// <summary>
+        /// AGE: age of tolerant hosts
+        /// </summary>
         public int TolerantHostAge
         {
-            get {
+            get
+            {
                 return tolerantHostAge;
             }
-            set {
+            set
+            {
                 if (value < 0)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be = or > 0.");
+                    throw new InputValueException(value.ToString(),
+                        "Value must be = or > 0.");
                 if (value > 999)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be = or < 999.");
+                    throw new InputValueException(value.ToString(),
+                        "Value must be = or < 999.");
                 tolerantHostAge = value;
             }
         }
+        /// <summary>
+        /// THRESHOLD: threshold vulnerability value of tolerant hosts
+        /// </summary>
         public double TolerantHostVuln
         {
             get
@@ -213,21 +141,29 @@ namespace Landis.Extension.BaseBDA
                 tolerantHostVuln = value;
             }
         }
+        /// <summary>
+        /// AGE: age of vulnerable hosts
+        /// </summary>
         public int VulnerableHostAge
         {
-            get {
+            get
+            {
                 return vulnerableHostAge;
             }
-            set {
+            set
+            {
                 if (value < 0)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be = or > 0.");
+                    throw new InputValueException(value.ToString(),
+                        "Value must be = or > 0.");
                 if (value > 999)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be = or < 999.");
+                    throw new InputValueException(value.ToString(),
+                        "Value must be = or < 999.");
                 vulnerableHostAge = value;
             }
         }
+        /// <summary>
+        /// THRESHOLD: threshold vulnerability value of vulnerable hosts
+        /// </summary>
         public double VulnerableHostVuln
         {
             get
@@ -245,6 +181,127 @@ namespace Landis.Extension.BaseBDA
                 vulnerableHostVuln = value;
             }
         }
+
+        /// <summary>
+        /// AGE: age of hosts with low susceptibility
+        /// </summary>
+        public int LowHostAge
+        {
+            get {
+                return lowHostAge;
+            }
+            set {
+               if (value < 0)
+                        throw new InputValueException(value.ToString(),
+                            "Value must be = or > 0.");
+               if (value > 999)
+                        throw new InputValueException(value.ToString(),
+                            "Value must be = or < 999.");
+                lowHostAge = value;
+            }
+        }
+        /// <summary>
+        /// MORTALITY PROBABILITY: mortality probability of hosts with low susceptibility 
+        /// </summary>
+        public double LowHostSusceptMortProb
+        {
+            get
+            {
+                return lowHostSusceptMortProb;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new InputValueException(value.ToString(),
+                        "Value must be = or > 0.");
+                if (value > 1)
+                    throw new InputValueException(value.ToString(),
+                        "Value must be = or < 1.");
+                lowHostSusceptMortProb = value;
+            }
+        }
+        /// <summary>
+        /// AGE: age of hosts with medium susceptibility
+        /// </summary>
+        public int MediumHostAge
+        {
+            get {
+                return mediumHostAge;
+            }
+            set {
+                if (value < 0)
+                        throw new InputValueException(value.ToString(),
+                            "Value must be = or > 0.");
+                if (value > 999)
+                        throw new InputValueException(value.ToString(),
+                            "Value must be = or < 999.");
+                mediumHostAge = value;
+            }
+        }
+        /// <summary>
+        /// MORTALITY PROBABILITY: mortality probability of hosts with medium susceptibility 
+        /// </summary>
+        public double MediumHostSusceptMortProb
+        {
+            get
+            {
+                return mediumHostSusceptMortProb;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new InputValueException(value.ToString(),
+                        "Value must be = or > 0.");
+                if (value > 1)
+                    throw new InputValueException(value.ToString(),
+                        "Value must be = or < 1.");
+                mediumHostSusceptMortProb = value;
+            }
+        }
+        /// <summary>
+        /// AGE: age of hosts with high susceptibility
+        /// </summary>
+        public int HighHostAge
+        {
+            get {
+                return highHostAge;
+            }
+            set {
+                if (value < 0)
+                        throw new InputValueException(value.ToString(),
+                            "Value must be = or > 0.");
+                if (value > 999)
+                        throw new InputValueException(value.ToString(),
+                            "Value must be = or < 999.");
+                highHostAge = value;
+            }
+        }
+        /// <summary>
+        /// MORTALITY PROBABILITY: mortality probability of hosts with high susceptibility 
+        /// </summary>
+        public double HighHostSusceptMortProb
+        {
+            get
+            {
+                return highHostSusceptMortProb;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new InputValueException(value.ToString(),
+                        "Value must be = or > 0.");
+                if (value > 1)
+                    throw new InputValueException(value.ToString(),
+                        "Value must be = or < 1.");
+                highHostSusceptMortProb = value;
+            }
+        }
+
+        /// <summary>
+        /// CONIFER FLAG: Host species can be flagged as contributing to a specialty dead fuel class, 
+        /// which allows the dead cohorts of these species to be considered by fuel extensions 
+        /// that account for disturbance-related fuels 
+        /// </summary>
         public bool CFSConifer
         {
             get {
@@ -259,18 +316,21 @@ namespace Landis.Extension.BaseBDA
         //---------------------------------------------------------------------
         public SppParameters()
         {
-            this.minorHostAge = 999;
-            this.minorHostSRD = 0;
-            this.secondaryHostAge = 999;
-            this.secondaryHostSRD = 0;
-            this.primaryHostAge = 999;
-            this.primaryHostSRD = 0;
+            //vulnerability to disease agent
             this.resistantHostAge = 999;
-            this.resistantHostVuln = 0;
+            this.resistantHostVulnThrsh = 0;
             this.tolerantHostAge = 999;
-            this.tolerantHostVuln = 0;
+            this.tolerantHostVulnThrsh = 0;
             this.vulnerableHostAge = 999;
-            this.vulnerableHostVuln = 0;
+            this.vulnerableHostVulnThrsh = 0;
+            //susceptibility to disease
+            this.lowHostAge = 999;
+            this.lowHostSusceptMortProb = 0;
+            this.mediumHostAge = 999;
+            this.mediumHostSusceptMortProb = 0;
+            this.highHostAge = 999;
+            this.highHostSusceptMortProb = 0;
+            //conifer flag
             this.cfsConifer = false;
         }
  
