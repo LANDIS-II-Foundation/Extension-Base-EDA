@@ -22,7 +22,6 @@ namespace Landis.Extension.BaseBDA
         private static ISiteVar<byte> fireSeverity;
         private static ISiteVar<int> timeOfLastWind;
         private static ISiteVar<byte> windSeverity; 
-        private static ISiteVar<double> neighborResourceDom;
         private static ISiteVar<double> siteResourceDomMod;
         private static ISiteVar<double> siteResourceDom;
         private static ISiteVar<double> vulnerability;
@@ -39,7 +38,6 @@ namespace Landis.Extension.BaseBDA
         public static void Initialize(ICore modelCore)
         {
             timeOfLastBDA  = modelCore.Landscape.NewSiteVar<int>();
-            neighborResourceDom = modelCore.Landscape.NewSiteVar<double>();
             siteResourceDomMod = modelCore.Landscape.NewSiteVar<double>();
             siteResourceDom = modelCore.Landscape.NewSiteVar<double>();
             vulnerability = modelCore.Landscape.NewSiteVar<double>();
@@ -51,7 +49,6 @@ namespace Landis.Extension.BaseBDA
 
 
             SiteVars.TimeOfLastEvent.ActiveSiteValues = -10000;
-            SiteVars.NeighborResourceDom.ActiveSiteValues = 0.0;
             SiteVars.SiteResourceDomMod.ActiveSiteValues = 0.0;
             SiteVars.SiteResourceDom.ActiveSiteValues = 0.0;
             SiteVars.Vulnerability.ActiveSiteValues = 0.0;
@@ -161,13 +158,6 @@ namespace Landis.Extension.BaseBDA
         {
             get {
                 return siteResourceDom;
-            }
-        }
-        //---------------------------------------------------------------------
-        public static ISiteVar<double> NeighborResourceDom
-        {
-            get {
-                return neighborResourceDom;
             }
         }
         //---------------------------------------------------------------------
