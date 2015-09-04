@@ -6,3 +6,14 @@ Discussion points with B. Miranda for Base-EDA Extension:
 2 - we may have to (a) make sure that SHS uses all cohorts in the mean (not just the oldest), or (b) use biomass output to weigh the average toward more dominant species	
 
 3 - do we need to add climate in the Modifiers to decrease site vulnerability to disease agent? How/Where?
+
+4 - we can have partial infection in a site and that infection needs to progress over time (while probabilistically killing some cohorts)
+
+5 - Should we rename the CFS variable in the code since it's not Conifer-only anymore? Seems like you called it species dead fuel class, so maybe
+	something like "SDF"...
+	
+6 - can we initialize an outbreak using an external raster image (e.g. 0-1 where 1 == disturbed site)? If so, how/where?
+
+7 - expand SRDmode from "mean" and "max" to "weighted" by biomass AND/OR "meanALL" including all species cohorts and NOT ONLY oldest cohorts by spp
+
+8 - we don't care too much about infection intensity (although it can still be an output), but rather intensity of disease (OAK mortality in our case) in terms of dead cohorts/damage
