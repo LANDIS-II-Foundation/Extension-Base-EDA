@@ -7,7 +7,7 @@ using Landis.Library.AgeOnlyCohorts;
 using Landis.SpatialModeling;
 using System.Collections.Generic;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
 
     public class SiteResources
@@ -15,13 +15,13 @@ namespace Landis.Extension.BaseBDA
 
         //---------------------------------------------------------------------
         ///<summary>
-        ///Calculate the Site Resource Dominance (SRD) for all active sites.
-        ///The SRD averages the resources for each species as defined in the
-        ///BDA species table.
-        ///SRD ranges from 0 - 1.
+        ///Calculate the Site Host Susceptibility (SHS) for all active sites.
+        ///The SHS averages the susceptibility for each species as defined in the
+        ///EDA species table.
+        ///SHS ranges from 0 - 1.
         ///</summary>
         //---------------------------------------------------------------------
-        public static void SiteResourceDominance(IAgent agent, int ROS)
+        public static void SiteHostSusceptibility(IAgent agent, int ROS)
         {
             PlugIn.ModelCore.UI.WriteLine("   Calculating BDA Site Resource Dominance.");
 
@@ -71,14 +71,14 @@ namespace Landis.Extension.BaseBDA
                 }
 
                 if (agent.SRDmode == SRDmode.mean)
-                    SiteVars.SiteResourceDom[site] = sumValue / (double) numValidSpp;
+                    SiteVars.SiteHostSuscept[site] = sumValue / (double) numValidSpp;
 
                 if (agent.SRDmode == SRDmode.max)
-                    SiteVars.SiteResourceDom[site] = maxValue;
+                    SiteVars.SiteHostSuscept[site] = maxValue;
 
             }
 
-        }  //end siteResourceDom
+        }  //end siteHostSuscept
 
         //---------------------------------------------------------------------
         ///<summary>
@@ -88,13 +88,13 @@ namespace Landis.Extension.BaseBDA
         ///SRDMods range from 0 - 1.
         ///</summary>
         //---------------------------------------------------------------------
-        public static void SiteResourceDominanceModifier(IAgent agent)
+        public static void SiteHostSusceptibilityModifier(IAgent agent)
         {
 
-            PlugIn.ModelCore.UI.WriteLine("   Calculating BDA Modified Site Resource Dominance.");
+            PlugIn.ModelCore.UI.WriteLine("   Calculating EDA Modified Site Host Susceptibility.");
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape) {
 
-                if (SiteVars.SiteResourceDom[site] > 0.0)
+                if (SiteVars.SiteHostSuscept[site] > 0.0)
                 {
                     int     lastDisturb = 0;
                     int     duration = 0;
@@ -221,17 +221,17 @@ namespace Landis.Extension.BaseBDA
                     IEcoregion ecoregion = PlugIn.ModelCore.Ecoregion[site];
 
 
-                    SRDM = SiteVars.SiteResourceDom[site] +
+                    SRDM = SiteVars.SiteHostSuscept[site] +
                            sumDisturbMods +
                            agent.EcoParameters[ecoregion.Index].EcoModifier;
 
                     SRDM = System.Math.Max(0.0, SRDM);
                     SRDM = System.Math.Min(1.0, SRDM);
 
-                    SiteVars.SiteResourceDomMod[site] = SRDM;
+                    SiteVars.SiteHostSusceptMod[site] = SRDM;
                 }//end of one site
 
-                else SiteVars.SiteResourceDomMod[site] = 0.0;
+                else SiteVars.SiteHostSusceptMod[site] = 0.0;
             } //end Active sites
         } //end Function
 
@@ -256,14 +256,13 @@ namespace Landis.Extension.BaseBDA
                 foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
                 {
 
-                    SRD = SiteVars.SiteResourceDom[site];
+                    SRD = SiteVars.SiteHostSuscept[site];
 
                     //If a site has been chosen for an outbreak and there are
                     //resources available for an outbreak:
                     if (SRD > 0)
                     {
-                        SRDMod = SiteVars.SiteResourceDomMod[site];
-                        NRD = SiteVars.NeighborResourceDom[site];
+                        SRDMod = SiteVars.SiteHostSusceptMod[site];
                         double tempSV = 0.0;
 
                         //Equation (8) in Sturtevant et al. 2004.
@@ -283,88 +282,13 @@ namespace Landis.Extension.BaseBDA
             {
                 foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
                 {
-                    SRDMod = SiteVars.SiteResourceDomMod[site];
+                    SRDMod = SiteVars.SiteHostSusceptMod[site];
 
                     double vulnerable = (double)(CaliROS3 * SRDMod);
                     SiteVars.Vulnerability[site] = System.Math.Max(0, vulnerable);
                 }
             }
         }
-
-        //---------------------------------------------------------------------
-        ///<summary>
-        /// Calculate the The Resource Dominance of all active NEIGHBORS
-        /// within the User defined NeighborRadius.
-        ///
-        /// The weight of neighbors is dependent upon distance and a
-        /// weighting algorithm:  uniform, linear, or gaussian.
-        ///
-        /// Subsampling determined by User defined NeighborSpeedUp.
-        /// Gaussian equation:  http://www.anc.ed.ac.uk/~mjo/intro/node7.html
-        ///</summary>
-        //---------------------------------------------------------------------
-        public static void NeighborResourceDominance(IAgent agent)
-        {
-            PlugIn.ModelCore.UI.WriteLine("   Calculating BDA Neighborhood Resource Dominance.");
-
-            double totalNeighborWeight = 0.0;
-            double maxNeighborWeight = 0.0;
-            int neighborCnt = 0;
-            int speedUpFraction = (int) agent.NeighborSpeedUp + 1;
-
-            foreach (ActiveSite site in PlugIn.ModelCore.Landscape) {
-                if (agent.OutbreakZone[site] == Zone.Newzone)
-                {
-                    //neighborWeight = 0.0;
-                    totalNeighborWeight = 0.0;
-                    maxNeighborWeight = 0.0;
-                    neighborCnt = 0;
-
-                    if (SiteVars.SiteResourceDom[site] > 0 )
-                    {
-
-                        List<RelativeLocationWeighted> neighborhood = new List<RelativeLocationWeighted>();
-                        foreach (RelativeLocationWeighted relativeLoc in agent.ResourceNeighbors)
-                        {
-
-                            Site neighbor = site.GetNeighbor(relativeLoc.Location);
-                            if (neighbor != null
-                                && neighbor.IsActive)
-                            {
-                                neighborhood.Add(relativeLoc);
-                            }
-                        }
-
-                        neighborhood = PlugIn.ModelCore.shuffle(neighborhood);
-                        foreach(RelativeLocationWeighted neighbor in neighborhood)
-                        {
-                            //Do NOT subsample if there are too few neighbors
-                            //i.e., <= subsample size.
-                            if(neighborhood.Count <= speedUpFraction ||
-                                neighborCnt%speedUpFraction == 0)
-                            {
-                                Site activeSite = site.GetNeighbor(neighbor.Location);
-
-                                //Note:  SiteResourceDomMod ranges from 0 - 1.
-                                if (SiteVars.SiteResourceDomMod[activeSite] > 0)
-                                {
-                                    totalNeighborWeight += SiteVars.SiteResourceDomMod[activeSite] * neighbor.Weight;
-                                    maxNeighborWeight += neighbor.Weight;
-                                }
-                            }
-                            neighborCnt++;
-                        }
-
-                        if (maxNeighborWeight > 0.0)
-                            SiteVars.NeighborResourceDom[site] = totalNeighborWeight / maxNeighborWeight;
-                        else
-                            SiteVars.NeighborResourceDom[site] = 0.0;
-                    } else
-                        SiteVars.NeighborResourceDom[site] = 0.0;
-                 }
-             }
-        }
-
 
 //End of SiteResources
     }

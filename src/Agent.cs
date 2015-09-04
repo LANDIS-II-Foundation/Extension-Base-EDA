@@ -7,72 +7,74 @@ using Edu.Wisc.Forest.Flel.Util;
 using System.Collections.Generic;
 using System.Data;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
-    public enum TemporalType {pulse,  variablepulse};
-    public enum OutbreakPattern {CyclicNormal, CyclicUniform, Climate};
-    public enum SRDmode {max, mean};
-    public enum DispersalTemplate {MaxRadius, N4, N8, N12, N24};
-    public enum NeighborShape {uniform, linear, gaussian};
-    public enum NeighborSpeed {none, X2, X3, X4};
-    public enum Zone {Nozone, Lastzone, Newzone};
+    //public enum TemporalType {pulse,  variablepulse};  //prob not needed at this stage
+    //public enum OutbreakPattern {CyclicNormal, CyclicUniform, Climate};  //maybe not needed (climate initialized outbreak...maybe)
+    public enum SHSmode {max, mean};  //maybe add something new here, like weighted by biomass, or mean for each cohort?
+    //public enum DispersalTemplate {MaxRadius, N4, N8, N12, N24}; //NRD not needed
+    //public enum NeighborShape {uniform, linear, gaussian};  //NRD not needed
+    //public enum NeighborSpeed {none, X2, X3, X4};    //NRD not needed
+    //public enum Zone {Nozone, Lastzone, Newzone}; //replace outbreak zone concepts with dispersal kernel
     
-
-
     /// <summary>
-    /// Interface to the Parameters for the extension
+    /// Interface to the Parameters for the BaseEDA extension
     /// </summary>
     public interface IAgent
     {
         string AgentName{get;set;}
-        int BDPCalibrator{get;set;}
+        //int BDPCalibrator{get;set;} //don't think we need it
         int StartYear { get; set; }
         int EndYear { get; set; }
 
+        SHSmode SHSmode { get; set; }
+
         //-- ROS --
-        int TimeSinceLastEpidemic{get;set;}
-        int TimeToNextEpidemic{get;set;}
-        TemporalType TempType{get;set;}
-        OutbreakPattern RandFunc{get;set;}
-        SRDmode SRDmode{get;set;}
-        double NormMean { get; set; }
-        double NormStDev { get; set; }
-        double MaxInterval{get;set;}
-        double MinInterval{get;set;}
-        int MinROS{get;set;}
-        int MaxROS{get;set;}
+        //int TimeSinceLastEpidemic{get;set;}
+        //int TimeToNextEpidemic{get;set;}
+        //TemporalType TempType{get;set;}
+        //OutbreakPattern RandFunc{get;set;}
+        //double NormMean { get; set; }
+        //double NormStDev { get; set; }
+        //double MaxInterval{get;set;}
+        //double MinInterval{get;set;}
+        //int MinROS{get;set;}
+        //int MaxROS{get;set;}
+
         // - Climate - 
-        string ClimateVarName { get; set; }
-        string ClimateVarSource { get; set; }
-        float ClimateThresh_Lowerbound { get; set; }
-        float ClimateThresh_Upperbound { get; set; }
-        int ClimateLag { get; set; }
-        int TimeSinceLastClimate { get; set; }
-        DataTable ClimateDataTable { get; set; }
-        LinkedList<int> OutbreakList { get; set; }
-        
-        //-- DISPERSAL -------------
-        bool Dispersal{get;set;}
-        int DispersalRate{get;set;}
-        double EpidemicThresh{get;set;}
-        int EpicenterNum{get;set;}
-        bool SeedEpicenter{get;set;}
-        double OutbreakEpicenterCoeff{get;set;}
-        double OutbreakEpicenterThresh { get; set; }
-        double SeedEpicenterCoeff{get;set;}
-        DispersalTemplate DispersalTemp{get;set;}
-        IEnumerable<RelativeLocation> DispersalNeighbors{get;set;}
+        //string ClimateVarName { get; set; }
+        //string ClimateVarSource { get; set; }
+        //float ClimateThresh_Lowerbound { get; set; }
+        //float ClimateThresh_Upperbound { get; set; }
+        //int ClimateLag { get; set; }
+        //int TimeSinceLastClimate { get; set; }
+        DataTable ClimateDataTable { get; set; }    //WHAT IS THIS?
+        LinkedList<int> OutbreakList { get; set; }  //WHAT IS THIS?
+
+        //-- DISPERSAL -------------REPLACE THIS WITH KERNEL BASED DISPERSAL (look at seed dispersal in LANDIS?)
+        //bool Dispersal{get;set;}
+        //int DispersalRate{get;set;}
+        //double EpidemicThresh{get;set;}
+        //int EpicenterNum{get;set;}
+        //bool SeedEpicenter{get;set;}
+        //double OutbreakEpicenterCoeff{get;set;}
+        //double OutbreakEpicenterThresh { get; set; }
+        //double SeedEpicenterCoeff{get;set;}
+        //DispersalTemplate DispersalTemp{get;set;}
+        //IEnumerable<RelativeLocation> DispersalNeighbors{get;set;}
 
         // Neighborhood Resource Dominance parameters
-        bool NeighborFlag{get;set;}
-        NeighborSpeed NeighborSpeedUp{get;set;}
-        int NeighborRadius{get; set;}
-        NeighborShape ShapeOfNeighbor{get;set;}
-        double NeighborWeight{get;set;}
-        IEnumerable<RelativeLocationWeighted> ResourceNeighbors{get;set;}
+        //bool NeighborFlag{get;set;}
+        //NeighborSpeed NeighborSpeedUp{get;set;}
+        //int NeighborRadius{get; set;}
+        //NeighborShape ShapeOfNeighbor{get;set;}
+        //double NeighborWeight{get;set;}
+        //IEnumerable<RelativeLocationWeighted> ResourceNeighbors{get;set;}
+        
+        //Epidemiological Disturbance Probability (EDP) thresholds --> INTENSITY of infection (by disease agent)
         double Class2_SV { get; }
         double Class3_SV { get; }
-        IEnumerable<ISpecies> NegSppList { get;set;}
+        IEnumerable<ISpecies> NegSppList { get; set; }
         //IEnumerable<ISpecies> AdvRegenSppList { get; set; }
         //int AdvRegenAgeCutoff { get; }
 
@@ -81,12 +83,12 @@ namespace Landis.Extension.BaseBDA
         //IDistParameters[] DistParameters { get; set; }
         List<IDisturbanceType> DisturbanceTypes { get;  }
         ISiteVar<byte> Severity { get; set; }
-        ISiteVar<Zone> OutbreakZone { get; set; }
+        //ISiteVar<Zone> OutbreakZone { get; set; }
     }
 }
 
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     /// <summary>
     /// Parameters for the plug-in.
@@ -95,22 +97,24 @@ namespace Landis.Extension.BaseBDA
         : IAgent
     {
         private string agentName;
-        private int bdpCalibrator;
+        //private int bdpCalibrator;
         private int startYear;
         private int endYear;
 
+        private SHSmode shsMode;
+
         //-- ROS --
-        private int timeSinceLastEpidemic;
-        private int timeToNextEpidemic;
-        private TemporalType tempType;
-        private OutbreakPattern randFunc;
-        private SRDmode srdMode;
-        private double normMean;
-        private double normStDev;
-        private double maxInterval;
-        private double minInterval;
-        private int minROS;
-        private int maxROS;
+        //private int timeSinceLastEpidemic;
+        //private int timeToNextEpidemic;
+        //private TemporalType tempType;
+        //private OutbreakPattern randFunc;
+        //private double normMean;
+        //private double normStDev;
+        //private double maxInterval;
+        //private double minInterval;
+        //private int minROS;
+        //private int maxROS;
+
         // - Climate - 
         private string climateVarName;
         private string climateVarSource;
@@ -122,26 +126,26 @@ namespace Landis.Extension.BaseBDA
         public LinkedList<int> outbreakList = new LinkedList<int>();
         
         //-- DISPERSAL -------------
-        private bool dispersal;
-        private int dispersalRate;
-        private double epidemicThresh;
-        private int epicenterNum;
-        private bool seedEpicenter;
-        private double outbreakEpicenterCoeff;
-        private double outbreakEpicenterThresh;
-        private double seedEpicenterCoeff;
-        private DispersalTemplate dispersalTemp;
-        private IEnumerable<RelativeLocation> dispersalNeighbors;
+        //private bool dispersal;
+        //private int dispersalRate;
+        //private double epidemicThresh;
+        //private int epicenterNum;
+        //private bool seedEpicenter;
+        //private double outbreakEpicenterCoeff;
+        //private double outbreakEpicenterThresh;
+        //private double seedEpicenterCoeff;
+        //private DispersalTemplate dispersalTemp;
+        //private IEnumerable<RelativeLocation> dispersalNeighbors;
 
         // Neighborhood Resource Dominance parameters
-        private bool neighborFlag;
-        private NeighborSpeed neighborSpeedUp;
-        private int neighborRadius;
-        private NeighborShape shapeOfNeighbor;
-        private double neighborWeight;
-        private IEnumerable<RelativeLocationWeighted> resourceNeighbors;
-        private double class2_SV;
-        private double class3_SV;
+        //private bool neighborFlag;
+        //private NeighborSpeed neighborSpeedUp;
+        //private int neighborRadius;
+        //private NeighborShape shapeOfNeighbor;
+        //private double neighborWeight;
+        //private IEnumerable<RelativeLocationWeighted> resourceNeighbors;
+        private double class2_SS;  //threshold for site susceptibility  ---> intensity of disturbance is derived from here
+        private double class3_SS;  //threshold for site susceptibility  ---> intensity of disturbance is derived from here
         private IEnumerable<ISpecies> negSppList;
         private IEnumerable<ISpecies> advRegenSppList;
         private int advRegenAgeCutoff;
@@ -163,7 +167,7 @@ namespace Landis.Extension.BaseBDA
             }
         }
         //---------------------------------------------------------------------
-        public int BDPCalibrator
+        /*public int BDPCalibrator
         {
             get {
                 return bdpCalibrator;
@@ -171,7 +175,7 @@ namespace Landis.Extension.BaseBDA
             set {
                 bdpCalibrator = value;
             }
-        }
+        }*/
         //---------------------------------------------------------------------
         public int StartYear
         {
@@ -197,7 +201,7 @@ namespace Landis.Extension.BaseBDA
             }
         }
         //---------------------------------------------------------------------
-        public int TimeSinceLastEpidemic
+        /*public int TimeSinceLastEpidemic
         {
             get {
                 return timeSinceLastEpidemic;
@@ -241,19 +245,19 @@ namespace Landis.Extension.BaseBDA
             set {
                 randFunc = value;
             }
-        }
+        }*/
         //---------------------------------------------------------------------
-        public SRDmode SRDmode
+        public SHSmode SHSmode
         {
             get {
-                return srdMode;
+                return shsMode;
             }
             set {
-                srdMode = value;
+                shsMode = value;
             }
         }
         //---------------------------------------------------------------------
-        public double NormMean
+        /*public double NormMean
         {
             get
             {
@@ -328,7 +332,7 @@ namespace Landis.Extension.BaseBDA
                             "Value must > or = MinROS.");
                 maxROS = value;
             }
-        }
+        }*/
         //---------------------------------------------------------------------
         // - Climate - 
         public string ClimateVarName
@@ -466,7 +470,7 @@ namespace Landis.Extension.BaseBDA
         //}
         //---------------------------------------------------------------------
         /// <summary>
-        /// Disturbances that can alter the SRD value
+        /// Disturbances that can alter the SHS value
         /// </summary>
         public List<IDisturbanceType> DisturbanceTypes
         {
@@ -486,7 +490,7 @@ namespace Landis.Extension.BaseBDA
             }
         }
         //---------------------------------------------------------------------
-        public ISiteVar<Zone> OutbreakZone
+        /*public ISiteVar<Zone> OutbreakZone
         {
             get {
                 return outbreakZone;
@@ -672,29 +676,29 @@ namespace Landis.Extension.BaseBDA
             set {
                 resourceNeighbors = value;
             }
-        }
+        }*/
         //---------------------------------------------------------------------
-        public double Class2_SV
+        public double Class2_SS //threshold for site susceptibility  ---> intensity of disturbance is derived from here
         {
             get
             {
-                return class2_SV;
+                return class2_SS;
             }
             set
             {
-                class2_SV = value;
+                class2_SS = value;
             }
         }
         //---------------------------------------------------------------------
-        public double Class3_SV
+        public double Class3_SS //threshold for site susceptibility  ---> intensity of disturbance is derived from here
         {
             get
             {
-                return class3_SV;
+                return class3_SS;
             }
             set
             {
-                class3_SV = value;
+                class3_SS = value;
             }
         }
         //---------------------------------------------------------------------
@@ -710,7 +714,7 @@ namespace Landis.Extension.BaseBDA
             }
         }
         //---------------------------------------------------------------------
-        public IEnumerable<ISpecies> AdvRegenSppList
+        public IEnumerable<ISpecies> AdvRegenSppList   //DO WE NEED THIS? IT's NOT DEFINED IN THE IAGENT interface
         {
             get
             {
@@ -722,7 +726,7 @@ namespace Landis.Extension.BaseBDA
             }
         }
         //---------------------------------------------------------------------
-        public int AdvRegenAgeCutoff
+        public int AdvRegenAgeCutoff   //DO WE NEED THIS? IT's NOT DEFINED IN THE IAGENT interface
         {
             get
             {
@@ -745,10 +749,10 @@ namespace Landis.Extension.BaseBDA
             disturbanceTypes = new List<IDisturbanceType>();
             negSppList = new List<ISpecies>();
             //advRegenSppList = new List<ISpecies>();
-            dispersalNeighbors = new List<RelativeLocation>();
-            resourceNeighbors = new List<RelativeLocationWeighted>();
-            severity       = PlugIn.ModelCore.Landscape.NewSiteVar<byte>();
-            outbreakZone   = PlugIn.ModelCore.Landscape.NewSiteVar<Zone>();
+            //dispersalNeighbors = new List<RelativeLocation>();
+            //resourceNeighbors = new List<RelativeLocationWeighted>();
+            severity = PlugIn.ModelCore.Landscape.NewSiteVar<byte>();
+            //outbreakZone = PlugIn.ModelCore.Landscape.NewSiteVar<Zone>();
             climateDataTable = new DataTable();
 
             for (int i = 0; i < sppCount; i++)
@@ -761,7 +765,7 @@ namespace Landis.Extension.BaseBDA
 
     }
 
-    public class RelativeLocationWeighted
+    /*public class RelativeLocationWeighted
     {
         private RelativeLocation location;
         private double weight;
@@ -793,5 +797,5 @@ namespace Landis.Extension.BaseBDA
             this.weight = weight;
         }
 
-    }
+    }*/
 }

@@ -7,14 +7,14 @@ using Landis.SpatialModeling;
 using Landis.Library.AgeOnlyCohorts;
 using System.Collections.Generic;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     ///<summary>
-    /// Site Variables for a disturbance plug-in that simulates Biological Agents.
+    /// Site Variables for a disturbance plug-in that simulates Epidemiological Processes.
     /// </summary>
     public static class SiteVars
     {
-        private static ISiteVar<int> timeOfLastBDA;
+        private static ISiteVar<int> timeOfLastEDA;
         private static ISiteVar<string> harvestPrescriptionName;
         private static ISiteVar<int> timeOfLastHarvest;
         private static ISiteVar<int> harvestCohortsKilled;
@@ -22,41 +22,43 @@ namespace Landis.Extension.BaseBDA
         private static ISiteVar<byte> fireSeverity;
         private static ISiteVar<int> timeOfLastWind;
         private static ISiteVar<byte> windSeverity; 
-        private static ISiteVar<double> siteResourceDomMod;
-        private static ISiteVar<double> siteResourceDom;
-        private static ISiteVar<double> vulnerability;
+        private static ISiteVar<double> siteHostSusceptMod;
+        private static ISiteVar<double> siteHostSuscept;
+        private static ISiteVar<double> epidemDistProb;  //according to the user manual, this corresponds to BPD so I changed accordingly to avoid confusion
         private static ISiteVar<bool> disturbed;
-        private static ISiteVar<Dictionary<int,int>> numberCFSconifersKilled;
+        private static ISiteVar<Dictionary<int,int>> numberCFSconifersKilled;  //do we need to rename this? of this variable is used "as is" by fire?
         private static ISiteVar<ISiteCohorts> cohorts;
         private static ISiteVar<int> timeOfNext;
         private static ISiteVar<string> agentName;
-        private static ISiteVar<int> timeOfLastBiomassInsects;
-        private static ISiteVar<string> biomassInsectsAgent;
+        private static ISiteVar<int> timeOfLastBiomassInsects;  //WHAT IS THIS PARAMETER?
+        private static ISiteVar<string> biomassInsectsAgent;    //WHAT IS A "BIOMASS" INSECT AGENT? DIFFERENT FROM OTHER BDA's?
 
         //---------------------------------------------------------------------
 
         public static void Initialize(ICore modelCore)
         {
-            timeOfLastBDA  = modelCore.Landscape.NewSiteVar<int>();
-            siteResourceDomMod = modelCore.Landscape.NewSiteVar<double>();
-            siteResourceDom = modelCore.Landscape.NewSiteVar<double>();
-            vulnerability = modelCore.Landscape.NewSiteVar<double>();
+            timeOfLastEDA  = modelCore.Landscape.NewSiteVar<int>();
+            siteHostSusceptMod = modelCore.Landscape.NewSiteVar<double>();
+            siteHostSuscept = modelCore.Landscape.NewSiteVar<double>();
+            epidemDistProb = modelCore.Landscape.NewSiteVar<double>();  //this used to be "vulnerability" or "BDP" in the BDA extension
             disturbed = modelCore.Landscape.NewSiteVar<bool>();
             numberCFSconifersKilled = modelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
             timeOfNext = modelCore.Landscape.NewSiteVar<int>();
             agentName = modelCore.Landscape.NewSiteVar<string>();
             biomassInsectsAgent = modelCore.Landscape.NewSiteVar<string>();
 
-
-            SiteVars.TimeOfLastEvent.ActiveSiteValues = -10000;
-            SiteVars.SiteResourceDomMod.ActiveSiteValues = 0.0;
-            SiteVars.SiteResourceDom.ActiveSiteValues = 0.0;
-            SiteVars.Vulnerability.ActiveSiteValues = 0.0;
-            SiteVars.TimeOfNext.ActiveSiteValues = 9999;
+            //initialize starting values
+            SiteVars.TimeOfLastEvent.ActiveSiteValues = -10000; //why this?
+            SiteVars.SiteHostSusceptMod.ActiveSiteValues = 0.0;
+            SiteVars.SiteHostSuscept.ActiveSiteValues = 0.0;
+            SiteVars.EpidemDistProb.ActiveSiteValues = 0.0;
+            SiteVars.TimeOfNext.ActiveSiteValues = 9999;    //why this?
             SiteVars.AgentName.ActiveSiteValues = "";
 
-            cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.AgeCohorts");
+            cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.AgeCohorts"); //get age cohorts from succession extension
 
+            //LOOP through each active pixel in the landscape and for each one of them
+            //initialize a dictionary to keep track of numbers of cohorts killed as part of special dead fuel
             foreach(ActiveSite site in modelCore.Landscape)
                 SiteVars.NumberCFSconifersKilled[site] = new Dictionary<int, int>();
 
@@ -88,7 +90,7 @@ namespace Landis.Extension.BaseBDA
         public static ISiteVar<int> TimeOfLastEvent
         {
             get {
-                return timeOfLastBDA;
+                return timeOfLastEDA;
             }
         }
 
@@ -154,24 +156,24 @@ namespace Landis.Extension.BaseBDA
             }
         }
         //---------------------------------------------------------------------
-        public static ISiteVar<double> SiteResourceDom
+        public static ISiteVar<double> SiteHostSuscept
         {
             get {
-                return siteResourceDom;
+                return siteHostSuscept;
             }
         }
         //---------------------------------------------------------------------
-        public static ISiteVar<double> SiteResourceDomMod
+        public static ISiteVar<double> SiteHostSusceptMod
         {
             get {
-                return siteResourceDomMod;
+                return siteHostSusceptMod;
             }
         }
         //---------------------------------------------------------------------
-        public static ISiteVar<double> Vulnerability
+        public static ISiteVar<double> EpidemDistProb
         {
             get {
-                return vulnerability;
+                return epidemDistProb;
             }
         }
         //---------------------------------------------------------------------
@@ -183,7 +185,7 @@ namespace Landis.Extension.BaseBDA
             }
         }
         //---------------------------------------------------------------------
-        public static ISiteVar<Dictionary<int,int>> NumberCFSconifersKilled
+        public static ISiteVar<Dictionary<int,int>> NumberCFSconifersKilled  //should we change this name or fire ext needs it as is?
         {
             get {
                 return numberCFSconifersKilled;
