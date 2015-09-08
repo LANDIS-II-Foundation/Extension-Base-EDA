@@ -154,7 +154,7 @@ namespace Landis.Extension.BaseEDA
         private IEcoParameters[] ecoParameters;
         //private IDistParameters[] distParameters;
         private List<IDisturbanceType> disturbanceTypes;
-        private ISiteVar<byte> severity;
+        private ISiteVar<byte> intensity;
         private ISiteVar<Zone> outbreakZone;
         //---------------------------------------------------------------------
         public string AgentName
@@ -480,13 +480,13 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-        public ISiteVar<byte> Severity
+        public ISiteVar<byte> Intensity
         {
             get {
-                return severity;
+                return intensity;
             }
             set {
-                severity = value;
+                intensity = value;
             }
         }
         //---------------------------------------------------------------------
@@ -751,7 +751,7 @@ namespace Landis.Extension.BaseEDA
             //advRegenSppList = new List<ISpecies>();
             //dispersalNeighbors = new List<RelativeLocation>();
             //resourceNeighbors = new List<RelativeLocationWeighted>();
-            severity = PlugIn.ModelCore.Landscape.NewSiteVar<byte>();
+            intensity = PlugIn.ModelCore.Landscape.NewSiteVar<byte>();
             //outbreakZone = PlugIn.ModelCore.Landscape.NewSiteVar<Zone>();
             climateDataTable = new DataTable();
 

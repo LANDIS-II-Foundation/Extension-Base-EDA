@@ -6,7 +6,7 @@ using Landis.Library.AgeOnlyCohorts;
 using Landis.SpatialModeling;
 using System.Collections.Generic;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     public class Epidemic
         : ICohortDisturbance
@@ -14,11 +14,15 @@ namespace Landis.Extension.BaseBDA
     {
         private static IEcoregionDataset ecoregions;
 
+        //WE ARE INTERESTED NOT ONLY IN THE INTENSITY OF AN INFECTION BUT ALSO IN DISEASE INTENSITY
+        //WHILE INFECTION INTENSITY IS A FUNCTION OF THE DISTURBANCE PROBABILITY OF A SITE (see Class_SS thresholds)
+        //DISEASE INTENSITY IF A FUNCTION OF THE NUMBER OF COHORTS KILLED IN A SITE (we MUST get this info)
+
         private IAgent epidemicParms;
         private int totalSitesDamaged;
         private int totalCohortsKilled;
-        private double meanSeverity;
-        private int siteSeverity;
+        private double meanIntensity;   //changed to "Intensity" instead of "Severity"
+        private int siteIntensity;      //changed to "Intensity" instead of "Severity"
         private double random;
         private double siteVulnerability;
         //private int advRegenAgeCutoff;
@@ -31,7 +35,7 @@ namespace Landis.Extension.BaseBDA
         private enum TempPattern        {random, cyclic};
         private enum NeighborShape      {uniform, linear, gaussian};
         private enum InitialCondition   {map, none};
-        private enum SRDMode            {SRDmax, SRDmean};
+        private enum SHSmode { SHSmax, SHSmean };
 
 
         //---------------------------------------------------------------------
@@ -60,10 +64,10 @@ namespace Landis.Extension.BaseBDA
 
         //---------------------------------------------------------------------
 
-        public double MeanSeverity
+        public double MeanIntensity
         {
             get {
-                return meanSeverity;
+                return meanIntensity;
             }
         }
 

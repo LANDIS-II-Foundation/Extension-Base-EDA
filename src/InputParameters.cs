@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using Edu.Wisc.Forest.Flel.Util;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     /// <summary>
     /// Parameters for the extension.
@@ -24,22 +24,24 @@ namespace Landis.Extension.BaseBDA
         /// <summary>
         /// Template for the filenames for output SRD maps.
         /// </summary>
-        string SRDMapNames{get;set;}
+        //string SRDMapNames{get;set;}
         //---------------------------------------------------------------------
         /// <summary>
         /// Template for the filenames for output SRD maps.
         /// </summary>
-        string NRDMapNames{get;set;}
+        //string NRDMapNames{get;set;}
         //---------------------------------------------------------------------
         /// <summary>
-        /// Template for the filenames for output Vulnerabilty maps.
+        /// Template for the filenames for Epidemiological Disturbance Probability (EDP) output maps.
         /// </summary>
-        string BDPMapNames { get; set; }
+        string EDPMapNames { get; set; }
         //---------------------------------------------------------------------
         /// <summary>
         /// Name of log file.
         /// </summary>
         string LogFileName{get;set;}
+
+        //WE NEED TO ADD A MAP TEMPLATE HERE FOR MORTALITY OUTPUT (e.g. NUMBER OF COHORTS KILLED by species)
 
         //---------------------------------------------------------------------
         /// <summary>
@@ -49,7 +51,7 @@ namespace Landis.Extension.BaseBDA
     }
 }
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     /// <summary>
     /// Parameters for the plug-in.
@@ -59,9 +61,9 @@ namespace Landis.Extension.BaseBDA
     {
         private int timestep;
         private string mapNamesTemplate;
-        private string srdMapNames;
-        private string nrdMapNames;
-        private string bdpMapNames;
+        //private string srdMapNames;
+        //private string nrdMapNames;
+        private string edpMapNames;
         private string logFileName;
         private IEnumerable<IAgent> manyAgentParameters;
 
@@ -101,7 +103,7 @@ namespace Landis.Extension.BaseBDA
         /// <summary>
         /// Template for the filenames for SRD output maps.
         /// </summary>
-        public string SRDMapNames
+        /*public string SRDMapNames
         {
             get
             {
@@ -129,21 +131,21 @@ namespace Landis.Extension.BaseBDA
                 MapNames.CheckTemplateVars(value);
                 nrdMapNames = value;
             }
-        }
+        }*/
         //---------------------------------------------------------------------
         /// <summary>
-        /// Template for the filenames for Vulnerability output maps.
+        /// Template for the filenames for Epidemiolical Disturbance Probability (EDP) output maps.
         /// </summary>
-        public string BDPMapNames
+        public string EDPMapNames
         {
             get
             {
-                return bdpMapNames;
+                return edpMapNames;
             }
             set
             {
                 MapNames.CheckTemplateVars(value);
-                bdpMapNames = value;
+                edpMapNames = value;
             }
         }
         //---------------------------------------------------------------------

@@ -12,23 +12,23 @@ using Landis.SpatialModeling;
 using Landis.Library.Climate;
 using System.Data;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     ///<summary>
-    /// A disturbance plug-in that simulates Biological Agents.
+    /// A disturbance plug-in that simulates Epidemiological (disease) Agents and Disease.
     /// </summary>
 
     public class PlugIn
         : ExtensionMain
     {
-        public static readonly ExtensionType type = new ExtensionType("disturbance:bda");
-        public static readonly string ExtensionName = "Base BDA";
+        public static readonly ExtensionType type = new ExtensionType("disturbance:eda");
+        public static readonly string ExtensionName = "Base EDA";
         public static MetadataTable<EventsLog> EventLog;
 
         private string mapNameTemplate;
-        private string srdMapNames;
-        private string nrdMapNames;
-        private string vulnMapNames;
+        //private string srdMapNames;
+        //private string nrdMapNames;
+        private string infectMapNames;
         //private StreamWriter log;
         private IEnumerable<IAgent> manyAgentParameters;
         private static IInputParameters parameters;
@@ -74,17 +74,17 @@ namespace Landis.Extension.BaseBDA
             reinitialized = false;
             MetadataHandler.InitializeMetadata(parameters.Timestep,
                parameters.MapNamesTemplate,
-               parameters.SRDMapNames,
-               parameters.NRDMapNames,
+               //parameters.SRDMapNames,
+               //parameters.NRDMapNames,
                parameters.LogFileName,
                parameters.ManyAgentParameters,
                ModelCore);
 
             Timestep = parameters.Timestep;
             mapNameTemplate = parameters.MapNamesTemplate;
-            srdMapNames = parameters.SRDMapNames;
-            nrdMapNames = parameters.NRDMapNames;
-            vulnMapNames = parameters.BDPMapNames;
+            //srdMapNames = parameters.SRDMapNames;
+            //nrdMapNames = parameters.NRDMapNames;
+            infectMapNames = parameters.EDPMapNames;
 
             SiteVars.Initialize(modelCore);
 
@@ -93,17 +93,17 @@ namespace Landis.Extension.BaseBDA
             {
                 if (activeAgent == null)
                     PlugIn.ModelCore.UI.WriteLine("Agent Parameters NOT loading correctly.");
-                activeAgent.TimeToNextEpidemic = TimeToNext(activeAgent, Timestep) + activeAgent.StartYear;
-                int timeOfNext = PlugIn.ModelCore.CurrentTime + activeAgent.TimeToNextEpidemic - activeAgent.TimeSinceLastEpidemic;
-                if (timeOfNext < Timestep)
-                    timeOfNext = Timestep;
-                if (timeOfNext < activeAgent.StartYear)
-                    timeOfNext = activeAgent.StartYear;
-                SiteVars.TimeOfNext.ActiveSiteValues = timeOfNext;
+                //activeAgent.TimeToNextEpidemic = TimeToNext(activeAgent, Timestep) + activeAgent.StartYear;
+                //int timeOfNext = PlugIn.ModelCore.CurrentTime + activeAgent.TimeToNextEpidemic - activeAgent.TimeSinceLastEpidemic;
+                //if (timeOfNext < Timestep)
+                //    timeOfNext = Timestep;
+                //if (timeOfNext < activeAgent.StartYear)
+                //    timeOfNext = activeAgent.StartYear;
+                //SiteVars.TimeOfNext.ActiveSiteValues = timeOfNext;
 
                 int i = 0;
 
-                activeAgent.DispersalNeighbors
+                /*activeAgent.DispersalNeighbors
                     = GetDispersalNeighborhood(activeAgent, Timestep);
                 if (activeAgent.DispersalNeighbors != null)
                 {
@@ -117,7 +117,7 @@ namespace Landis.Extension.BaseBDA
                 {
                     foreach (RelativeLocationWeighted reloc in activeAgent.ResourceNeighbors) i++;
                     PlugIn.ModelCore.UI.WriteLine("Resource Neighborhood = {0} neighbors.", i);
-                }
+                }*/
 
                 if (activeAgent.RandFunc == OutbreakPattern.Climate)
                     if (activeAgent.ClimateVarSource != "Library")
@@ -138,6 +138,7 @@ namespace Landis.Extension.BaseBDA
 
         }
 
+        //IS THIS NECESSARY?
         public new void InitializePhase2()
         {
                 SiteVars.InitializeTimeOfLastDisturbances();
@@ -146,11 +147,11 @@ namespace Landis.Extension.BaseBDA
 
         //---------------------------------------------------------------------
         ///<summary>
-        /// Run the BDA extension at a particular timestep.
+        /// Run the EDA extension at a particular timestep.
         ///</summary>
         public override void Run()
         {
-            PlugIn.ModelCore.UI.WriteLine("   Processing landscape for BDA events ...");
+            PlugIn.ModelCore.UI.WriteLine("   Processing landscape for EDA events ...");
             if(!reinitialized)
                 InitializePhase2();
 
@@ -161,9 +162,10 @@ namespace Landis.Extension.BaseBDA
             foreach(IAgent activeAgent in manyAgentParameters)
             {
 
-                activeAgent.TimeSinceLastEpidemic += Timestep;
+                //activeAgent.TimeSinceLastEpidemic += Timestep;
 
-                int ROS = RegionalOutbreakStatus(activeAgent, Timestep);
+                //OUR MODEL PROBABLY DOES NOT NEED THE ROS COMPONENT
+                //int ROS = RegionalOutbreakStatus(activeAgent, Timestep);
 
                 if(ROS > 0)
                 {

@@ -6,7 +6,7 @@ using Edu.Wisc.Forest.Flel.Util;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     /// <summary>
     /// A parser that reads the extension parameters from text input.
@@ -54,9 +54,9 @@ namespace Landis.Extension.BaseBDA
             ReadVar(mapNames);
             parameters.MapNamesTemplate = mapNames.Value;
 
-            InputVar<string> srdMapNames = new InputVar<string>("SRDMapNames");
-            if(ReadOptionalVar(srdMapNames))
-                parameters.SRDMapNames = srdMapNames.Value;
+            //InputVar<string> srdMapNames = new InputVar<string>("SRDMapNames");
+            //if(ReadOptionalVar(srdMapNames))
+            //    parameters.SRDMapNames = srdMapNames.Value;
             /*try
             {
                 ReadVar(srdMapNames);
@@ -71,9 +71,9 @@ namespace Landis.Extension.BaseBDA
 
             }
             */
-            InputVar<string> nrdMapNames = new InputVar<string>("NRDMapNames");
-            if(ReadOptionalVar(nrdMapNames))
-                parameters.NRDMapNames = nrdMapNames.Value;
+            //InputVar<string> nrdMapNames = new InputVar<string>("NRDMapNames");
+            //if(ReadOptionalVar(nrdMapNames))
+            //    parameters.NRDMapNames = nrdMapNames.Value;
             /*try
             {
                 ReadVar(nrdMapNames);
@@ -88,9 +88,9 @@ namespace Landis.Extension.BaseBDA
 
             }
              * */
-            InputVar<string> bdpMapNames = new InputVar<string>("BDPMapNames");
-            if(ReadOptionalVar(bdpMapNames))
-                parameters.BDPMapNames = bdpMapNames.Value;
+            InputVar<string> edpMapNames = new InputVar<string>("EDPMapNames");
+            if(ReadOptionalVar(edpMapNames))
+                parameters.EDPMapNames = edpMapNames.Value;
             /*try
             {
                 ReadVar(bdpMapNames);
@@ -114,7 +114,7 @@ namespace Landis.Extension.BaseBDA
             // Last, read in Agent File names,
             // then parse the data in those files into agent parameters.
 
-            InputVar<string> agentFileName = new InputVar<string>("BDAInputFiles");
+            InputVar<string> agentFileName = new InputVar<string>("EDAInputFiles");
             ReadVar(agentFileName);
 
             List<IAgent> agentParameterList = new List<IAgent>();

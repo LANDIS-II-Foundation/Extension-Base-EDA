@@ -4,12 +4,12 @@
 using Edu.Wisc.Forest.Flel.Util;
 using System.Collections.Generic;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     //This slash type is used for all disturbance fuel types
     public interface IDisturbanceType
     {
-        double SRDModifier {get;set;}
+        double SHSModifier {get;set;}
         int MaxAge {get;set;}
         List<string> PrescriptionNames{get;set;}
     }
@@ -20,7 +20,7 @@ namespace Landis.Extension.BaseBDA
     public class DisturbanceType
         : IDisturbanceType
     {
-        private double srdMod;
+        private double shsMod;
         private int maxAge;
         private List<string> prescriptionNames;
 
@@ -29,13 +29,13 @@ namespace Landis.Extension.BaseBDA
         /// <summary>
         /// Index
         /// </summary>
-        public double SRDModifier
+        public double SHSModifier
         {
             get {
-                return srdMod;
+                return shsMod;
             }
             set {
-                srdMod = value;
+                shsMod = value;
             }
         }
 
@@ -58,7 +58,7 @@ namespace Landis.Extension.BaseBDA
         //---------------------------------------------------------------------
 
         /// <summary>
-        /// A prescription name
+        /// A prescription name (for harvest)
         /// </summary>
         public List<string> PrescriptionNames
         {

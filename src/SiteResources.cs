@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace Landis.Extension.BaseEDA
 {
 
-    public class SiteResources
+    public class SiteSusceptibility
     {
 
         //---------------------------------------------------------------------
@@ -23,7 +23,7 @@ namespace Landis.Extension.BaseEDA
         //---------------------------------------------------------------------
         public static void SiteHostSusceptibility(IAgent agent, int ROS)
         {
-            PlugIn.ModelCore.UI.WriteLine("   Calculating BDA Site Resource Dominance.");
+            PlugIn.ModelCore.UI.WriteLine("   Calculating EDA Site Resource Dominance.");
 
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape) {
 
@@ -35,13 +35,14 @@ namespace Landis.Extension.BaseEDA
 
                 foreach (ISpecies species in PlugIn.ModelCore.Species)
                 {
+                    //get age of oldest cohort
                     ageOldestCohort = Util.GetMaxAge(SiteVars.Cohorts[site][species]);
                     ISppParameters sppParms = agent.SppParameters[species.Index];
                     if (sppParms == null)
                         continue;
 
                     bool negList = false;
-                    foreach (ISpecies negSpp in agent.NegSppList)
+                    foreach (ISpecies negSpp in agent.NegSppList)  //what is NegSppList?
                     {
                         if (species == negSpp)
                             negList = true;
@@ -52,17 +53,17 @@ namespace Landis.Extension.BaseEDA
                         numValidSpp++;
                         speciesHostValue = 0.0;
 
-                        if (ageOldestCohort >= sppParms.MinorHostAge)
-                            //speciesHostValue = 0.33;
-                            speciesHostValue = sppParms.MinorHostSRD;
+                        if (ageOldestCohort >= sppParms.LowHostAge)
+                            //speciesHostValue = 0.33; VALUES ARE READ IN FROM THE EDA Spp Param Table
+                            speciesHostValue = sppParms.LowHostSusceptInfProb;
 
-                        if (ageOldestCohort >= sppParms.SecondaryHostAge)
-                            //speciesHostValue = 0.66;
-                            speciesHostValue = sppParms.SecondaryHostSRD;
+                        if (ageOldestCohort >= sppParms.MediumHostAge)
+                            //speciesHostValue = 0.66; VALUES ARE READ IN FROM THE EDA Spp Param Table
+                            speciesHostValue = sppParms.MediumHostSusceptInfProb;
 
-                        if (ageOldestCohort >= sppParms.PrimaryHostAge)
-                            //speciesHostValue = 1.0;
-                            speciesHostValue = sppParms.PrimaryHostSRD;
+                        if (ageOldestCohort >= sppParms.HighHostAge)
+                            //speciesHostValue = 1.0; VALUES ARE READ IN FROM THE EDA Spp Param Table
+                            speciesHostValue = sppParms.HighHostSusceptInfProb;
 
 
                         sumValue += speciesHostValue;
@@ -70,10 +71,10 @@ namespace Landis.Extension.BaseEDA
                     }
                 }
 
-                if (agent.SRDmode == SRDmode.mean)
+                if (agent.SHSmode == SHSmode.mean)
                     SiteVars.SiteHostSuscept[site] = sumValue / (double) numValidSpp;
 
-                if (agent.SRDmode == SRDmode.max)
+                if (agent.SHSmode == SHSmode.max)
                     SiteVars.SiteHostSuscept[site] = maxValue;
 
             }
@@ -100,10 +101,10 @@ namespace Landis.Extension.BaseEDA
                     int     duration = 0;
                     double  disturbMod = 0;
                     double  sumDisturbMods = 0.0;
-                    double  SRDM = 0.0;
+                    double  SHSM = 0.0;
 
                     // Next check the disturbance types.  This will provide the disturbance modifier
-                    // Check for harvest effects on SRD
+                    // Check for harvest effects on SHS
                     IEnumerable<IDisturbanceType> disturbanceTypes = agent.DisturbanceTypes;
                     foreach (DisturbanceType disturbance in disturbanceTypes)
                     {
@@ -118,7 +119,7 @@ namespace Landis.Extension.BaseEDA
                                 {
                                     if ((SiteVars.HarvestPrescriptionName != null && SiteVars.HarvestPrescriptionName[site].Trim() == pName.Trim()) || (pName.Trim() == "Harvest"))
                                     {
-                                        disturbMod = disturbance.SRDModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
+                                        disturbMod = disturbance.SHSModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
                                         sumDisturbMods += disturbMod;
                                     }
                                 }
@@ -138,13 +139,13 @@ namespace Landis.Extension.BaseEDA
                                     {
                                         if ((pName.Substring((pName.Length - 1), 1)).ToString() == SiteVars.FireSeverity[site].ToString())
                                         {
-                                            disturbMod = disturbance.SRDModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
+                                            disturbMod = disturbance.SHSModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
                                             sumDisturbMods += disturbMod;
                                         }
                                     }
                                     else if (pName.Trim() == "Fire") // Generic for all fire
                                     {
-                                        disturbMod = disturbance.SRDModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
+                                        disturbMod = disturbance.SHSModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
                                         sumDisturbMods += disturbMod;
                                     }
                                 }
@@ -165,13 +166,13 @@ namespace Landis.Extension.BaseEDA
                                     {
                                         if ((pName.Substring((pName.Length - 1), 1)).ToString() == SiteVars.WindSeverity[site].ToString())
                                         {
-                                            disturbMod = disturbance.SRDModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
+                                            disturbMod = disturbance.SHSModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
                                             sumDisturbMods += disturbMod;
                                         }
                                     }
                                     else if (pName.Trim() == "Wind") // Generic for all wind
                                     {
-                                        disturbMod = disturbance.SRDModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
+                                        disturbMod = disturbance.SHSModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
                                         sumDisturbMods += disturbMod;
                                     }
                                 }
@@ -189,7 +190,7 @@ namespace Landis.Extension.BaseEDA
                                 {
                                     if((SiteVars.BiomassInsectsAgent[site].Trim() == pName.Trim()) || (pName.Trim() == "BiomassInsects"))
                                     {
-                                        disturbMod = disturbance.SRDModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
+                                        disturbMod = disturbance.SHSModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
                                         sumDisturbMods += disturbMod;
                                     }
                                 }
@@ -207,7 +208,7 @@ namespace Landis.Extension.BaseEDA
                                 {
                                     if ((SiteVars.AgentName[site].Trim() == pName.Trim()) || (pName.Trim() == "BDA"))
                                     {
-                                        disturbMod = disturbance.SRDModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
+                                        disturbMod = disturbance.SHSModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
                                         sumDisturbMods += disturbMod;
                                     }
                                 }
@@ -221,14 +222,14 @@ namespace Landis.Extension.BaseEDA
                     IEcoregion ecoregion = PlugIn.ModelCore.Ecoregion[site];
 
 
-                    SRDM = SiteVars.SiteHostSuscept[site] +
+                    SHSM = SiteVars.SiteHostSuscept[site] +
                            sumDisturbMods +
                            agent.EcoParameters[ecoregion.Index].EcoModifier;
 
-                    SRDM = System.Math.Max(0.0, SRDM);
-                    SRDM = System.Math.Min(1.0, SRDM);
+                    SHSM = System.Math.Max(0.0, SHSM);
+                    SHSM = System.Math.Min(1.0, SHSM);
 
-                    SiteVars.SiteHostSusceptMod[site] = SRDM;
+                    SiteVars.SiteHostSusceptMod[site] = SHSM;
                 }//end of one site
 
                 else SiteVars.SiteHostSusceptMod[site] = 0.0;
@@ -237,21 +238,21 @@ namespace Landis.Extension.BaseEDA
 
         //---------------------------------------------------------------------
         ///<summary>
-        ///Calculate SITE VULNERABILITY
-        ///Following equations found in Sturtevant et al. 2004.
-        ///Ecological Modeling 180: 153-174.
+        ///Calculate SITE EPIDEMIOLOGICAL DISTURBANCE PROBABILITY (EDP)
         ///</summary>
         //---------------------------------------------------------------------
-        public static void SiteVulnerability(IAgent agent,
-                                                int ROS,
-                                                bool considerNeighbor)
+        public static void SiteDistProbability(IAgent agent)//,
+                                                //int ROS,
+                                                //bool considerNeighbor)
         {
-            double   SRD, SRDMod, NRD;
-            double   CaliROS3 = ((double) ROS / 3) * agent.BDPCalibrator;
+            double SHS, SHSMod;
+            //double SRD, SRDMod;
+            //double NRD; 
+            //double   CaliROS3 = ((double) ROS / 3) * agent.BDPCalibrator;
 
             //PlugIn.ModelCore.Log.WriteLine("   Calculating BDA SiteVulnerability.");
 
-            if (considerNeighbor)      //take neigborhood into consideration
+            /*if (considerNeighbor)      //take neigborhood into consideration
             {
                 foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
                 {
@@ -279,17 +280,17 @@ namespace Landis.Extension.BaseEDA
                 }
             }
             else        //Do NOT take neigborhood into consideration
-            {
-                foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
-                {
-                    SRDMod = SiteVars.SiteHostSusceptMod[site];
+            {*/
+            foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
+              {
+                  SHSMod = SiteVars.SiteHostSusceptMod[site];
 
-                    double vulnerable = (double)(CaliROS3 * SRDMod);
-                    SiteVars.Vulnerability[site] = System.Math.Max(0, vulnerable);
-                }
-            }
+                //double vulnerable = (double)(CaliROS3 * SRDMod);
+                SiteVars.EpidemDistProb[site] = System.Math.Max(0, SHSMod);
+              }
+            //}
         }
 
-//End of SiteResources
+//End of SiteSusceptibility
     }
 }
