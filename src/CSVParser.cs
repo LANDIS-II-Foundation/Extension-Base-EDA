@@ -8,7 +8,7 @@ using System.IO;
 using System.Data;
 using System.Text.RegularExpressions;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     //CSVParser derived from code posted at http://aspnetcafe.com/post/CSV-to--DataTable-Parser.aspx
     //Modified for LANDIS-II by Brendan C. Ward, 4/15/2008
@@ -16,7 +16,7 @@ namespace Landis.Extension.BaseBDA
     {
         string delimiter = ",";
         string quotes = "\"";
-        System.Text.RegularExpressions.Regex CSVregEx = new System.Text.RegularExpressions.Regex("(\"([^\"]*|\"{2})*\"(,|$))|\"[^\"]*\"(,|$)|[^,]+(,|$)|(,)");
+        Regex CSVregEx = new Regex("(\"([^\"]*|\"{2})*\"(,|$))|\"[^\"]*\"(,|$)|[^,]+(,|$)|(,)");
         StreamReader reader;
 
         public CSVParser(){ }

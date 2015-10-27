@@ -10,7 +10,7 @@ using Landis.Library.Metadata;
 using Edu.Wisc.Forest.Flel.Util;
 using Landis.Core;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     public static class MetadataHandler
     {
@@ -18,9 +18,11 @@ namespace Landis.Extension.BaseBDA
         public static ExtensionMetadata Extension {get; set;}
 
         public static void InitializeMetadata(int Timestep, 
-            string severityMapFileName, 
-            string srdMapFileName, 
-            string nrdMapFileName, 
+            string infseverityMapFileName,
+            string mortalityMapFileName,
+            string bdpMapFileName,
+            //string srdMapFileName, 
+            //string nrdMapFileName, 
             string logFileName, 
             IEnumerable<IAgent> manyAgentParameters, 
             ICore mCore)
@@ -44,8 +46,8 @@ namespace Landis.Extension.BaseBDA
             //          table outputs:   
             //---------------------------------------
 
-             //PlugIn.EventLog = new MetadataTable<EventsLog>(logFileName);
-            PlugIn.EventLog = new MetadataTable<EventsLog>("bda-log.csv");
+            //PlugIn.EventLog = new MetadataTable<EventsLog>(logFileName);
+            PlugIn.EventLog = new MetadataTable<EventsLog>("eda-log.csv");
 
             OutputMetadata tblOut_events = new OutputMetadata()
             {
@@ -75,20 +77,20 @@ namespace Landis.Extension.BaseBDA
 
             foreach (IAgent activeAgent in manyAgentParameters)
             {
-                string mapTypePath = MapNames.ReplaceTemplateVarsMetadata(severityMapFileName, activeAgent.AgentName);
+                string mapTypePath = MapNames.ReplaceTemplateVarsMetadata(infseverityMapFileName, activeAgent.AgentName);
 
-                OutputMetadata mapOut_Severity = new OutputMetadata()
+                OutputMetadata mapOut_InfSeverity = new OutputMetadata()
                 {
                     Type = OutputType.Map,
-                    Name = System.String.Format(activeAgent.AgentName + " Outbreak Severity"),
+                    Name = string.Format(activeAgent.AgentName + " Outbreak Infection Severity"),
                     FilePath = @mapTypePath,
                     Map_DataType = MapDataType.Ordinal,
-                    Map_Unit = FieldUnits.Severity_Rank,
+                    Map_Unit = FieldUnits.Severity_Rank, //can one change this name to something else?
                     Visualize = true,
                 };
-                Extension.OutputMetadatas.Add(mapOut_Severity);
+                Extension.OutputMetadatas.Add(mapOut_InfSeverity);
 
-                if (srdMapFileName != null)
+                /*if (srdMapFileName != null)
                 {
                     mapTypePath = MapNames.ReplaceTemplateVarsMetadata(srdMapFileName, activeAgent.AgentName);
                     OutputMetadata mapOut_SRD = new OutputMetadata()
@@ -116,7 +118,7 @@ namespace Landis.Extension.BaseBDA
                         Visualize = false,
                     };
                     Extension.OutputMetadatas.Add(mapOut_NRD);
-                }
+                }*/
             }
             //---------------------------------------
             MetadataProvider mp = new MetadataProvider(Extension);

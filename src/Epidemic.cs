@@ -32,9 +32,11 @@ namespace Landis.Extension.BaseEDA
 
         private ActiveSite currentSite; // current site where cohorts are being damaged
 
-        private enum TempPattern        {random, cyclic};
-        private enum NeighborShape      {uniform, linear, gaussian};
-        private enum InitialCondition   {map, none};
+        //ROS
+        //private enum TempPattern        {random, cyclic};   
+        //NRD 
+        //private enum NeighborShape      {uniform, linear, gaussian};
+        private enum InitialCondition   {map, none};   //is this to use initial map of infected sites?
         private enum SHSmode { SHSmax, SHSmean };
 
 
@@ -109,7 +111,7 @@ namespace Landis.Extension.BaseEDA
         //---------------------------------------------------------------------
         ///<summary>
         ///Initialize an Epidemic - defined as an agent outbreak for an entire landscape
-        ///at a single BDA timestep.  One epidemic per agent per BDA timestep
+        ///at a single EDA timestep.  One epidemic per agent per EDA timestep
         ///</summary>
 
         public static void Initialize(IAgent agent)
@@ -120,10 +122,10 @@ namespace Landis.Extension.BaseEDA
 
 
             //.ActiveSiteValues allows you to reset all active site at once.
-            SiteVars.NeighborResourceDom.ActiveSiteValues = 0;
-            SiteVars.Vulnerability.ActiveSiteValues = 0;
-            SiteVars.SiteResourceDomMod.ActiveSiteValues = 0;
-            SiteVars.SiteResourceDom.ActiveSiteValues = 0;
+            //SiteVars.NeighborResourceDom.ActiveSiteValues = 0;
+            SiteVars.EpidemDistProb.ActiveSiteValues = 0;
+            SiteVars.SiteHostSusceptMod.ActiveSiteValues = 0;
+            SiteVars.SiteHostSuscept.ActiveSiteValues = 0;
 
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
             {
@@ -142,25 +144,26 @@ namespace Landis.Extension.BaseEDA
         ///</summary>
         public static Epidemic Simulate(IAgent agent,
                                         int currentTime,
-                                        int timestep,
-                                        int ROS)
+                                        int timestep)//,
+                                        //int ROS)
         {
 
 
             Epidemic CurrentEpidemic = new Epidemic(agent);
-            PlugIn.ModelCore.UI.WriteLine("   New BDA Epidemic Activated.");
+            PlugIn.ModelCore.UI.WriteLine("   New EDA Epidemic Started.");
 
             //SiteResources.SiteResourceDominance(agent, ROS, SiteVars.Cohorts);
-            SiteResources.SiteResourceDominance(agent, ROS);
-            SiteResources.SiteResourceDominanceModifier(agent);
+            //SiteResources.SiteResourceDominance(agent, ROS);
+            SiteResources.SiteHostSusceptibility(agent);   //WHY IS SiteResources UNDERLINED?
+            SiteResources.SiteHostSusceptibilityModifier(agent);  //WHY IS SiteResources UNDERLINED?
 
-            if(agent.Dispersal) {
+            if (agent.Dispersal) {
                 //Asynchronous - Simulate Agent Dispersal
 
-                // Calculate Site Vulnerability without considering the Neighborhood
+                // Calculate Site Disturbance Probability
                 // If neither disturbance modifiers nor ecoregion modifiers are active,
-                //  Vulnerability will equal SiteReourceDominance.
-                SiteResources.SiteVulnerability(agent, ROS, false);
+                // Site Disturbance Probability will equal SiteHostSusceptibility.
+                SiteResources.SiteHostSusceptibility(agent, ROS, false);
 
                 Epicenters.NewEpicenters(agent, timestep);
 

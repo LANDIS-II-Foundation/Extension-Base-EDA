@@ -6,7 +6,7 @@ using Edu.Wisc.Forest.Flel.Util;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
 
     /// <summary>

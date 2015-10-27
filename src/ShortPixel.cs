@@ -3,7 +3,7 @@
 
 using Landis.SpatialModeling;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     public class ShortPixel : Pixel
     {

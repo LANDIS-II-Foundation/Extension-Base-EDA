@@ -1,19 +1,19 @@
 Discussion points with B. Miranda for Base-EDA Extension:
+==========================================================
 
-1 - how do we deal with spill-over within the same site (cell)? Oaks get infected by the disease agent ONLY from surrounding hosts (e.g. UMCA, LIDE)
-    not directly. In other words, if a disease event kills X cohort of species Y, can this mortality cumulate/increase over time in the same site?
-	
-2 - we may have to (a) make sure that SHS uses all cohorts in the mean (not just the oldest), or (b) use biomass output to weigh the average toward more dominant species	
+* underlined variables don't have a reference library (why is the library called?)
+* initialize infections: can we initialize an outbreak using an external raster image (e.g. 0-1 where 1 == disturbed site)? If so, how/where?
+* integrate dispersal (maybe look at seeds?)
+* how do we deal with spill-over within the same site (cell)? Oaks get infected by the disease agent ONLY from surrounding hosts (e.g. UMCA, LIDE, etc.)
+  not directly. In other words, if a disease event kills X cohort of species Y, can this mortality cumulate/increase over time in the same site? 
+  we can have partial infection in a site and that infection needs to progress over time (while probabilistically killing some cohorts)
+* we don't care too much about infection intensity (although it can still be an output), but rather intensity of disease (OAK mortality in our case) in terms of dead cohorts/damage
+* where can we add (and HOW) climate modifiers to decrease site vulnerability to disease agent? We know that low precip and tmean affect SV
+* should we rename the CFS variable in the code since it's not Conifer-only anymore? Seems like you called it species dead fuel class, so maybe
+  something like "SDF"...
 
-3 - do we need to add climate in the Modifiers to decrease site vulnerability to disease agent? How/Where?
+* TODO: (a) make sure that SDR uses all cohorts in the mean (not just the oldest), or (b) use biomass output to weigh the average toward more dominant species.
+		    Expand SRDmode from "mean" and "max" to "weighted" by biomass AND/OR "meanALL" including all species cohorts and NOT ONLY oldest cohorts by spp
 
-4 - we can have partial infection in a site and that infection needs to progress over time (while probabilistically killing some cohorts)
 
-5 - Should we rename the CFS variable in the code since it's not Conifer-only anymore? Seems like you called it species dead fuel class, so maybe
-	something like "SDF"...
-	
-6 - can we initialize an outbreak using an external raster image (e.g. 0-1 where 1 == disturbed site)? If so, how/where?
-
-7 - expand SRDmode from "mean" and "max" to "weighted" by biomass AND/OR "meanALL" including all species cohorts and NOT ONLY oldest cohorts by spp
-
-8 - we don't care too much about infection intensity (although it can still be an output), but rather intensity of disease (OAK mortality in our case) in terms of dead cohorts/damage
+			

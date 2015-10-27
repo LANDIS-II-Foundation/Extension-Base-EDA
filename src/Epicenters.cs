@@ -6,7 +6,7 @@ using Landis.SpatialModeling;
 using System.Collections.Generic;
 
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     public class Epicenters
     {

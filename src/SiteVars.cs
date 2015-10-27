@@ -63,11 +63,11 @@ namespace Landis.Extension.BaseEDA
                 SiteVars.NumberCFSconifersKilled[site] = new Dictionary<int, int>();
 
             // Added for v1.1 to enable interactions with CFS fuels extension.
-            modelCore.RegisterSiteVar(SiteVars.NumberCFSconifersKilled, "BDA.NumCFSConifers");
-            modelCore.RegisterSiteVar(SiteVars.TimeOfLastEvent, "BDA.TimeOfLastEvent");
-            modelCore.RegisterSiteVar(SiteVars.AgentName, "BDA.AgentName");
+            modelCore.RegisterSiteVar(SiteVars.NumberCFSconifersKilled, "EDA.NumCFSConifers");
+            modelCore.RegisterSiteVar(SiteVars.TimeOfLastEvent, "EDA.TimeOfLastEvent");
+            modelCore.RegisterSiteVar(SiteVars.AgentName, "EDA.AgentName");
             // Added to enable interactions with other extensions (Presalvage harvest)
-            modelCore.RegisterSiteVar(SiteVars.TimeOfNext, "BDA.TimeOfNext");
+            modelCore.RegisterSiteVar(SiteVars.TimeOfNext, "EDA.TimeOfNext");
 
         }
 

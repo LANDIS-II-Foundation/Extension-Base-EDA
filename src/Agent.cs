@@ -155,7 +155,7 @@ namespace Landis.Extension.BaseEDA
         //private IDistParameters[] distParameters;
         private List<IDisturbanceType> disturbanceTypes;
         private ISiteVar<byte> intensity;
-        private ISiteVar<Zone> outbreakZone;
+        //private ISiteVar<Zone> outbreakZone;
         //---------------------------------------------------------------------
         public string AgentName
         {

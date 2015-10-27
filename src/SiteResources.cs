@@ -21,7 +21,7 @@ namespace Landis.Extension.BaseEDA
         ///SHS ranges from 0 - 1.
         ///</summary>
         //---------------------------------------------------------------------
-        public static void SiteHostSusceptibility(IAgent agent, int ROS)
+        public static void SiteHostSusceptibility(IAgent agent)//, int ROS)
         {
             PlugIn.ModelCore.UI.WriteLine("   Calculating EDA Site Resource Dominance.");
 
