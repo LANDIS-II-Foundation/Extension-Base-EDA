@@ -28,7 +28,8 @@ namespace Landis.Extension.BaseEDA
         private string mapNameTemplate;
         //private string srdMapNames;
         //private string nrdMapNames;
-        private string infectMapNames;
+        //private string vulnMapNames;
+        private string epiMapNames;
         //private StreamWriter log;
         private IEnumerable<IAgent> manyAgentParameters;
         private static IInputParameters parameters;
@@ -76,6 +77,7 @@ namespace Landis.Extension.BaseEDA
                parameters.MapNamesTemplate,
                //parameters.SRDMapNames,
                //parameters.NRDMapNames,
+               parameters.EPIMapNames,
                parameters.LogFileName,
                parameters.ManyAgentParameters,
                ModelCore);
@@ -84,7 +86,8 @@ namespace Landis.Extension.BaseEDA
             mapNameTemplate = parameters.MapNamesTemplate;
             //srdMapNames = parameters.SRDMapNames;
             //nrdMapNames = parameters.NRDMapNames;
-            infectMapNames = parameters.EDPMapNames;
+            //vulnMapNames = parameters.BDPMapNames;
+            epiMapNames = parameters.EPIMapNames;
 
             SiteVars.Initialize(modelCore);
 
@@ -101,7 +104,7 @@ namespace Landis.Extension.BaseEDA
                 //    timeOfNext = activeAgent.StartYear;
                 //SiteVars.TimeOfNext.ActiveSiteValues = timeOfNext;
 
-                int i = 0;
+                //int i = 0;   //THIS IS NOT UTILIZED...
 
                 /*activeAgent.DispersalNeighbors
                     = GetDispersalNeighborhood(activeAgent, Timestep);
@@ -117,14 +120,14 @@ namespace Landis.Extension.BaseEDA
                 {
                     foreach (RelativeLocationWeighted reloc in activeAgent.ResourceNeighbors) i++;
                     PlugIn.ModelCore.UI.WriteLine("Resource Neighborhood = {0} neighbors.", i);
-                }*/
+                }
 
                 if (activeAgent.RandFunc == OutbreakPattern.Climate)
                     if (activeAgent.ClimateVarSource != "Library")
                     {
                         DataTable weatherTable = ClimateData.ReadWeatherFile(activeAgent.ClimateVarSource);
                         activeAgent.ClimateDataTable = weatherTable;
-                    }
+                    }*/
             }
 
 
@@ -208,7 +211,7 @@ namespace Landis.Extension.BaseEDA
                                 }
                             }
                         }
-                        if (!(srdMapNames == null))
+                        /*if (!(srdMapNames == null))
                         {
                             //----- Write BDA SRD maps --------
                             string path2 = MapNames.ReplaceTemplateVars(srdMapNames, activeAgent.AgentName, PlugIn.ModelCore.CurrentTime);
@@ -275,7 +278,7 @@ namespace Landis.Extension.BaseEDA
                                     outputRaster.WriteBufferPixel();
                                 }
                             }
-                        }
+                        }*/
 
                         eventCount++;
                     }

@@ -17,9 +17,9 @@ namespace Landis.Extension.BaseEDA
         int Timestep {get;set;}
         //---------------------------------------------------------------------
         /// <summary>
-        /// Template for the filenames for output maps.
+        /// Template for the filenames for output maps. Provides the naming convention for the EDA intensity files (intensity of infection).
         /// </summary>
-        string MapNamesTemplate{get;set;}
+        string MapNamesTemplate {get;set;}
         //---------------------------------------------------------------------
         /// <summary>
         /// Template for the filenames for output SRD maps.
@@ -34,15 +34,17 @@ namespace Landis.Extension.BaseEDA
         /// <summary>
         /// Template for the filenames for Epidemiological Disturbance Probability (EDP) output maps.
         /// </summary>
-        string EDPMapNames { get; set; }
+        //string EDPMapNames { get; set; }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Template for the filenames for epidemic (disease) mortality output maps (number of cohorts killed for each species of interest).
+        /// </summary>
+        string EPIMapNames { get; set; }
         //---------------------------------------------------------------------
         /// <summary>
         /// Name of log file.
         /// </summary>
-        string LogFileName{get;set;}
-
-        //WE NEED TO ADD A MAP TEMPLATE HERE FOR MORTALITY OUTPUT (e.g. NUMBER OF COHORTS KILLED by species)
-
+        string LogFileName {get;set;}
         //---------------------------------------------------------------------
         /// <summary>
         /// List of Agent Files
@@ -63,7 +65,8 @@ namespace Landis.Extension.BaseEDA
         private string mapNamesTemplate;
         //private string srdMapNames;
         //private string nrdMapNames;
-        private string edpMapNames;
+        //private string edpMapNames;
+        private string epiMapNames;
         private string logFileName;
         private IEnumerable<IAgent> manyAgentParameters;
 
@@ -86,7 +89,7 @@ namespace Landis.Extension.BaseEDA
 
         //---------------------------------------------------------------------
         /// <summary>
-        /// Template for the filenames for output maps.
+        /// Template for the filenames for output maps. Provides the naming convention for the EDA intensity files (intensity of infection).
         /// </summary>
         public string MapNamesTemplate
         {
@@ -131,7 +134,7 @@ namespace Landis.Extension.BaseEDA
                 MapNames.CheckTemplateVars(value);
                 nrdMapNames = value;
             }
-        }*/
+        }
         //---------------------------------------------------------------------
         /// <summary>
         /// Template for the filenames for Epidemiolical Disturbance Probability (EDP) output maps.
@@ -146,6 +149,22 @@ namespace Landis.Extension.BaseEDA
             {
                 MapNames.CheckTemplateVars(value);
                 edpMapNames = value;
+            }
+        }*/
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Template for the filenames for epidemic (disease) mortality output maps (number of cohorts killed for each species of interest).
+        /// </summary>
+        public string EPIMapNames
+        {
+            get
+            {
+                return epiMapNames;
+            }
+            set
+            {
+                MapNames.CheckTemplateVars(value);
+                epiMapNames = value;
             }
         }
         //---------------------------------------------------------------------

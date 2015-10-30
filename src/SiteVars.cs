@@ -14,14 +14,18 @@ namespace Landis.Extension.BaseEDA
     /// </summary>
     public static class SiteVars
     {
-        private static ISiteVar<int> timeOfLastEDA;
+        //harvest
         private static ISiteVar<string> harvestPrescriptionName;
         private static ISiteVar<int> timeOfLastHarvest;
         private static ISiteVar<int> harvestCohortsKilled;
+        //fire
         private static ISiteVar<int> timeOfLastFire;
         private static ISiteVar<byte> fireSeverity;
+        //wind
         private static ISiteVar<int> timeOfLastWind;
-        private static ISiteVar<byte> windSeverity; 
+        private static ISiteVar<byte> windSeverity;
+        //epidem
+        private static ISiteVar<int> timeOfLastEDA;
         private static ISiteVar<double> siteHostSusceptMod;
         private static ISiteVar<double> siteHostSuscept;
         private static ISiteVar<double> epidemDistProb;  //according to the user manual, this corresponds to BPD so I changed accordingly to avoid confusion
@@ -30,6 +34,8 @@ namespace Landis.Extension.BaseEDA
         private static ISiteVar<ISiteCohorts> cohorts;
         private static ISiteVar<int> timeOfNext;
         private static ISiteVar<string> agentName;
+
+        //biomass?
         private static ISiteVar<int> timeOfLastBiomassInsects;  //WHAT IS THIS PARAMETER?
         private static ISiteVar<string> biomassInsectsAgent;    //WHAT IS A "BIOMASS" INSECT AGENT? DIFFERENT FROM OTHER BDA's?
 
@@ -48,26 +54,26 @@ namespace Landis.Extension.BaseEDA
             biomassInsectsAgent = modelCore.Landscape.NewSiteVar<string>();
 
             //initialize starting values
-            SiteVars.TimeOfLastEvent.ActiveSiteValues = -10000; //why this?
-            SiteVars.SiteHostSusceptMod.ActiveSiteValues = 0.0;
-            SiteVars.SiteHostSuscept.ActiveSiteValues = 0.0;
-            SiteVars.EpidemDistProb.ActiveSiteValues = 0.0;
-            SiteVars.TimeOfNext.ActiveSiteValues = 9999;    //why this?
-            SiteVars.AgentName.ActiveSiteValues = "";
+            TimeOfLastEvent.ActiveSiteValues = -10000; //why this?
+            SiteHostSusceptMod.ActiveSiteValues = 0.0;
+            SiteHostSuscept.ActiveSiteValues = 0.0;
+            EpidemDistProb.ActiveSiteValues = 0.0;
+            TimeOfNext.ActiveSiteValues = 9999;    //why this?
+            AgentName.ActiveSiteValues = "";
 
             cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.AgeCohorts"); //get age cohorts from succession extension
 
             //LOOP through each active pixel in the landscape and for each one of them
             //initialize a dictionary to keep track of numbers of cohorts killed as part of special dead fuel
             foreach(ActiveSite site in modelCore.Landscape)
-                SiteVars.NumberCFSconifersKilled[site] = new Dictionary<int, int>();
+                NumberCFSconifersKilled[site] = new Dictionary<int, int>();
 
-            // Added for v1.1 to enable interactions with CFS fuels extension.
-            modelCore.RegisterSiteVar(SiteVars.NumberCFSconifersKilled, "EDA.NumCFSConifers");
-            modelCore.RegisterSiteVar(SiteVars.TimeOfLastEvent, "EDA.TimeOfLastEvent");
-            modelCore.RegisterSiteVar(SiteVars.AgentName, "EDA.AgentName");
+            // Enable interactions with CFS fuels extension.
+            modelCore.RegisterSiteVar(NumberCFSconifersKilled, "EDA.NumCFSConifers");
+            modelCore.RegisterSiteVar(TimeOfLastEvent, "EDA.TimeOfLastEvent");
+            modelCore.RegisterSiteVar(AgentName, "EDA.AgentName");
             // Added to enable interactions with other extensions (Presalvage harvest)
-            modelCore.RegisterSiteVar(SiteVars.TimeOfNext, "EDA.TimeOfNext");
+            modelCore.RegisterSiteVar(TimeOfNext, "EDA.TimeOfNext");
 
         }
 
@@ -75,13 +81,17 @@ namespace Landis.Extension.BaseEDA
 
         public static void InitializeTimeOfLastDisturbances()
         {
+            //harvest
             harvestPrescriptionName = PlugIn.ModelCore.GetSiteVar<string>("Harvest.PrescriptionName");
             timeOfLastHarvest = PlugIn.ModelCore.GetSiteVar<int>("Harvest.TimeOfLastEvent");
             harvestCohortsKilled = PlugIn.ModelCore.GetSiteVar<int>("Harvest.CohortsKilled");
+            //fire
             timeOfLastFire = PlugIn.ModelCore.GetSiteVar<int>("Fire.TimeOfLastEvent");
             fireSeverity = PlugIn.ModelCore.GetSiteVar<byte>("Fire.Severity");
+            //wind
             timeOfLastWind = PlugIn.ModelCore.GetSiteVar<int>("Wind.TimeOfLastEvent");
             windSeverity = PlugIn.ModelCore.GetSiteVar<byte>("Wind.Severity");
+            //biomass
             timeOfLastBiomassInsects = PlugIn.ModelCore.GetSiteVar<int>("BiomassInsects.TimeOfLastEvent");
             biomassInsectsAgent = PlugIn.ModelCore.GetSiteVar<string>("BiomassInsects.InsectName");
 

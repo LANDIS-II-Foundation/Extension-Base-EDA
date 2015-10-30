@@ -18,11 +18,10 @@ namespace Landis.Extension.BaseEDA
         public static ExtensionMetadata Extension {get; set;}
 
         public static void InitializeMetadata(int Timestep, 
-            string infseverityMapFileName,
-            string mortalityMapFileName,
-            string bdpMapFileName,
+            string intensityMapFileName,   //should this name be MapFileName instead or does not matter?
             //string srdMapFileName, 
-            //string nrdMapFileName, 
+            //string nrdMapFileName,
+            string mortalityMapFileName,   //should this name be epiMapFileName instead or does not matter?
             string logFileName, 
             IEnumerable<IAgent> manyAgentParameters, 
             ICore mCore)
@@ -77,18 +76,18 @@ namespace Landis.Extension.BaseEDA
 
             foreach (IAgent activeAgent in manyAgentParameters)
             {
-                string mapTypePath = MapNames.ReplaceTemplateVarsMetadata(infseverityMapFileName, activeAgent.AgentName);
+                string mapTypePath = MapNames.ReplaceTemplateVarsMetadata(intensityMapFileName, activeAgent.AgentName);
 
-                OutputMetadata mapOut_InfSeverity = new OutputMetadata()
+                OutputMetadata mapOut_Intensity = new OutputMetadata()
                 {
                     Type = OutputType.Map,
-                    Name = string.Format(activeAgent.AgentName + " Outbreak Infection Severity"),
+                    Name = string.Format(activeAgent.AgentName + " Outbreak Infection Intensity"),
                     FilePath = @mapTypePath,
                     Map_DataType = MapDataType.Ordinal,
                     Map_Unit = FieldUnits.Severity_Rank, //can one change this name to something else?
                     Visualize = true,
                 };
-                Extension.OutputMetadatas.Add(mapOut_InfSeverity);
+                Extension.OutputMetadatas.Add(mapOut_Intensity);
 
                 /*if (srdMapFileName != null)
                 {
