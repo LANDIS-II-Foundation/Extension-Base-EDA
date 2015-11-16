@@ -15,21 +15,21 @@ namespace Landis.Extension.BaseEDA
         /// </summary>
         // Site Host Susceptibility to infection by DISEASE AGENT using 3 classes (Low, Medium, High)
         int LowHostAge { get; set; }
-        double LowHostSusceptInfProb { get; set; }
+        double LowHostScore { get; set; }
         int MediumHostAge { get; set; }
-        double MediumHostSusceptInfProb { get; set; }
+        double MediumHostScore { get; set; }
         int HighHostAge { get; set; }
-        double HighHostSusceptInfProb { get; set; }
+        double HighHostScore { get; set; }
 
-        // Site Host Vulnerability (SHV) to DISEASE (and mortality) using 3 classes (Resistant, Tolerant, Vulnerable)
-        int ResistantHostAge { get; set; }
-        double ResistantHostMortProb { get; set; }
-        int TolerantHostAge { get; set; }
-        double TolerantHostMortProb { get; set; }
-        int VulnerableHostAge { get; set; }
-        double VulnerableHostMortProb { get; set; }
+        // Site Host Vulnerability (SHV) to DISEASE (and mortality) using 3 classes (Low Vulnerability, Medium Vulnerability, High Vulnerability)
+        int LowVulnHostAge { get; set; }
+        double LowVulnHostMortProb { get; set; }
+        int MediumVulnHostAge { get; set; }
+        double MediumVulnHostMortProb { get; set; }
+        int HighVulnHostAge { get; set; }
+        double HighVulnHostMortProb { get; set; }
 
-        //Conifer Flag for dead fuels
+        //Conifer Flag for dead fuels (specifically designed for Canadian fire model)
         bool CFSConifer{ get; set; }
     }
 }
@@ -41,28 +41,29 @@ namespace Landis.Extension.BaseEDA
         : ISppParameters
     {
 
-        // Site Host Susceptibility to infection by DISEASE AGENT using 3 classes (Low, Medium, High)
+        // Site Host Index:  susceptibility to become infected and suitability to produce infectious spores of the
+        //                   pathogen using 3 classes (Low, Medium, High)
         private int lowHostAge;
-        private double lowHostSusceptInfProb;
+        private double lowHostScore;
         private int mediumHostAge;
-        private double mediumHostSusceptInfProb;
+        private double mediumHostScore;
         private int highHostAge;
-        private double highHostSusceptInfProb;
+        private double highHostScore;
 
-        // Site Host Vulnerability (SHV) to DISEASE (and mortality) using 3 classes (Resistant, Tolerant, Vulnerable)
-        private int resistantHostAge;
-        private double resistantHostMortProb;
-        private int tolerantHostAge;
-        private double tolerantHostMortProb;
-        private int vulnerableHostAge;
-        private double vulnerableHostMortProb;
+        // Site Host Vulnerability (SHV) to DISEASE (and mortality) using 3 classes (Low Vulnerability, Medium Vulnerability, High Vulnerability)
+        private int lowVulnHostAge;
+        private double lowVulnHostMortProb;
+        private int mediumVulnHostAge;
+        private double mediumVulnHostMortProb;
+        private int highVulnHostAge;
+        private double highVulnHostMortProb;
 
         private bool cfsConifer;
 
         //---------------------------------------------------------------------
 
         /// <summary>
-        /// AGE: age of hosts with low susceptibility
+        /// AGE: age of hosts with LOW susceptibility/suitability to produce infectious spores of the pathogen
         /// </summary>
         public int LowHostAge
         {
@@ -82,13 +83,13 @@ namespace Landis.Extension.BaseEDA
             }
         }
         /// <summary>
-        /// INFECTION PROBABILITY: infection probability for hosts with low susceptibility 
+        /// HOST SCORE: score for hosts with LOW susceptibility/suitability to produce infectious spores of the pathogen
         /// </summary>
-        public double LowHostSusceptInfProb
+        public double LowHostScore
         {
             get
             {
-                return lowHostSusceptInfProb;
+                return lowHostScore;
             }
             set
             {
@@ -98,11 +99,11 @@ namespace Landis.Extension.BaseEDA
                 if (value > 1)
                     throw new InputValueException(value.ToString(),
                         "Value must be = or < 1.");
-                lowHostSusceptInfProb = value;
+                lowHostScore = value;
             }
         }
         /// <summary>
-        /// AGE: age of hosts with medium susceptibility
+        /// AGE: age of hosts with MEDIUM susceptibility/suitability to produce infectious spores of the pathogen
         /// </summary>
         public int MediumHostAge
         {
@@ -122,13 +123,13 @@ namespace Landis.Extension.BaseEDA
             }
         }
         /// <summary>
-        /// INFECTION PROBABILITY: infection probability for hosts with medium susceptibility 
+        /// HOST SCORE: score for hosts with MEDIUM susceptibility/suitability to produce infectious spores of the pathogen
         /// </summary>
-        public double MediumHostSusceptInfProb
+        public double MediumHostScore
         {
             get
             {
-                return mediumHostSusceptInfProb;
+                return mediumHostScore;
             }
             set
             {
@@ -138,11 +139,11 @@ namespace Landis.Extension.BaseEDA
                 if (value > 1)
                     throw new InputValueException(value.ToString(),
                         "Value must be = or < 1.");
-                mediumHostSusceptInfProb = value;
+                mediumHostScore = value;
             }
         }
         /// <summary>
-        /// AGE: age of hosts with high susceptibility
+        /// AGE: age of hosts with HIGH susceptibility/suitability to produce infectious spores of the pathogen
         /// </summary>
         public int HighHostAge
         {
@@ -162,13 +163,13 @@ namespace Landis.Extension.BaseEDA
             }
         }
         /// <summary>
-        /// INFECTION PROBABILITY: infection probability for hosts with high susceptibility 
+        /// HOST SCORE: score for hosts with HIGH susceptibility/suitability to produce infectious spores of the pathogen
         /// </summary>
-        public double HighHostSusceptInfProb
+        public double HighHostScore
         {
             get
             {
-                return highHostSusceptInfProb;
+                return highHostScore;
             }
             set
             {
@@ -178,18 +179,18 @@ namespace Landis.Extension.BaseEDA
                 if (value > 1)
                     throw new InputValueException(value.ToString(),
                         "Value must be = or < 1.");
-                highHostSusceptInfProb = value;
+                highHostScore = value;
             }
         }
 
         /// <summary>
-        /// AGE: age of resistant hosts
+        /// AGE: age of hosts with LOW vulnerability to disease caused by epidem agent
         /// </summary>
-        public int ResistantHostAge
+        public int LowVulnHostAge
         {
             get
             {
-                return resistantHostAge;
+                return lowVulnHostAge;
             }
             set
             {
@@ -199,17 +200,17 @@ namespace Landis.Extension.BaseEDA
                 if (value > 999)
                     throw new InputValueException(value.ToString(),
                         "Value must be = or < 999.");
-                resistantHostAge = value;
+                lowVulnHostAge = value;
             }
         }
         /// <summary>
-        /// MORTALITY: mortality probability for resistant hosts
+        /// MORTALITY: mortality probability for hosts with LOW vulnerability to disease caused by epidem agent
         /// </summary>
-        public double ResistantHostMortProb
+        public double LowVulnHostMortProb
         {
             get
             {
-                return resistantHostMortProb;
+                return lowVulnHostMortProb;
             }
             set
             {
@@ -219,17 +220,17 @@ namespace Landis.Extension.BaseEDA
                 if (value > 1)
                     throw new InputValueException(value.ToString(),
                         "Value must be = or < 1.");
-                resistantHostMortProb = value;
+                lowVulnHostMortProb = value;
             }
         }
         /// <summary>
-        /// AGE: age of tolerant hosts
+        /// AGE: age of hosts with MEDIUM vulnerability to disease caused by epidem agent
         /// </summary>
-        public int TolerantHostAge
+        public int MediumVulnHostAge
         {
             get
             {
-                return tolerantHostAge;
+                return mediumVulnHostAge;
             }
             set
             {
@@ -239,17 +240,17 @@ namespace Landis.Extension.BaseEDA
                 if (value > 999)
                     throw new InputValueException(value.ToString(),
                         "Value must be = or < 999.");
-                tolerantHostAge = value;
+                mediumVulnHostAge = value;
             }
         }
         /// <summary>
-        /// MORTALITY: mortality probability for tolerant hosts
+        /// MORTALITY: mortality probability for hosts with MEDIUM vulnerability to disease caused by epidem agent
         /// </summary>
-        public double TolerantHostMortProb
+        public double MediumVulnHostMortProb
         {
             get
             {
-                return tolerantHostMortProb;
+                return mediumVulnHostMortProb;
             }
             set
             {
@@ -259,17 +260,17 @@ namespace Landis.Extension.BaseEDA
                 if (value > 1)
                     throw new InputValueException(value.ToString(),
                         "Value must be = or < 1.");
-                tolerantHostMortProb = value;
+                mediumVulnHostMortProb = value;
             }
         }
         /// <summary>
-        /// AGE: age of vulnerable hosts
+        /// AGE: age of hosts with HIGH vulnerability to disease caused by epidem agent
         /// </summary>
-        public int VulnerableHostAge
+        public int HighVulnHostAge
         {
             get
             {
-                return vulnerableHostAge;
+                return highVulnHostAge;
             }
             set
             {
@@ -279,17 +280,17 @@ namespace Landis.Extension.BaseEDA
                 if (value > 999)
                     throw new InputValueException(value.ToString(),
                         "Value must be = or < 999.");
-                vulnerableHostAge = value;
+                highVulnHostAge = value;
             }
         }
         /// <summary>
-        /// MORTALITY: mortality probability for vulnerable hosts
+        /// MORTALITY: mortality probability for hosts with HIGH vulnerability to disease caused by epidem agent
         /// </summary>
-        public double VulnerableHostMortProb
+        public double HighVulnHostMortProb
         {
             get
             {
-                return vulnerableHostMortProb;
+                return highVulnHostMortProb;
             }
             set
             {
@@ -299,7 +300,7 @@ namespace Landis.Extension.BaseEDA
                 if (value > 1)
                     throw new InputValueException(value.ToString(),
                         "Value must be = or < 1.");
-                vulnerableHostMortProb = value;
+                highVulnHostMortProb = value;
             }
         }
 
@@ -324,18 +325,18 @@ namespace Landis.Extension.BaseEDA
         {
             //susceptibility to infection by disease agent
             this.lowHostAge = 999;
-            this.lowHostSusceptInfProb = 0;
+            this.lowHostScore = 0;
             this.mediumHostAge = 999;
-            this.mediumHostSusceptInfProb = 0;
+            this.mediumHostScore = 0;
             this.highHostAge = 999;
-            this.highHostSusceptInfProb = 0;
+            this.highHostScore = 0;
             //vulnerability to disease (and mortality)
-            this.resistantHostAge = 999;
-            this.resistantHostMortProb = 0;
-            this.tolerantHostAge = 999;
-            this.tolerantHostMortProb = 0;
-            this.vulnerableHostAge = 999;
-            this.vulnerableHostMortProb = 0;
+            this.lowVulnHostAge = 999;
+            this.lowVulnHostMortProb = 0;
+            this.mediumVulnHostAge = 999;
+            this.mediumVulnHostMortProb = 0;
+            this.highVulnHostAge = 999;
+            this.highVulnHostMortProb = 0;
             //conifer flag
             this.cfsConifer = false;
         }

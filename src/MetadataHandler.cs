@@ -2,12 +2,12 @@
 //  Authors:  Robert M. Scheller, Brian Miranda
 //  BDA originally programmed by Wei (Vera) Li at University of Missouri-Columbia in 2004.
 
-using System;
+//using System;
 using System.Collections.Generic;
-using System.Linq;
+//using System.Linq;
 //using System.Text;
 using Landis.Library.Metadata;
-using Edu.Wisc.Forest.Flel.Util;
+//using Edu.Wisc.Forest.Flel.Util;
 using Landis.Core;
 
 namespace Landis.Extension.BaseEDA
@@ -84,8 +84,8 @@ namespace Landis.Extension.BaseEDA
                     Name = string.Format(activeAgent.AgentName + " Outbreak Infection Intensity"),
                     FilePath = @mapTypePath,
                     Map_DataType = MapDataType.Ordinal,
-                    Map_Unit = FieldUnits.Severity_Rank, //can one change this name to something else?
-                    Visualize = true,
+                    Map_Unit = FieldUnits.Severity_Rank, //based on the metadata library (https://github.com/LANDIS-II-Foundation/Libraries/blob/master/metadata/trunk/src/FieldUnits.cs)
+                    Visualize = true,                    //it seems like Severity_Rank can have values between 1-5 
                 };
                 Extension.OutputMetadatas.Add(mapOut_Intensity);
 

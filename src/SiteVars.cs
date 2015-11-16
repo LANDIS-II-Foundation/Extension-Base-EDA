@@ -24,29 +24,33 @@ namespace Landis.Extension.BaseEDA
         //wind
         private static ISiteVar<int> timeOfLastWind;
         private static ISiteVar<byte> windSeverity;
+        //biomass leaf insect
+        private static ISiteVar<int> timeOfLastBiomassInsects;
+        private static ISiteVar<string> biomassInsectsAgent;
+        //biological disturbance agent (BDA)
+        //private static ISiteVar<int> timeOfLastBDA; CHANGE THIS TO MATCH BDA
+        //private static ISiteVar<byte> windSeverity; CHANGE THIS TO MATCH SEVERITY CAUSED BY BDA
+
         //epidem
         private static ISiteVar<int> timeOfLastEDA;
-        private static ISiteVar<double> siteHostSusceptMod;
-        private static ISiteVar<double> siteHostSuscept;
-        private static ISiteVar<double> epidemDistProb;  //according to the user manual, this corresponds to BPD so I changed accordingly to avoid confusion
+        private static ISiteVar<double> siteHostIndexMod;
+        private static ISiteVar<double> siteHostIndex;   //Host Index defined as "susceptibility of each non-infected cell to become infected 
+                                                         //and the suitability of each infected cell to produce infectious spores of the pathogen"
+        //private static ISiteVar<double> epidemDistProb;  
         private static ISiteVar<bool> disturbed;
-        private static ISiteVar<Dictionary<int,int>> numberCFSconifersKilled;  //do we need to rename this? of this variable is used "as is" by fire?
-        private static ISiteVar<ISiteCohorts> cohorts;
+        private static ISiteVar<Dictionary<int,int>> numberCFSconifersKilled;  //this specific naming convention is defined by the Canadian fire model. Keep as is.
+        private static ISiteVar<ISiteCohorts> cohorts;                         //the list of species to be used as FUEL for the fire extension can be specified in the Fire Fuel extension!                     
         private static ISiteVar<int> timeOfNext;
         private static ISiteVar<string> agentName;
-
-        //biomass?
-        private static ISiteVar<int> timeOfLastBiomassInsects;  //WHAT IS THIS PARAMETER?
-        private static ISiteVar<string> biomassInsectsAgent;    //WHAT IS A "BIOMASS" INSECT AGENT? DIFFERENT FROM OTHER BDA's?
 
         //---------------------------------------------------------------------
 
         public static void Initialize(ICore modelCore)
         {
             timeOfLastEDA  = modelCore.Landscape.NewSiteVar<int>();
-            siteHostSusceptMod = modelCore.Landscape.NewSiteVar<double>();
-            siteHostSuscept = modelCore.Landscape.NewSiteVar<double>();
-            epidemDistProb = modelCore.Landscape.NewSiteVar<double>();  //this used to be "vulnerability" or "BDP" in the BDA extension
+            siteHostIndexMod = modelCore.Landscape.NewSiteVar<double>();
+            siteHostIndex = modelCore.Landscape.NewSiteVar<double>();
+            //epidemDistProb = modelCore.Landscape.NewSiteVar<double>(); 
             disturbed = modelCore.Landscape.NewSiteVar<bool>();
             numberCFSconifersKilled = modelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
             timeOfNext = modelCore.Landscape.NewSiteVar<int>();
@@ -55,9 +59,9 @@ namespace Landis.Extension.BaseEDA
 
             //initialize starting values
             TimeOfLastEvent.ActiveSiteValues = -10000; //why this?
-            SiteHostSusceptMod.ActiveSiteValues = 0.0;
-            SiteHostSuscept.ActiveSiteValues = 0.0;
-            EpidemDistProb.ActiveSiteValues = 0.0;
+            SiteHostIndexMod.ActiveSiteValues = 0.0;
+            SiteHostIndex.ActiveSiteValues = 0.0;
+            //EpidemDistProb.ActiveSiteValues = 0.0;
             TimeOfNext.ActiveSiteValues = 9999;    //why this?
             AgentName.ActiveSiteValues = "";
 
@@ -70,6 +74,7 @@ namespace Landis.Extension.BaseEDA
 
             // Enable interactions with CFS fuels extension.
             modelCore.RegisterSiteVar(NumberCFSconifersKilled, "EDA.NumCFSConifers");
+
             modelCore.RegisterSiteVar(TimeOfLastEvent, "EDA.TimeOfLastEvent");
             modelCore.RegisterSiteVar(AgentName, "EDA.AgentName");
             // Added to enable interactions with other extensions (Presalvage harvest)
@@ -91,6 +96,9 @@ namespace Landis.Extension.BaseEDA
             //wind
             timeOfLastWind = PlugIn.ModelCore.GetSiteVar<int>("Wind.TimeOfLastEvent");
             windSeverity = PlugIn.ModelCore.GetSiteVar<byte>("Wind.Severity");
+            //bda
+            //timeOfLastBDA = PlugIn.ModelCore.GetSiteVar<int>("BDA.TimeOfLastEvent"); //HOW DO WE CHANGE THIS?
+            //windSeverity = PlugIn.ModelCore.GetSiteVar<byte>("BDA.Severity");  //HOW DO WE CHANGE THIS?
             //biomass
             timeOfLastBiomassInsects = PlugIn.ModelCore.GetSiteVar<int>("BiomassInsects.TimeOfLastEvent");
             biomassInsectsAgent = PlugIn.ModelCore.GetSiteVar<string>("BiomassInsects.InsectName");
@@ -166,26 +174,26 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-        public static ISiteVar<double> SiteHostSuscept
+        public static ISiteVar<double> SiteHostIndex
         {
             get {
-                return siteHostSuscept;
+                return siteHostIndex;
             }
         }
         //---------------------------------------------------------------------
-        public static ISiteVar<double> SiteHostSusceptMod
+        public static ISiteVar<double> SiteHostIndexMod
         {
             get {
-                return siteHostSusceptMod;
+                return siteHostIndexMod;
             }
         }
         //---------------------------------------------------------------------
-        public static ISiteVar<double> EpidemDistProb
-        {
-            get {
-                return epidemDistProb;
-            }
-        }
+        //public static ISiteVar<double> EpidemDistProb
+        //{
+        //    get {
+        //        return epidemDistProb;
+        //    }
+        //}
         //---------------------------------------------------------------------
 
         public static ISiteVar<bool> Disturbed

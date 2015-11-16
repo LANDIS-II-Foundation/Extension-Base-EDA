@@ -101,56 +101,6 @@ namespace Landis.Extension.BaseEDA
                 mapNamesTemplate = value;
             }
         }
-
-        //---------------------------------------------------------------------
-        /// <summary>
-        /// Template for the filenames for SRD output maps.
-        /// </summary>
-        /*public string SRDMapNames
-        {
-            get
-            {
-                return srdMapNames;
-            }
-            set
-            {
-                MapNames.CheckTemplateVars(value);
-                srdMapNames = value;
-            }
-        }
-
-        //---------------------------------------------------------------------
-        /// <summary>
-        /// Template for the filenames for NRD output maps.
-        /// </summary>
-        public string NRDMapNames
-        {
-            get
-            {
-                return nrdMapNames;
-            }
-            set
-            {
-                MapNames.CheckTemplateVars(value);
-                nrdMapNames = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        /// <summary>
-        /// Template for the filenames for Epidemiolical Disturbance Probability (EDP) output maps.
-        /// </summary>
-        public string EDPMapNames
-        {
-            get
-            {
-                return edpMapNames;
-            }
-            set
-            {
-                MapNames.CheckTemplateVars(value);
-                edpMapNames = value;
-            }
-        }*/
         //---------------------------------------------------------------------
         /// <summary>
         /// Template for the filenames for epidemic (disease) mortality output maps (number of cohorts killed for each species of interest).

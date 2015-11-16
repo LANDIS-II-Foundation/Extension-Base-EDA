@@ -1,16 +1,12 @@
-LandisData "Base BDA"
+LandisData "Base EDA"
 
 Timestep	1
 
-MapNames	bda/{agentName}-{timestep}.gis
+MapNames	eda/{agentName}-{timestep}.img
 
-SRDMapNames	bda/{agentName}-SRD-{timestep}.gis
+EPIMapNames     eda/{agentName}-EPI-{timestep}.img
 
-NRDMapNames	bda/{agentName}-NRD-{timestep}.gis
+LogFile		eda/eda-log.csv
 
-BDPMapNames     bda/{agentName}-BDP-{timestep}.gis
-
-LogFile		bda/bda-log.csv
-
-BDAInputFiles	spruce_budworm.txt	
+EDAInputFiles	P_ramorum.txt	
 

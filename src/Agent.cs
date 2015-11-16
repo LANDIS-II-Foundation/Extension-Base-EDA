@@ -9,13 +9,8 @@ using System.Data;
 
 namespace Landis.Extension.BaseEDA
 {
-    //public enum TemporalType {pulse,  variablepulse};  //prob not needed at this stage
-    //public enum OutbreakPattern {CyclicNormal, CyclicUniform, Climate};  //maybe not needed (climate initialized outbreak...maybe)
-    public enum SHSmode {max, mean};  //maybe add something new here, like weighted by biomass, or mean for each cohort?
-    //public enum DispersalTemplate {MaxRadius, N4, N8, N12, N24}; //NRD not needed
-    //public enum NeighborShape {uniform, linear, gaussian};  //NRD not needed
-    //public enum NeighborSpeed {none, X2, X3, X4};    //NRD not needed
-    //public enum Zone {Nozone, Lastzone, Newzone}; //replace outbreak zone concepts with dispersal kernel
+
+    public enum SHImode {max, mean};  //maybe add something new here, like weighted by biomass, or mean for each cohort?
     
     /// <summary>
     /// Interface to the Parameters for the BaseEDA extension
@@ -27,19 +22,7 @@ namespace Landis.Extension.BaseEDA
         int StartYear { get; set; }
         int EndYear { get; set; }
 
-        SHSmode SHSmode { get; set; }
-
-        //-- ROS --
-        //int TimeSinceLastEpidemic{get;set;}
-        //int TimeToNextEpidemic{get;set;}
-        //TemporalType TempType{get;set;}
-        //OutbreakPattern RandFunc{get;set;}
-        //double NormMean { get; set; }
-        //double NormStDev { get; set; }
-        //double MaxInterval{get;set;}
-        //double MinInterval{get;set;}
-        //int MinROS{get;set;}
-        //int MaxROS{get;set;}
+        SHImode SHImode { get; set; }
 
         // - Climate - 
         //string ClimateVarName { get; set; }
@@ -52,24 +35,8 @@ namespace Landis.Extension.BaseEDA
         LinkedList<int> OutbreakList { get; set; }  //WHAT IS THIS?
 
         //-- DISPERSAL -------------REPLACE THIS WITH KERNEL BASED DISPERSAL (look at seed dispersal in LANDIS?)
-        //bool Dispersal{get;set;}
-        //int DispersalRate{get;set;}
-        //double EpidemicThresh{get;set;}
-        //int EpicenterNum{get;set;}
-        //bool SeedEpicenter{get;set;}
-        //double OutbreakEpicenterCoeff{get;set;}
-        //double OutbreakEpicenterThresh { get; set; }
-        //double SeedEpicenterCoeff{get;set;}
-        //DispersalTemplate DispersalTemp{get;set;}
-        //IEnumerable<RelativeLocation> DispersalNeighbors{get;set;}
 
-        // Neighborhood Resource Dominance parameters
-        //bool NeighborFlag{get;set;}
-        //NeighborSpeed NeighborSpeedUp{get;set;}
-        //int NeighborRadius{get; set;}
-        //NeighborShape ShapeOfNeighbor{get;set;}
-        //double NeighborWeight{get;set;}
-        //IEnumerable<RelativeLocationWeighted> ResourceNeighbors{get;set;}
+
         
         //Epidemiological Disturbance Probability (EDP) thresholds --> INTENSITY of infection (by disease agent)
         double Class2_SV { get; }
@@ -101,7 +68,7 @@ namespace Landis.Extension.BaseEDA
         private int startYear;
         private int endYear;
 
-        private SHSmode shsMode;
+        private SHImode shiMode;
 
         //-- ROS --
         //private int timeSinceLastEpidemic;
@@ -247,13 +214,13 @@ namespace Landis.Extension.BaseEDA
             }
         }*/
         //---------------------------------------------------------------------
-        public SHSmode SHSmode
+        public SHImode SHImode
         {
             get {
-                return shsMode;
+                return shiMode;
             }
             set {
-                shsMode = value;
+                shiMode = value;
             }
         }
         //---------------------------------------------------------------------
@@ -470,7 +437,7 @@ namespace Landis.Extension.BaseEDA
         //}
         //---------------------------------------------------------------------
         /// <summary>
-        /// Disturbances that can alter the SHS value
+        /// Disturbances that can alter the SHI value
         /// </summary>
         public List<IDisturbanceType> DisturbanceTypes
         {

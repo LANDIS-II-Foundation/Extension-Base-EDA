@@ -34,9 +34,9 @@ namespace Landis.Extension.BaseEDA
         }
 
         //---------------------------------------------------------------------
-        public static string ReplaceTemplateVars(string template,
-                                                 string agentName,
-                                                 int    timestep)
+        public static string ReplaceTemplateVars(string template,      //WHY DO WE HAVE TWO DIFFERENT METHODS ReplaceTemplateVars()
+                                                 string agentName,     //WITH SAME NAME BUT ONE EXTRA PARAMETER (LINES 37, 46)?
+                                                 int    timestep)   
         {
             varValues[AgentNameVar] = agentName;
             varValues[TimestepVar] = timestep.ToString();

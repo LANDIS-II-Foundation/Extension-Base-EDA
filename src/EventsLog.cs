@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Landis.Library.Metadata;
 
-namespace Landis.Extension.BaseBDA
+namespace Landis.Extension.BaseEDA
 {
     public class EventsLog
     {
@@ -12,9 +12,6 @@ namespace Landis.Extension.BaseBDA
 
         [DataFieldAttribute(Unit = FieldUnits.Year, Desc = "Simulation Year")]
         public int Time {set; get;}
-
-        [DataFieldAttribute(Desc = "Rate of Spread")]
-        public int ROS { set; get; }
 
         [DataFieldAttribute(Desc = "Agent Name")]
         public string AgentName { set; get; }
