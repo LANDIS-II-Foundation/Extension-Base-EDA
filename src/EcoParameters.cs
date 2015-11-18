@@ -38,16 +38,6 @@ namespace Landis.Extension.BaseEDA
         public EcoParameters()
         {
         }
-/*        //---------------------------------------------------------------------
-        public EcoParameters(double ecoModifier)
-        {
-            this.ecoModifier = ecoModifier;
-        }
 
-        //---------------------------------------------------------------------
-        public EcoParameters()
-        {
-            this.ecoModifier        = 0.0;
-        }*/
     }
 }

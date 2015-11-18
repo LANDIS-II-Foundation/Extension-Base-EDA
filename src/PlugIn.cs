@@ -15,7 +15,7 @@ using System.Data;
 namespace Landis.Extension.BaseEDA
 {
     ///<summary>
-    /// A disturbance plug-in that simulates Epidemiological (disease) Agents and Disease.
+    /// A disturbance plug-in that simulates Pathogen Dispersal and Disease.
     /// </summary>
 
     public class PlugIn
@@ -25,11 +25,10 @@ namespace Landis.Extension.BaseEDA
         public static readonly string ExtensionName = "Base EDA";
         public static MetadataTable<EventsLog> EventLog;
 
-        private string mapNameTemplate;
-        //private string srdMapNames;
-        //private string nrdMapNames;
-        //private string vulnMapNames;
-        private string epiMapNames;
+        private string infMapName;
+        private string disMapNames;
+        private string mortMapNames;
+
         //private StreamWriter log;
         private IEnumerable<IAgent> manyAgentParameters;
         private static IInputParameters parameters;
@@ -74,20 +73,17 @@ namespace Landis.Extension.BaseEDA
         {
             reinitialized = false;
             MetadataHandler.InitializeMetadata(parameters.Timestep,
-               parameters.MapNamesTemplate,
-               //parameters.SRDMapNames,
-               //parameters.NRDMapNames,
-               parameters.EPIMapNames,
+               parameters.InfMapNames,
+               parameters.DisMapNames,
+               parameters.MortMapNames,
                parameters.LogFileName,
                parameters.ManyAgentParameters,
                ModelCore);
 
             Timestep = parameters.Timestep;
-            mapNameTemplate = parameters.MapNamesTemplate;
-            //srdMapNames = parameters.SRDMapNames;
-            //nrdMapNames = parameters.NRDMapNames;
-            //vulnMapNames = parameters.BDPMapNames;
-            epiMapNames = parameters.EPIMapNames;
+            infMapName = parameters.InfMapNames;
+            disMapNames = parameters.DisMapNames;
+            mortMapNames = parameters.MortMapNames;
 
             SiteVars.Initialize(modelCore);
 
@@ -96,13 +92,15 @@ namespace Landis.Extension.BaseEDA
             {
                 if (activeAgent == null)
                     PlugIn.ModelCore.UI.WriteLine("Agent Parameters NOT loading correctly.");
-                //activeAgent.TimeToNextEpidemic = TimeToNext(activeAgent, Timestep) + activeAgent.StartYear;
-                //int timeOfNext = PlugIn.ModelCore.CurrentTime + activeAgent.TimeToNextEpidemic - activeAgent.TimeSinceLastEpidemic;
-                //if (timeOfNext < Timestep)
-                //    timeOfNext = Timestep;
-                //if (timeOfNext < activeAgent.StartYear)
-                //    timeOfNext = activeAgent.StartYear;
-                //SiteVars.TimeOfNext.ActiveSiteValues = timeOfNext;
+
+                //THIS ONLY GOOD WHEN WORKING WITH ROS CORRECT?
+                activeAgent.TimeToNextEpidemic = TimeToNext(activeAgent, Timestep) + activeAgent.StartYear;
+                int timeOfNext = PlugIn.ModelCore.CurrentTime + activeAgent.TimeToNextEpidemic - activeAgent.TimeSinceLastEpidemic;
+                if (timeOfNext < Timestep)
+                    timeOfNext = Timestep;
+                if (timeOfNext < activeAgent.StartYear)
+                    timeOfNext = activeAgent.StartYear;
+                SiteVars.TimeOfNext.ActiveSiteValues = timeOfNext;
 
                 //int i = 0;   //THIS IS NOT UTILIZED...
 
@@ -130,18 +128,8 @@ namespace Landis.Extension.BaseEDA
                     }*/
             }
 
-
-
-            //string logFileName = parameters.LogFileName;
-            //PlugIn.ModelCore.UI.WriteLine("Opening BDA log file \"{0}\" ...", logFileName);
-            //log = PlugIn.ModelCore.CreateTextFile(logFileName);
-            //log.AutoFlush = true;
-            //log.Write("CurrentTime, ROS, AgentName, NumCohortsKilled, NumSitesDamaged, MeanSeverity");
-            //log.WriteLine("");
-
         }
 
-        //IS THIS NECESSARY?
         public new void InitializePhase2()
         {
                 SiteVars.InitializeTimeOfLastDisturbances();
@@ -158,16 +146,12 @@ namespace Landis.Extension.BaseEDA
             if(!reinitialized)
                 InitializePhase2();
 
-            //SiteVars.Epidemic.SiteValues = null;
-
             int eventCount = 0;
 
             foreach(IAgent activeAgent in manyAgentParameters)
             {
 
                 //activeAgent.TimeSinceLastEpidemic += Timestep;
-
-                //OUR MODEL PROBABLY DOES NOT NEED THE ROS COMPONENT
                 //int ROS = RegionalOutbreakStatus(activeAgent, Timestep);
 
                 if(ROS > 0)
@@ -211,51 +195,7 @@ namespace Landis.Extension.BaseEDA
                                 }
                             }
                         }
-                        /*if (!(srdMapNames == null))
-                        {
-                            //----- Write BDA SRD maps --------
-                            string path2 = MapNames.ReplaceTemplateVars(srdMapNames, activeAgent.AgentName, PlugIn.ModelCore.CurrentTime);
-                            using (IOutputRaster<ShortPixel> outputRaster = modelCore.CreateRaster<ShortPixel>(path2, modelCore.Landscape.Dimensions))
-                            {
-                                ShortPixel pixel = outputRaster.BufferPixel;
-                                foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
-                                {
-                                    if (site.IsActive)
-                                    {
-                                        pixel.MapCode.Value = (short) System.Math.Round(SiteVars.SiteResourceDom[site] * 100.00);
-                                    }
-                                    else
-                                    {
-                                        //  Inactive site
-                                        pixel.MapCode.Value = 0;
-                                    }
-                                    outputRaster.WriteBufferPixel();
-                                }
-                            }
-                        }
-                        if (!(nrdMapNames == null))
-                        {
-                            //----- Write BDA NRD maps --------
-                            string path3 = MapNames.ReplaceTemplateVars(nrdMapNames, activeAgent.AgentName, PlugIn.ModelCore.CurrentTime);
-                            using (IOutputRaster<ShortPixel> outputRaster = modelCore.CreateRaster<ShortPixel>(path3, modelCore.Landscape.Dimensions))
-                            {
-                                ShortPixel pixel = outputRaster.BufferPixel;
-
-                                foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
-                                {
-                                    if (site.IsActive)
-                                    {
-                                        pixel.MapCode.Value = (short)System.Math.Round(SiteVars.NeighborResourceDom[site] * 100.00);
-                                    }
-                                    else
-                                    {
-                                        //  Inactive site
-                                        pixel.MapCode.Value = 0;
-                                    }
-                                    outputRaster.WriteBufferPixel();
-                                }
-                            }
-                        }
+                        /*
                         if (!(vulnMapNames == null))
                         {
                             //----- Write BDA Vulnerability maps --------
@@ -287,21 +227,6 @@ namespace Landis.Extension.BaseEDA
         }
 
         //---------------------------------------------------------------------
-        /*private void LogEvent(int   currentTime,
-                              Epidemic CurrentEvent,
-                              int ROS, IAgent agent)
-        {
-            log.Write("{0},{1},{2},{3},{4},{5:0.0}",
-                      currentTime,
-                      ROS,
-                      agent.AgentName,
-                      CurrentEvent.CohortsKilled,
-                      CurrentEvent.TotalSitesDamaged,
-                      CurrentEvent.MeanSeverity);
-            log.WriteLine("");
-        }
-        */
-        //---------------------------------------------------------------------
         private void LogEvent(int currentTime,
                               Epidemic CurrentEvent,
                               int ROS, IAgent agent)
@@ -323,20 +248,6 @@ namespace Landis.Extension.BaseEDA
         {
             string path = MapNames.ReplaceTemplateVars(mapNameTemplate, agentName, currentTime);
             PlugIn.ModelCore.Log.WriteLine("   Writing BDA severity map to {0} ...", path);
-            return PlugIn.modelCore.CreateRaster<ShortPixel>(path, PlugIn.modelCore.Landscape.Dimensions);
-        }*/
-
-        /*private IOutputRaster<ShortPixel> CreateSRDMap(int currentTime, string agentName)
-        {
-            string path = MapNames.ReplaceTemplateVars(srdMapNames, agentName, currentTime);
-            PlugIn.ModelCore.Log.WriteLine("   Writing BDA SRD map to {0} ...", path);
-            return PlugIn.modelCore.CreateRaster<ShortPixel>(path, PlugIn.modelCore.Landscape.Dimensions);
-        }*/
-
-        /*private IOutputRaster<ShortPixel> CreateNRDMap(int currentTime, string agentName)
-        {
-            string path = MapNames.ReplaceTemplateVars(nrdMapNames, agentName, currentTime);
-            PlugIn.ModelCore.Log.WriteLine("   Writing BDA NRD map to {0} ...", path);
             return PlugIn.modelCore.CreateRaster<ShortPixel>(path, PlugIn.modelCore.Landscape.Dimensions);
         }*/
         //---------------------------------------------------------------------

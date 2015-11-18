@@ -22,7 +22,7 @@ namespace Landis.Extension.BaseEDA
         //---------------------------------------------------------------------
         public override string LandisDataValue
         {
-            get { return "BDA Agent"; }
+            get { return "EDA Agent"; }
         }
 
         //---------------------------------------------------------------------
@@ -35,8 +35,7 @@ namespace Landis.Extension.BaseEDA
 
         protected override IAgent Parse()
         {
-            //PlugIn.ModelCore.Log.WriteLine("Parsing 1; sppCnt={0}", Model.Species.Count);
-            //Agent agentParameters = new Agent(PlugIn.ModelCore.Species.Count, PlugIn.ModelCore.Ecoregions.Count, (int) DisturbanceType.Null);  //The last disturb Type is Null
+
             InputVar<string> landisData = new InputVar<string>("LandisData");
             ReadVar(landisData);
             if (landisData.Value.Actual != LandisDataValue)
@@ -44,17 +43,13 @@ namespace Landis.Extension.BaseEDA
 
             Agent agentParameters = new Agent(PlugIn.ModelCore.Species.Count, PlugIn.ModelCore.Ecoregions.Count);
 
-            InputVar<string> agentName = new InputVar<string>("BDAAgentName");
+            InputVar<string> agentName = new InputVar<string>("EDAAgentName");
             ReadVar(agentName);
             agentParameters.AgentName = agentName.Value;
 
-            InputVar<int> bdpc = new InputVar<int>("BDPCalibrator");
-            ReadVar(bdpc);
-            agentParameters.BDPCalibrator = bdpc.Value;
-
-            InputVar<SRDmode> srd = new InputVar<SRDmode>("SRDMode");
-            ReadVar(srd);
-            agentParameters.SRDmode = srd.Value;
+            InputVar<SHImode> shi = new InputVar<SHImode>("SHIMode");
+            ReadVar(shi);
+            agentParameters.SHImode = shi.Value;
 
             InputVar<int> startYear = new InputVar<int>("StartYear");
             if (CurrentName == "StartYear")
@@ -74,162 +69,30 @@ namespace Landis.Extension.BaseEDA
             else
                 agentParameters.EndYear = PlugIn.ModelCore.EndTime;
 
-            InputVar<OutbreakPattern> rf = new InputVar<OutbreakPattern>("OutbreakPattern");
-            ReadVar(rf);
-            agentParameters.RandFunc = rf.Value;
+            // - Climate Input - 
+            //ADD HERE
 
-            InputVar<double> normMean = new InputVar<double>("Mean");
-            InputVar<double> normStDev = new InputVar<double>("StDev");
-            InputVar<int> tSLE = new InputVar<int>("TimeSinceLastEpidemic");
+            // - Transmission Input -
 
-            if ((rf.Value.ToString()) == "CyclicNormal")
-            {
-                ReadVar(normMean);
-                agentParameters.NormMean = normMean.Value;
-                ReadVar(normStDev);
-                agentParameters.NormStDev = normStDev.Value;
-                ReadVar(tSLE);
-                agentParameters.TimeSinceLastEpidemic = tSLE.Value;
-            }
-            else
-            {
-                agentParameters.NormMean = 0;
-                agentParameters.NormStDev = 0;
-            }
+            InputVar<double> tr = new InputVar<double>("TransmissionRate");
+            ReadVar(tr);
+            agentParameters.TransmissionRate = tr.Value;
 
-            InputVar<double> maxInterval = new InputVar<double>("MaxInterval");
-            InputVar<double> minInterval = new InputVar<double>("MinInterval");
-            if (rf.Value.ToString() == "CyclicUniform")
-            {
-                ReadVar(maxInterval);
-                agentParameters.MaxInterval = maxInterval.Value;
-                ReadVar(minInterval);
-                agentParameters.MinInterval = minInterval.Value;
-                ReadVar(tSLE);
-                agentParameters.TimeSinceLastEpidemic = tSLE.Value;
-            }
-            else
-            {
-                agentParameters.MaxInterval = 0;
-                agentParameters.MinInterval = 0;
-            }
-            InputVar<string> climateVarName = new InputVar<string>("VariableName");
-            InputVar<string> climateVarSource = new InputVar<string>("Source");
-            InputVar<float> climateThresh_Lowerbound = new InputVar<float>("ThresholdLowerBound");
-            InputVar<float> climateThresh_Upperbound = new InputVar<float>("ThresholdUpperBound");
-            InputVar<int> climateLag  = new InputVar<int>("OutbreakLag");
-            InputVar<int>  timeSinceLastClimate = new InputVar<int>("TimeSinceLastClimate");
+            InputVar<double> ar = new InputVar<double>("AcquisitionRate");
+            ReadVar(ar);
+            agentParameters.AcquisitionRate = ar.Value;
 
-            if (rf.Value.ToString().ToLower() == "climate")
-            {
-                ReadVar(climateVarName);
-                agentParameters.ClimateVarName = climateVarName.Value;
-                ReadVar(climateVarSource);
-                agentParameters.ClimateVarSource = climateVarSource.Value;
-                ReadVar(climateThresh_Lowerbound);
-                agentParameters.ClimateThresh_Lowerbound = climateThresh_Lowerbound.Value;
-                ReadVar(climateThresh_Upperbound);
-                agentParameters.ClimateThresh_Upperbound = climateThresh_Upperbound.Value;
-                ReadVar(climateLag);
-                agentParameters.ClimateLag = climateLag.Value;
-                if (ReadOptionalVar(timeSinceLastClimate))
-                {
-                    agentParameters.TimeSinceLastClimate = timeSinceLastClimate.Value;
-                }
-                else
-                    agentParameters.TimeSinceLastClimate = 0;
-                agentParameters.TimeSinceLastEpidemic = 0;
-            }
-            else
-            {
-                agentParameters.ClimateVarName = "";
-                agentParameters.ClimateVarSource = "";
-                agentParameters.ClimateThresh_Lowerbound = 0;
-                agentParameters.ClimateThresh_Upperbound = 0;
-                agentParameters.ClimateLag = 0;
-                agentParameters.TimeSinceLastClimate = 0;
-            }
+            // InitialEpidemMap ??
 
-            
+            InputVar<DispersalTemplate> dk = new InputVar<DispersalTemplate>("DispersalKernel");
+            ReadVar(dk);
+            agentParameters.DispersalKernel = dk.Value;
 
-            InputVar<TemporalType> tt = new InputVar<TemporalType>("TemporalType");
-            ReadVar(tt);
-            agentParameters.TempType = tt.Value;
-            
-            InputVar<int> minROS = new InputVar<int>("MinROS");
-            ReadVar(minROS);
-            agentParameters.MinROS = minROS.Value;
+            InputVar<double> ac = new InputVar<double>("AlphaCoef");
+            ReadVar(ac);
+            agentParameters.AlphaCoef = ac.Value;
 
-            InputVar<int> maxROS = new InputVar<int>("MaxROS");
-            ReadVar(maxROS);
-            agentParameters.MaxROS = maxROS.Value;
-
-
-            InputVar<bool> d = new InputVar<bool>("Dispersal");
-            ReadVar(d);
-            agentParameters.Dispersal = d.Value;
-
-            InputVar<int> dr = new InputVar<int>("DispersalRate");
-            ReadVar(dr);
-            agentParameters.DispersalRate = dr.Value;
-
-            InputVar<double> et = new InputVar<double>("EpidemicThresh");
-            ReadVar(et);
-            agentParameters.EpidemicThresh = et.Value;
-
-            InputVar<int> ien = new InputVar<int>("InitialEpicenterNum");
-            ReadVar(ien);
-            agentParameters.EpicenterNum = ien.Value;
-
-            InputVar<double> oec = new InputVar<double>("OutbreakEpicenterCoeff");
-            ReadVar(oec);
-            agentParameters.OutbreakEpicenterCoeff = oec.Value;
-
-            InputVar<double> outEpiThresh = new InputVar<double>("OutbreakEpicenterThresh");
-            ReadVar(outEpiThresh);
-            agentParameters.OutbreakEpicenterThresh = outEpiThresh.Value;
-            
-            InputVar<bool> se = new InputVar<bool>("SeedEpicenter");
-            ReadVar(se);
-            agentParameters.SeedEpicenter = se.Value;
-
-            InputVar<double> sec = new InputVar<double>("SeedEpicenterCoeff");
-            ReadVar(sec);
-            agentParameters.SeedEpicenterCoeff = sec.Value;
-
-            InputVar<DispersalTemplate> dispt = new InputVar<DispersalTemplate>("DispersalTemplate");
-            ReadVar(dispt);
-            agentParameters.DispersalTemp = dispt.Value;
-
-            InputVar<bool> nf = new InputVar<bool>("NeighborFlag");
-            ReadVar(nf);
-            agentParameters.NeighborFlag = nf.Value;
-
-            InputVar<NeighborSpeed> nspeed = new InputVar<NeighborSpeed>("NeighborSpeedUp");
-            ReadVar(nspeed);
-            agentParameters.NeighborSpeedUp = nspeed.Value;
-
-            InputVar<int> nr = new InputVar<int>("NeighborRadius");
-            ReadVar(nr);
-            agentParameters.NeighborRadius = nr.Value;
-
-            InputVar<NeighborShape> ns = new InputVar<NeighborShape>("NeighborShape");
-            ReadVar(ns);
-            agentParameters.ShapeOfNeighbor = ns.Value;
-
-            InputVar<double> nw = new InputVar<double>("NeighborWeight");
-            ReadVar(nw);
-            agentParameters.NeighborWeight = nw.Value;
-
-            InputVar<double> class2_SV = new InputVar<double>("IntensityClass2_BDP");
-            ReadVar(class2_SV);
-            agentParameters.Class2_SV = class2_SV.Value;
-
-            InputVar<double> class3_SV = new InputVar<double>("IntensityClass3_BDP");
-            ReadVar(class3_SV);
-            agentParameters.Class3_SV = class3_SV.Value;
-
-            //--------- Read In Ecoreigon Table ---------------------------------------
+            //--------- Read In Ecoregion Table ---------------------------------------
             PlugIn.ModelCore.UI.WriteLine("Begin parsing ECOREGION table.");
 
             InputVar<string> ecoName = new InputVar<string>("Ecoregion Name");
@@ -237,7 +100,7 @@ namespace Landis.Extension.BaseEDA
 
             Dictionary <string, int> lineNumbers = new Dictionary<string, int>();
             const string DistParms = "DisturbanceModifiers";
-            const string SppParms = "BDASpeciesParameters";
+            const string SppParms = "EDASpeciesParameters";
 
             while (! AtEndOfInput && CurrentName != DistParms && CurrentName != SppParms) {
                 StringReader currentLine = new StringReader(CurrentLine);
@@ -291,13 +154,10 @@ namespace Landis.Extension.BaseEDA
                     IDisturbanceType currentDisturbanceType = new DisturbanceType();
                     agentParameters.DisturbanceTypes.Add(currentDisturbanceType);
 
-                    currentDisturbanceType.SRDModifier = distModifier.Value;
-
-                    //IDistParameters distParms = new DistParameters();
-                    //agentParameters.DistParameters[dt] = distParms;
+                    currentDisturbanceType.SHIModifier = distModifier.Value;
 
                     ReadValue(duration, currentLine);
-                    currentDisturbanceType.MaxAge = duration.Value;
+                    currentDisturbanceType.ImpactDuration = duration.Value;
 
                     List<string> prescriptionNames = new List<string>();
                     TextReader.SkipWhitespace(currentLine);
@@ -313,9 +173,6 @@ namespace Landis.Extension.BaseEDA
 
                     currentDisturbanceType.PrescriptionNames = prescriptionNames;
 
-                    //ReadValue(distType, currentLine);
-                    //int dt = (int)distType.Value.Actual;
-
                     CheckNoDataAfter("the " + distModifier.Name + " column",
                                      currentLine);
                     GetNextLine();
@@ -326,25 +183,36 @@ namespace Landis.Extension.BaseEDA
 
             ReadName(SppParms);
 
-            //const string FireCurves = "FireCurveTable";
+            //Species Name
             InputVar<string> sppName = new InputVar<string>("Species");
-            InputVar<int> minorHostAge = new InputVar<int>("Minor Host Age");
-            InputVar<double> minorHostSRD = new InputVar<double>("Minor Host SRDProb");
-            InputVar<int> secondaryHostAge = new InputVar<int>("Second Host Age");
-            InputVar<double> secondaryHostSRD = new InputVar<double>("Secondary Host SRDProb");
-            InputVar<int> primaryHostAge = new InputVar<int>("Primary Host Age");
-            InputVar<double> primaryHostSRD = new InputVar<double>("Primary Host SRDProb");
-            InputVar<int> resistantHostAge = new InputVar<int>("Resistant Host Age");
-            InputVar<double> resistantHostVuln = new InputVar<double>("Resistant Host VulnProb");
-            InputVar<int> tolerantHostAge = new InputVar<int>("Tolerant Host Age");
-            InputVar<double> tolerantHostVuln = new InputVar<double>("Tolerant Host VulnProb");
-            InputVar<int> vulnerableHostAge = new InputVar<int>("Vulnerable Host Age");
-            InputVar<double> vulnerableHostVuln = new InputVar<double>("Vulnerable Host VulnProb");
+
+            //SHI (Host Index)
+            InputVar<int> lowHostAge = new InputVar<int>("Low Host Index Age");
+            InputVar<double> lowHostScore = new InputVar<double>("Low Host Index Score");
+            InputVar<int> mediumHostAge = new InputVar<int>("Medium Host Index Age");
+            InputVar<double> mediumHostScore = new InputVar<double>("Medium Host Index Score");
+            InputVar<int> highHostAge = new InputVar<int>("High Host Index Age");
+            InputVar<double> highHostScore = new InputVar<double>("High Host Index Score");
+
+            //SHV (Vulnerability)
+            InputVar<int> lowVulnHostAge = new InputVar<int>("Low Vulnerability Host Age");
+            InputVar<double> lowVulnHostMortProb = new InputVar<double>("Low Vulnerability Host MortProb");
+            InputVar<int> mediumVulnHostAge = new InputVar<int>("Medium Vulnerability Host Age");
+            InputVar<double> mediumVulnHostMortProb = new InputVar<double>("Medium Vulnerability Host MortProb");
+            InputVar<int> highVulnHostAge = new InputVar<int>("High Vulnerability Host Age");
+            InputVar<double> highVulnHostMortProb = new InputVar<double>("High Vulnerability Host MortProb");
+
+            //CFS
             InputVar<bool> cfsConifer = new InputVar<bool>("CFS Conifer type:  yes/no");
 
-            const string NegSpp = "IgnoredSpecies";
-            const string AdvRegenSpp = "AdvancedRegenSpecies";
-            const string AdvRegenMaxAge = "AgeCutoff";
+            const string NegSpp = "IgnoredSpecies";  //does this include all spp that are not in the Species Table?
+
+            const string AdvRegenSpp = "AdvancedRegenSpecies"; //WHAT IS THIS?
+            const string AdvRegenMaxAge = "AgeCutoff";          //WHAT IS THIS?
+
+            //LIST OF ALL SPECIES TO BE LOOKED AT FOR MORTALITY CAUSED DISEASE (for mapping purposes also). 
+            //Not all species that die from a disease may be of interest...
+            const string MortSpp = "MortalitySpecies";
 
             while ((!AtEndOfInput) && (CurrentName != NegSpp) && (CurrentName != AdvRegenSpp) && (CurrentName != AdvRegenMaxAge))
             {
@@ -367,42 +235,45 @@ namespace Landis.Extension.BaseEDA
                 ISppParameters sppParms = new SppParameters();
                 agentParameters.SppParameters[species.Index] = sppParms;
 
-                ReadValue(minorHostAge, currentLine);
-                sppParms.MinorHostAge = minorHostAge.Value;
+                //SHI
+                ReadValue(lowHostAge, currentLine);
+                sppParms.LowHostAge = lowHostAge.Value;
 
-                ReadValue(minorHostSRD, currentLine);
-                sppParms.MinorHostSRD = minorHostSRD.Value;
+                ReadValue(lowHostScore, currentLine);
+                sppParms.LowHostScore = lowHostScore.Value;
 
-                ReadValue(secondaryHostAge, currentLine);
-                sppParms.SecondaryHostAge = secondaryHostAge.Value;
+                ReadValue(mediumHostAge, currentLine);
+                sppParms.MediumHostAge = mediumHostAge.Value;
 
-                ReadValue(secondaryHostSRD, currentLine);
-                sppParms.SecondaryHostSRD = secondaryHostSRD.Value;
+                ReadValue(mediumHostScore, currentLine);
+                sppParms.MediumHostScore = mediumHostScore.Value;
 
-                ReadValue(primaryHostAge, currentLine);
-                sppParms.PrimaryHostAge = primaryHostAge.Value;
+                ReadValue(highHostAge, currentLine);
+                sppParms.HighHostAge = highHostAge.Value;
 
-                ReadValue(primaryHostSRD, currentLine);
-                sppParms.PrimaryHostSRD = primaryHostSRD.Value;
+                ReadValue(highHostScore, currentLine);
+                sppParms.HighHostScore = highHostScore.Value;
 
-                ReadValue(resistantHostAge, currentLine);
-                sppParms.ResistantHostAge = resistantHostAge.Value;
+                //SHV
+                ReadValue(lowVulnHostAge, currentLine);
+                sppParms.LowVulnHostAge = lowVulnHostAge.Value;
 
-                ReadValue(resistantHostVuln, currentLine);
-                sppParms.ResistantHostVuln = resistantHostVuln.Value;
+                ReadValue(lowVulnHostMortProb, currentLine);
+                sppParms.LowVulnHostMortProb = lowVulnHostMortProb.Value;
 
-                ReadValue(tolerantHostAge, currentLine);
-                sppParms.TolerantHostAge = tolerantHostAge.Value;
+                ReadValue(mediumVulnHostAge, currentLine);
+                sppParms.MediumVulnHostAge = mediumVulnHostAge.Value;
 
-                ReadValue(tolerantHostVuln, currentLine);
-                sppParms.TolerantHostVuln = tolerantHostVuln.Value;
+                ReadValue(mediumVulnHostMortProb, currentLine);
+                sppParms.MediumVulnHostMortProb = mediumVulnHostMortProb.Value;
 
-                ReadValue(vulnerableHostAge, currentLine);
-                sppParms.VulnerableHostAge = vulnerableHostAge.Value;
+                ReadValue(highVulnHostAge, currentLine);
+                sppParms.HighVulnHostAge = highVulnHostAge.Value;
 
-                ReadValue(vulnerableHostVuln, currentLine);
-                sppParms.VulnerableHostVuln = vulnerableHostVuln.Value;
+                ReadValue(highVulnHostMortProb, currentLine);
+                sppParms.HighVulnHostMortProb = highVulnHostMortProb.Value;
 
+                //CFS
                 ReadValue(cfsConifer, currentLine);
                 sppParms.CFSConifer = cfsConifer.Value;
 
@@ -416,12 +287,12 @@ namespace Landis.Extension.BaseEDA
             //--------- Read In Ignored Species List ---------------------------------------
 
             List<ISpecies> negSppList = new List<ISpecies>();
-            if (!AtEndOfInput && (CurrentName != AdvRegenSpp) && (CurrentName != AdvRegenMaxAge))
+            if (!AtEndOfInput && (CurrentName != AdvRegenSpp) && (CurrentName != AdvRegenMaxAge) && (CurrentName != MortSpp))
             {
                 ReadName(NegSpp);
                 InputVar<string> negSppName = new InputVar<string>("Ignored Spp Name");
 
-                while (!AtEndOfInput && (CurrentName != AdvRegenSpp) && (CurrentName != AdvRegenMaxAge))
+                while (!AtEndOfInput && (CurrentName != AdvRegenSpp) && (CurrentName != AdvRegenMaxAge) && (CurrentName != MortSpp))
                 {
                     StringReader currentLine = new StringReader(CurrentLine);
 
@@ -444,6 +315,36 @@ namespace Landis.Extension.BaseEDA
                 }
             }
             agentParameters.NegSppList = negSppList;
+
+            //--------- Read In Mortality Species List ---------------------------------------
+
+            List<ISpecies> mortSppList = new List<ISpecies>();
+            if (!AtEndOfInput && (CurrentName != AdvRegenSpp) && (CurrentName != AdvRegenMaxAge) && (CurrentName != NegSpp))
+            {
+                ReadName(MortSpp);
+                InputVar<string> mortSppName = new InputVar<string>("Mortality Spp Name");
+                while (!AtEndOfInput && (CurrentName != AdvRegenSpp) && (CurrentName != AdvRegenMaxAge) && (CurrentName != NegSpp))
+                {
+                    StringReader currentLine = new StringReader(CurrentLine);
+                    ReadValue(mortSppName, currentLine);
+                    ISpecies species = SpeciesDataset[mortSppName.Value.Actual];
+                    if (species == null)
+                        throw new InputValueException(mortSppName.Value.String,
+                                                      "{0} is not a species name.",
+                                                      mortSppName.Value.String);
+                    int lineNumber;
+                    if (lineNumbers.TryGetValue(species.Name, out lineNumber))
+                        PlugIn.ModelCore.UI.WriteLine("WARNING: The species {0} was previously used on line {1}.", mortSppName.Value.String, lineNumber);
+                    else
+                        lineNumbers[species.Name] = LineNumber;
+
+                    mortSppList.Add(species);
+
+                    GetNextLine();
+                }
+            }
+            agentParameters.MortSppList = mortSppList;
+
 
             //--------- Read In Advanced Regen Species List ---------------------------------------
 
@@ -489,80 +390,23 @@ namespace Landis.Extension.BaseEDA
             return agentParameters; //.GetComplete();
         }
 
-        public static SRDmode SRDParse(string word)
+        //--------------------------------------------------------------------------------
+        public static SHImode SHIParse(string word)
         {
             if (word == "max")
-                return SRDmode.max;
+                return SHImode.max;
             else if (word == "mean")
-                return SRDmode.mean;
+                return SHImode.mean;
             throw new System.FormatException("Valid algorithms: max, mean");
         }
 
-        public static TemporalType TTParse(string word)
+         public static DispersalTemplate DispTParse(string word)
         {
-            if (word == "pulse")
-                return TemporalType.pulse;
-            else if (word == "variablepulse")
-                return TemporalType.variablepulse;
-            throw new System.FormatException("Valid algorithms: pulse, continuous, variablepulse");
-        }
-
-        public static OutbreakPattern RFParse(string word)
-        {
-            if (word == "CyclicNormal")
-                return OutbreakPattern.CyclicNormal;
-            else if (word == "CyclicUniform")
-                return OutbreakPattern.CyclicUniform;
-            else if (word == "Climate")
-                return OutbreakPattern.Climate;
-            throw new System.FormatException("Valid algorithms: CyclicNormal or CyclicUniform or Climate");
-        }
-
-        //public static DisturbanceType DTParse(string word)
-        //{
-        //    if (word == "Wind")
-        //        return DisturbanceType.Wind;
-        //    else if (word == "Fire")
-        //        return DisturbanceType.Fire;
-        //    else if (word == "Harvest")
-        //        return DisturbanceType.Harvest;
-        //    throw new System.FormatException("Valid algorithms: Wind, Fire, Harvest");
-        //}
-        public static DispersalTemplate DispTParse(string word)
-        {
-            if (word == "MaxRadius")
-                return DispersalTemplate.MaxRadius;
-            else if (word == "4N")
-                return DispersalTemplate.N4;
-            else if (word == "8N")
-                return DispersalTemplate.N8;
-            else if (word == "12N")
-                return DispersalTemplate.N12;
-            else if (word == "24N")
-                return DispersalTemplate.N24;
-            throw new System.FormatException("Valid algorithms: MaxRadius, 4N, 8N, 12N, 24N");
-        }
-        public static NeighborShape NSParse(string word)
-        {
-            if (word == "uniform")
-                return NeighborShape.uniform;
-            else if (word == "linear")
-                return NeighborShape.linear;
-            else if (word == "gaussian")
-                return NeighborShape.gaussian;
-            throw new System.FormatException("Valid algorithms: uniform, linear, gaussian");
-        }
-        public static NeighborSpeed NSpeedParse(string word)
-        {
-            if (word == "none")
-                return NeighborSpeed.none;
-            else if (word == "2x")
-                return NeighborSpeed.X2;
-            else if (word == "3x")
-                return NeighborSpeed.X3;
-            else if (word == "4x")
-                return NeighborSpeed.X4;
-            throw new System.FormatException("Valid algorithms:  none, 2x, 3x, 4x");
+            if (word == "PowerLaw")
+                return DispersalTemplate.PowerLaw;
+            else if (word == "NegExp")
+                return DispersalTemplate.NegExp;
+            throw new System.FormatException("Valid algorithms: PowerLaw, NegExp");
         }
         //---------------------------------------------------------------------
 
@@ -571,26 +415,12 @@ namespace Landis.Extension.BaseEDA
         /// </summary>
         public static void RegisterForInputValues()
         {
-            Type.SetDescription<SRDmode>("Site Resources Dominance Mode");
-            InputValues.Register<SRDmode>(SRDParse);
-
-            Type.SetDescription<TemporalType>("Temporal Type");
-            InputValues.Register<TemporalType>(TTParse);
-
-            Type.SetDescription<OutbreakPattern>("Outbreak Pattern");
-            InputValues.Register<OutbreakPattern>(RFParse);
-
-            //Type.SetDescription<DisturbanceType>("Disturbance Type");
-            //InputValues.Register<DisturbanceType>(DTParse);
+            Type.SetDescription<SHImode>("Site Host Index Mode");
+            InputValues.Register<SHImode>(SHIParse);
 
             Type.SetDescription<DispersalTemplate>("Dispersal Template");
             InputValues.Register<DispersalTemplate>(DispTParse);
 
-            Type.SetDescription<NeighborShape>("Neighbor Shape");
-            InputValues.Register<NeighborShape>(NSParse);
-
-            Type.SetDescription<NeighborSpeed>("Neighbor Speed");
-            InputValues.Register<NeighborSpeed>(NSpeedParse);
         }
     }
 }

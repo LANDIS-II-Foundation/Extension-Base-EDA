@@ -17,29 +17,19 @@ namespace Landis.Extension.BaseEDA
         int Timestep {get;set;}
         //---------------------------------------------------------------------
         /// <summary>
-        /// Template for the filenames for output maps. Provides the naming convention for the EDA intensity files (intensity of infection).
+        /// Template for the filenames for output INFECTED maps.
         /// </summary>
-        string MapNamesTemplate {get;set;}
+        string InfMapNames {get;set;}
         //---------------------------------------------------------------------
         /// <summary>
-        /// Template for the filenames for output SRD maps.
+        /// Template for the filenames for output DISEASED maps.
         /// </summary>
-        //string SRDMapNames{get;set;}
+        string DisMapNames{get;set;}
         //---------------------------------------------------------------------
         /// <summary>
-        /// Template for the filenames for output SRD maps.
+        /// Template for the filenames for mortality output maps (number of cohorts killed for each species of interest).
         /// </summary>
-        //string NRDMapNames{get;set;}
-        //---------------------------------------------------------------------
-        /// <summary>
-        /// Template for the filenames for Epidemiological Disturbance Probability (EDP) output maps.
-        /// </summary>
-        //string EDPMapNames { get; set; }
-        //---------------------------------------------------------------------
-        /// <summary>
-        /// Template for the filenames for epidemic (disease) mortality output maps (number of cohorts killed for each species of interest).
-        /// </summary>
-        string EPIMapNames { get; set; }
+        string MortMapNames { get; set; }
         //---------------------------------------------------------------------
         /// <summary>
         /// Name of log file.
@@ -62,11 +52,9 @@ namespace Landis.Extension.BaseEDA
         : IInputParameters
     {
         private int timestep;
-        private string mapNamesTemplate;
-        //private string srdMapNames;
-        //private string nrdMapNames;
-        //private string edpMapNames;
-        private string epiMapNames;
+        private string infMapNames;
+        private string disMapNames;
+        private string mortMapNames;
         private string logFileName;
         private IEnumerable<IAgent> manyAgentParameters;
 
@@ -89,32 +77,48 @@ namespace Landis.Extension.BaseEDA
 
         //---------------------------------------------------------------------
         /// <summary>
-        /// Template for the filenames for output maps. Provides the naming convention for the EDA intensity files (intensity of infection).
+        /// Template for the filenames for output INFECTED maps.
         /// </summary>
-        public string MapNamesTemplate
+        public string InfMapNames
         {
             get {
-                return mapNamesTemplate;
+                return infMapNames;
             }
             set {
                 MapNames.CheckTemplateVars(value);
-                mapNamesTemplate = value;
+                infMapNames = value;
             }
         }
         //---------------------------------------------------------------------
         /// <summary>
-        /// Template for the filenames for epidemic (disease) mortality output maps (number of cohorts killed for each species of interest).
+        /// Template for the filenames for output DISEASED maps.
         /// </summary>
-        public string EPIMapNames
+        public string DisMapNames
         {
             get
             {
-                return epiMapNames;
+                return disMapNames;
             }
             set
             {
                 MapNames.CheckTemplateVars(value);
-                epiMapNames = value;
+                disMapNames = value;
+            }
+        }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Template for the filenames for mortality output maps (number of cohorts killed for each species of interest).
+        /// </summary>
+        public string MortMapNames
+        {
+            get
+            {
+                return mortMapNames;
+            }
+            set
+            {
+                MapNames.CheckTemplateVars(value);
+                mortMapNames = value;
             }
         }
         //---------------------------------------------------------------------

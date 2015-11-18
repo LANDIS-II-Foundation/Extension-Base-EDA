@@ -13,7 +13,7 @@ namespace Landis.Extension.BaseEDA
     {
         /// <summary>
         /// </summary>
-        // Site Host Susceptibility to infection by DISEASE AGENT using 3 classes (Low, Medium, High)
+        // Site Host Index to infection by DISEASE AGENT using 3 classes (Low, Medium, High)
         int LowHostAge { get; set; }
         double LowHostScore { get; set; }
         int MediumHostAge { get; set; }
@@ -323,7 +323,7 @@ namespace Landis.Extension.BaseEDA
         //---------------------------------------------------------------------
         public SppParameters()
         {
-            //susceptibility to infection by disease agent
+            //susceptibility to infection by disease agent/suitability to produce spores once infected
             this.lowHostAge = 999;
             this.lowHostScore = 0;
             this.mediumHostAge = 999;

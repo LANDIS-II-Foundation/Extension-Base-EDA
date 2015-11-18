@@ -36,8 +36,12 @@ namespace Landis.Extension.BaseEDA
         private static ISiteVar<double> siteHostIndexMod;
         private static ISiteVar<double> siteHostIndex;   //Host Index defined as "susceptibility of each non-infected cell to become infected 
                                                          //and the suitability of each infected cell to produce infectious spores of the pathogen"
-        //private static ISiteVar<double> epidemDistProb;  
-        private static ISiteVar<bool> disturbed;
+        
+        //STATE OF A CELL: SUSCEPTIBLE (S), INFECTED (cryptic-non symptomatic) (I), DISEASED (symptomatic) (D)
+        private static ISiteVar<string> susceptible;
+        private static ISiteVar<string> infected;  //non-symptomatic but can infect!
+        private static ISiteVar<string> diseased;  //BUT not all diseased die, this is controlled by mortality probability and vuln class
+
         private static ISiteVar<Dictionary<int,int>> numberCFSconifersKilled;  //this specific naming convention is defined by the Canadian fire model. Keep as is.
         private static ISiteVar<ISiteCohorts> cohorts;                         //the list of species to be used as FUEL for the fire extension can be specified in the Fire Fuel extension!                     
         private static ISiteVar<int> timeOfNext;
@@ -50,8 +54,9 @@ namespace Landis.Extension.BaseEDA
             timeOfLastEDA  = modelCore.Landscape.NewSiteVar<int>();
             siteHostIndexMod = modelCore.Landscape.NewSiteVar<double>();
             siteHostIndex = modelCore.Landscape.NewSiteVar<double>();
-            //epidemDistProb = modelCore.Landscape.NewSiteVar<double>(); 
-            disturbed = modelCore.Landscape.NewSiteVar<bool>();
+            susceptible = modelCore.Landscape.NewSiteVar<string>();
+            infected = modelCore.Landscape.NewSiteVar<string>();
+            diseased = modelCore.Landscape.NewSiteVar<string>();
             numberCFSconifersKilled = modelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
             timeOfNext = modelCore.Landscape.NewSiteVar<int>();
             agentName = modelCore.Landscape.NewSiteVar<string>();
@@ -187,21 +192,37 @@ namespace Landis.Extension.BaseEDA
                 return siteHostIndexMod;
             }
         }
-        //---------------------------------------------------------------------
-        //public static ISiteVar<double> EpidemDistProb
+
+        //public static ISiteVar<bool> Disturbed
         //{
         //    get {
-        //        return epidemDistProb;
-        //    }
+        //        return disturbed;
+        //   }
         //}
-        //---------------------------------------------------------------------
 
-        public static ISiteVar<bool> Disturbed
+        public static ISiteVar<string> Susceptible
         {
             get {
-                return disturbed;
+                return susceptible;
+           }
+        }
+
+        public static ISiteVar<string> Infected
+        {
+            get
+            {
+                return infected;
             }
         }
+
+        public static ISiteVar<string> Diseased
+        {
+            get
+            {
+                return diseased;
+            }
+        }
+
         //---------------------------------------------------------------------
         public static ISiteVar<Dictionary<int,int>> NumberCFSconifersKilled  //should we change this name or fire ext needs it as is?
         {

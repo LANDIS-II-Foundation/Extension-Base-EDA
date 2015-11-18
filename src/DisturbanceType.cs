@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Landis.Extension.BaseEDA
 {
-    //This slash type is used for all disturbance fuel types
+
     public interface IDisturbanceType
     {
         double SHIModifier {get;set; } //site host index (SHI) modifier
@@ -29,12 +29,16 @@ namespace Landis.Extension.BaseEDA
         /// <summary>
         /// Index
         /// </summary>
-        public double SHIModifier  //CHECK TO MAKE SURE WE DON'T NEED TO ADD ANY CONDITIONAL CHECK FOR HV < 0
+        public double SHIModifier  
         {
             get {
                 return shiMod;
             }
-            set {
+            set
+            {
+                if (value < -1.0 || value > 1.0)
+                    throw new InputValueException(value.ToString(),
+                        "Value must be > -1 and < 1.");
                 shiMod = value;
             }
         }
@@ -44,7 +48,7 @@ namespace Landis.Extension.BaseEDA
         /// <summary>
         /// Maximum duration of impact for a disturbance (in years)
         /// </summary>
-        public int ImpactDuration   //changed from MaxAge
+        public int ImpactDuration   
         {
             get {
                 return impactDuration;

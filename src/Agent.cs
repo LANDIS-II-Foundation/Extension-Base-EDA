@@ -11,46 +11,41 @@ namespace Landis.Extension.BaseEDA
 {
 
     public enum SHImode {max, mean};  //maybe add something new here, like weighted by biomass, or mean for each cohort?
-    
+    public enum DispersalTemplate { PowerLaw, NegExp };
+
     /// <summary>
     /// Interface to the Parameters for the BaseEDA extension
     /// </summary>
     public interface IAgent
     {
         string AgentName{get;set;}
-        //int BDPCalibrator{get;set;} //don't think we need it
         int StartYear { get; set; }
         int EndYear { get; set; }
 
         SHImode SHImode { get; set; }
 
-        // - Climate - 
-        //string ClimateVarName { get; set; }
-        //string ClimateVarSource { get; set; }
-        //float ClimateThresh_Lowerbound { get; set; }
-        //float ClimateThresh_Upperbound { get; set; }
-        //int ClimateLag { get; set; }
-        //int TimeSinceLastClimate { get; set; }
-        DataTable ClimateDataTable { get; set; }    //WHAT IS THIS?
-        LinkedList<int> OutbreakList { get; set; }  //WHAT IS THIS?
+        // - Climate - PLACEHOLDER FOR CLIMATE INPUTS
+        //VariableNames {get; set;}
+        //StartMonth {get; set;}
+        //EndMonth {get; set;}
+        //ADD HERE!
 
-        //-- DISPERSAL -------------REPLACE THIS WITH KERNEL BASED DISPERSAL (look at seed dispersal in LANDIS?)
+        //- Transmission -
+        double TransmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
+        double AcquisitionRate  { get; set; }  //rD = Rate of acquisition of detectable symptoms (per time step)
+        //>>InitialEpidemMap? do I need to add this here?
+        DispersalTemplate DispersalKernel { get; set; }
+        double AlphaCoef { get; set; }
 
-
-        
-        //Epidemiological Disturbance Probability (EDP) thresholds --> INTENSITY of infection (by disease agent)
-        double Class2_SV { get; }
-        double Class3_SV { get; }
+        //List of tree species to be ignored
         IEnumerable<ISpecies> NegSppList { get; set; }
-        //IEnumerable<ISpecies> AdvRegenSppList { get; set; }
-        //int AdvRegenAgeCutoff { get; }
+        //List of tree species to be considered for mortality outputs
+        IEnumerable<ISpecies> MortSppList { get; set; }
 
         ISppParameters[] SppParameters { get; set; }
         IEcoParameters[] EcoParameters { get; set; }
-        //IDistParameters[] DistParameters { get; set; }
         List<IDisturbanceType> DisturbanceTypes { get;  }
-        ISiteVar<byte> Severity { get; set; }
-        //ISiteVar<Zone> OutbreakZone { get; set; }
+        //ISiteVar<byte> Severity { get; set; }
     }
 }
 
@@ -64,65 +59,34 @@ namespace Landis.Extension.BaseEDA
         : IAgent
     {
         private string agentName;
-        //private int bdpCalibrator;
         private int startYear;
         private int endYear;
 
         private SHImode shiMode;
 
-        //-- ROS --
-        //private int timeSinceLastEpidemic;
-        //private int timeToNextEpidemic;
-        //private TemporalType tempType;
-        //private OutbreakPattern randFunc;
-        //private double normMean;
-        //private double normStDev;
-        //private double maxInterval;
-        //private double minInterval;
-        //private int minROS;
-        //private int maxROS;
+        // - Climate - PLACEHOLDER FOR CLIMATE INPUTS
+        //VariableNames {get; set;}
+        //StartMonth {get; set;}
+        //EndMonth {get; set;}
+        //ADD HERE!
 
-        // - Climate - 
-        private string climateVarName;
-        private string climateVarSource;
-        private float climateThresh_Lowerbound;
-        private float climateThresh_Upperbound;
-        private int climateLag;
-        private int timeSinceLastClimate;
-        private DataTable climateDataTable;
-        public LinkedList<int> outbreakList = new LinkedList<int>();
-        
-        //-- DISPERSAL -------------
-        //private bool dispersal;
-        //private int dispersalRate;
-        //private double epidemicThresh;
-        //private int epicenterNum;
-        //private bool seedEpicenter;
-        //private double outbreakEpicenterCoeff;
-        //private double outbreakEpicenterThresh;
-        //private double seedEpicenterCoeff;
-        //private DispersalTemplate dispersalTemp;
-        //private IEnumerable<RelativeLocation> dispersalNeighbors;
+        //-- Transmission -------------
+        private double transmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
+        private double acquisitionRate { get; set; }  //rD = Rate of acquisition of detectable symptoms (per time step)
+        //>>InitialEpidemMap? do I need to add this here?
+        private DispersalTemplate dispersalKernel { get; set; }
+        private double alphaCoef { get; set; }
 
-        // Neighborhood Resource Dominance parameters
-        //private bool neighborFlag;
-        //private NeighborSpeed neighborSpeedUp;
-        //private int neighborRadius;
-        //private NeighborShape shapeOfNeighbor;
-        //private double neighborWeight;
-        //private IEnumerable<RelativeLocationWeighted> resourceNeighbors;
-        private double class2_SS;  //threshold for site susceptibility  ---> intensity of disturbance is derived from here
-        private double class3_SS;  //threshold for site susceptibility  ---> intensity of disturbance is derived from here
+        //List of tree species to be ignored
         private IEnumerable<ISpecies> negSppList;
-        private IEnumerable<ISpecies> advRegenSppList;
-        private int advRegenAgeCutoff;
-
         private ISppParameters[] sppParameters;
         private IEcoParameters[] ecoParameters;
-        //private IDistParameters[] distParameters;
         private List<IDisturbanceType> disturbanceTypes;
-        private ISiteVar<byte> intensity;
-        //private ISiteVar<Zone> outbreakZone;
+        //private ISiteVar<byte> severity;
+
+        private IEnumerable<ISpecies> advRegenSppList;  //WHAT IS THIS?
+        private int advRegenAgeCutoff; //WHAT IS THIS?
+
         //---------------------------------------------------------------------
         public string AgentName
         {
@@ -133,16 +97,6 @@ namespace Landis.Extension.BaseEDA
                 agentName = value;
             }
         }
-        //---------------------------------------------------------------------
-        /*public int BDPCalibrator
-        {
-            get {
-                return bdpCalibrator;
-            }
-            set {
-                bdpCalibrator = value;
-            }
-        }*/
         //---------------------------------------------------------------------
         public int StartYear
         {
@@ -168,52 +122,6 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-        /*public int TimeSinceLastEpidemic
-        {
-            get {
-                return timeSinceLastEpidemic;
-            }
-            set {
-                if (value < 0)
-                        throw new InputValueException(value.ToString(),
-                            "Value must = or be > 0.");
-                if (value > 10000)
-                        throw new InputValueException(value.ToString(),
-                            "Value must < 10000.");
-                timeSinceLastEpidemic = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public int TimeToNextEpidemic
-        {
-            get {
-                return timeToNextEpidemic;
-            }
-            set {
-                timeToNextEpidemic = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public TemporalType TempType
-        {
-            get {
-                return tempType;
-            }
-            set {
-                tempType = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public OutbreakPattern RandFunc
-        {
-            get {
-                return randFunc;
-            }
-            set {
-                randFunc = value;
-            }
-        }*/
-        //---------------------------------------------------------------------
         public SHImode SHImode
         {
             get {
@@ -224,187 +132,63 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-        /*public double NormMean
-        {
-            get
-            {
-                return normMean;
-            }
-            set
-            {
-                normMean = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public double NormStDev
-        {
-            get
-            {
-                return normStDev;
-            }
-            set
-            {
-                normStDev = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public double MaxInterval
-        {
-            get {
-                return maxInterval;
-            }
-            set {
-                maxInterval = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public double MinInterval
-        {
-            get {
-                return minInterval;
-            }
-            set {
-                minInterval = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public int MinROS
-        {
-            get {
-                return minROS;
-            }
-            set {
-                if (value < 0)
-                        throw new InputValueException(value.ToString(),
-                            "Value must = or be > 0.");
-                if (maxROS > 0 && value > maxROS)
-                        throw new InputValueException(value.ToString(),
-                            "Value must < or = MaxROS.");
+        // - Climate - PLACEHOLDER FOR CLIMATE INPUTS
+        //VariableNames {get; set;}
+        //StartMonth {get; set;}
+        //EndMonth {get; set;}
+        //ADD HERE!
 
-                minROS = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public int MaxROS
-        {
-            get {
-                return maxROS;
-            }
-            set {
-                if (value < 0)
-                        throw new InputValueException(value.ToString(),
-                            "Value must = or be > 0.");
-                if (minROS > 0 && value < minROS)
-                        throw new InputValueException(value.ToString(),
-                            "Value must > or = MinROS.");
-                maxROS = value;
-            }
-        }*/
-        //---------------------------------------------------------------------
-        // - Climate - 
-        public string ClimateVarName
+        //-- Transmission -------------
+        public double TransmissionRate
         {
             get
             {
-                return climateVarName;
+                return transmissionRate;
             }
             set
             {
-                climateVarName = value;
+                transmissionRate = value;
             }
         }
         //---------------------------------------------------------------------
-        public string ClimateVarSource
+        public double AcquisitionRate
         {
             get
             {
-                return climateVarSource;
+                return acquisitionRate;
             }
             set
             {
-                climateVarSource = value;
+                acquisitionRate = value;
             }
         }
         //---------------------------------------------------------------------
-        public float ClimateThresh_Lowerbound
-        {
-            get
-            {
-                return climateThresh_Lowerbound;
-            }
-            set
-            {
-                climateThresh_Lowerbound = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public float ClimateThresh_Upperbound
-        {
-            get
-            {
-                return climateThresh_Upperbound;
-            }
-            set
-            {
-                climateThresh_Upperbound = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public int ClimateLag
-        {
-            get
-            {
-                return climateLag;
-            }
-            set
-            {
-                climateLag = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public int TimeSinceLastClimate
-        {
-            get
-            {
-                return timeSinceLastClimate;
-            }
-            set
-            {
-                timeSinceLastClimate = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        /// <summary>
-        /// Climate Data Table.
-        /// </summary>
-        public DataTable ClimateDataTable
-        {
-            get
-            {
-                return climateDataTable;
-            }
-            set
-            {
-                climateDataTable = value;
-            }
-        }
+        //>>InitialEpidemMap? do I need to add this here?
 
         //---------------------------------------------------------------------
-        /// <summary>
-        /// Outbreak List.
-        /// </summary>
-        public LinkedList<int> OutbreakList
+        public DispersalTemplate DispersalKernel
         {
             get
             {
-                return outbreakList;
+                return dispersalKernel;
             }
             set
             {
-                outbreakList = value;
+                dispersalKernel = value;
             }
         }
-
+        //---------------------------------------------------------------------
+        public double AlphaCoef
+        {
+            get
+            {
+                return alphaCoef;
+            }
+            set
+            {
+                alphaCoef = value;
+            }
+        }
         //---------------------------------------------------------------------
         public ISppParameters[] SppParameters
         {
@@ -425,17 +209,7 @@ namespace Landis.Extension.BaseEDA
                 ecoParameters = value;
             }
         }
-        //---------------------------------------------------------------------
-        //public IDistParameters[] DistParameters
-        //{
-        //    get {
-        //        return distParameters;
-        //    }
-        //    set {
-        //        distParameters = value;
-        //    }
-        //}
-        //---------------------------------------------------------------------
+         //---------------------------------------------------------------------
         /// <summary>
         /// Disturbances that can alter the SHI value
         /// </summary>
@@ -447,7 +221,7 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-        public ISiteVar<byte> Intensity
+        /*public ISiteVar<byte> Intensity
         {
             get {
                 return intensity;
@@ -455,219 +229,7 @@ namespace Landis.Extension.BaseEDA
             set {
                 intensity = value;
             }
-        }
-        //---------------------------------------------------------------------
-        /*public ISiteVar<Zone> OutbreakZone
-        {
-            get {
-                return outbreakZone;
-            }
-            set {
-                outbreakZone = value;
-            }
-        }
-
-        //---------------------------------------------------------------------
-        public bool Dispersal
-        {
-            get {
-                return dispersal;
-            }
-            set {
-                dispersal = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public int DispersalRate
-        {
-            get {
-                return dispersalRate;
-            }
-            set {
-                if (value <= 0)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be > 0.");
-                dispersalRate = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public double EpidemicThresh
-        {
-            get {
-                return epidemicThresh;
-            }
-            set {
-                if (value < 0.0 || value > 1.0)
-                       throw new InputValueException(value.ToString(),
-                            "Value must be > or = 0 and < or = 1.");
-                epidemicThresh = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public int EpicenterNum
-        {
-            get {
-                return epicenterNum;
-            }
-            set {
-                epicenterNum = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public bool SeedEpicenter
-        {
-            get {
-                return seedEpicenter;
-            }
-            set {
-                seedEpicenter = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public double OutbreakEpicenterCoeff
-        {
-            get {
-                return outbreakEpicenterCoeff;
-            }
-            set {
-                outbreakEpicenterCoeff = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public double OutbreakEpicenterThresh
-        {
-            get
-            {
-                return outbreakEpicenterThresh;
-            }
-            set
-            {
-                if (value < 0.0 || value > 1.0)
-                    throw new InputValueException(value.ToString(),
-                         "Value must be > or = 0 and < or = 1.");
-                outbreakEpicenterThresh = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public double SeedEpicenterCoeff
-        {
-            get {
-                return seedEpicenterCoeff;
-            }
-            set {
-                seedEpicenterCoeff = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public DispersalTemplate DispersalTemp
-        {
-            get {
-                return dispersalTemp;
-            }
-            set {
-                dispersalTemp = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public IEnumerable<RelativeLocation> DispersalNeighbors
-        {
-            get {
-                return dispersalNeighbors;
-            }
-            set {
-                dispersalNeighbors = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public bool NeighborFlag
-        {
-            get {
-                return neighborFlag;
-            }
-            set {
-                neighborFlag = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public NeighborSpeed NeighborSpeedUp
-        {
-            get {
-                return neighborSpeedUp;
-            }
-            set {
-                 neighborSpeedUp = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public int NeighborRadius
-        {
-            get {
-                return neighborRadius;
-            }
-            set {
-                if (value <= 0)
-                        throw new InputValueException(value.ToString(),
-                            "Value must be > 0.");
-                neighborRadius = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public NeighborShape ShapeOfNeighbor
-        {
-            get {
-                return shapeOfNeighbor;
-            }
-            set {
-                shapeOfNeighbor = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public double NeighborWeight
-        {
-            get {
-                return neighborWeight;
-            }
-            set {
-                if (value < 0)
-                        throw new InputValueException(value.ToString(),
-                            "Value must = or be > 0.");
-                neighborWeight = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public IEnumerable<RelativeLocationWeighted> ResourceNeighbors
-        {
-            get {
-                return resourceNeighbors;
-            }
-            set {
-                resourceNeighbors = value;
-            }
         }*/
-        //---------------------------------------------------------------------
-        public double Class2_SS //threshold for site susceptibility  ---> intensity of disturbance is derived from here
-        {
-            get
-            {
-                return class2_SS;
-            }
-            set
-            {
-                class2_SS = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public double Class3_SS //threshold for site susceptibility  ---> intensity of disturbance is derived from here
-        {
-            get
-            {
-                return class3_SS;
-            }
-            set
-            {
-                class3_SS = value;
-            }
-        }
         //---------------------------------------------------------------------
         public IEnumerable<ISpecies> NegSppList
         {
@@ -678,6 +240,18 @@ namespace Landis.Extension.BaseEDA
             set
             {
                 negSppList = value;
+            }
+        }
+        //---------------------------------------------------------------------
+        public IEnumerable<ISpecies> MortSppList
+        {
+            get
+            {
+                return mortSppList;
+            }
+            set
+            {
+                mortSppList = value;
             }
         }
         //---------------------------------------------------------------------
@@ -704,6 +278,7 @@ namespace Landis.Extension.BaseEDA
                 advRegenAgeCutoff = value;
             }
         }
+
         //---------------------------------------------------------------------
         /// <summary>
         /// Objects and Lists must be initialized.
@@ -712,57 +287,20 @@ namespace Landis.Extension.BaseEDA
         {
             SppParameters = new ISppParameters[sppCount];
             EcoParameters = new IEcoParameters[ecoCount];
-            //DistParameters = new IDistParameters[distCount];
             disturbanceTypes = new List<IDisturbanceType>();
             negSppList = new List<ISpecies>();
-            //advRegenSppList = new List<ISpecies>();
-            //dispersalNeighbors = new List<RelativeLocation>();
-            //resourceNeighbors = new List<RelativeLocationWeighted>();
-            intensity = PlugIn.ModelCore.Landscape.NewSiteVar<byte>();
-            //outbreakZone = PlugIn.ModelCore.Landscape.NewSiteVar<Zone>();
-            climateDataTable = new DataTable();
 
+            //advRegenSppList = new List<ISpecies>(); //DO WE NEED THIS? IT's NOT DEFINED IN THE IAGENT interface
+
+            //severity = PlugIn.ModelCore.Landscape.NewSiteVar<byte>();
+            
             for (int i = 0; i < sppCount; i++)
                 SppParameters[i] = new SppParameters();
             for (int i = 0; i < ecoCount; i++)
                 EcoParameters[i] = new EcoParameters();
-            //for (int i = 0; i < distCount; i++)
-            //   DistParameters[i] = new DistParameters();
         }
 
     }
 
-    /*public class RelativeLocationWeighted
-    {
-        private RelativeLocation location;
-        private double weight;
-
-        //---------------------------------------------------------------------
-        public RelativeLocation Location
-        {
-            get {
-                return location;
-            }
-            set {
-                location = value;
-            }
-        }
-
-        public double Weight
-        {
-            get {
-                return weight;
-            }
-            set {
-                weight = value;
-            }
-        }
-
-        public RelativeLocationWeighted (RelativeLocation location, double weight)
-        {
-            this.location = location;
-            this.weight = weight;
-        }
-
-    }*/
+ 
 }

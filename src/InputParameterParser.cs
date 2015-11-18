@@ -50,25 +50,44 @@ namespace Landis.Extension.BaseEDA
             //----------------------------------------------------------
             // Read in Maps and Log file names.
 
-            InputVar<string> mapNames = new InputVar<string>("MapNames");
-            ReadVar(mapNames);
-            parameters.MapNamesTemplate = mapNames.Value;
+            // - infected -
+            InputVar<string> infMapNames = new InputVar<string>("INFMapNames");
+            ReadVar(infMapNames);
+            parameters.InfMapNames = infMapNames.Value; //check why this is different from others below
 
-            InputVar<string> epiMapNames = new InputVar<string>("EPIMapNames");
+            // - diseased -
+            InputVar<string> disMapNames = new InputVar<string>("DISMapNames");
             try
             {
-                ReadVar(epiMapNames);
-                parameters.EPIMapNames = epiMapNames.Value;
+                ReadVar(disMapNames);
+                parameters.DisMapNames = disMapNames.Value;
             }
             catch (LineReaderException errString)
             {
-                if (!(errString.MultiLineMessage[1].Contains("Found the name \"EPDMapNames\" but expected \"EPIMapNames\"")))
+                if (!(errString.MultiLineMessage[1].Contains("Found the name \"EPDMapNames\" but expected \"DISMapNames\"")))
                 {
                     throw errString;
                 }
 
             }
 
+            // - mortality -
+            InputVar<string> mortMapNames = new InputVar<string>("MORTMapNames");
+            try
+            {
+                ReadVar(mortMapNames);
+                parameters.MortMapNames = mortMapNames.Value;
+            }
+            catch (LineReaderException errString)
+            {
+                if (!(errString.MultiLineMessage[1].Contains("Found the name \"EPDMapNames\" but expected \"MORTMapNames\"")))
+                {
+                    throw errString;
+                }
+
+            }
+
+            // - logfile -
             InputVar<string> logFile = new InputVar<string>("LogFile");
             ReadVar(logFile);
             parameters.LogFileName = logFile.Value;

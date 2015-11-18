@@ -107,11 +107,11 @@ namespace Landis.Extension.BaseEDA
 
                     //---- APPLY DISTURBANCE MODIFIERS (DMs) --------
                     // The assumption for DMs is that their impact decreases LINEARLY over time up to a max impact duration
-
-                    // Check for harvest effects on SHI
+      
                     IEnumerable<IDisturbanceType> disturbanceTypes = agent.DisturbanceTypes;
                     foreach (DisturbanceType disturbance in disturbanceTypes)
                     {
+                        //Check for harvest effects on SHI
                         if (SiteVars.HarvestCohortsKilled != null && SiteVars.HarvestCohortsKilled[site] > 0)
                         {
                             lastDisturb = SiteVars.TimeOfLastHarvest[site];
@@ -265,27 +265,6 @@ namespace Landis.Extension.BaseEDA
                 else SiteVars.SiteHostIndexMod[site] = 0.0;
             } //end Active sites
         } //end Function
-
-        /*
-        //---------------------------------------------------------------------
-        ///<summary>
-        ///Calculate SITE EPIDEMIOLOGICAL DISTURBANCE PROBABILITY (EDP)
-        ///</summary>
-        //---------------------------------------------------------------------
-        public static void SiteDistProbability(IAgent agent)
-
-        {
-            double SHIMod;
-
-            PlugIn.ModelCore.UI.WriteLine("   Calculating EDA Epidemiological Disturbance Probability.");
-
-             foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
-              {
-                SHIMod = SiteVars.SiteHostIndexMod[site];
-                SiteVars.EpidemDistProb[site] = System.Math.Max(0, SHIMod);
-              }
-            
-        }*/
 
     }//End of SiteResources
 }

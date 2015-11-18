@@ -1,29 +1,21 @@
 LandisData "EDA Agent"
 
 EDAAgentName		ramorum
->>EDPCalibrator		1   DO WE STILL NEED THIS?
-SHIMode			mean
+SHIMode			mean     <<possibly add weighted by biomass!
 >>StartYear 50
 >>EndYear   100
 
+>>-------- Climate Input ----------------
+>>VariableNames	Precip MeanTemp	
+>>StartMonth	April
+>>EndMonth	June
 
->>-------- Dispersal Inputs ----------------------
-Dispersal		no		<<yes or no
-DispersalRate		4000		<<meters/year
-EpidemicThresh		0.5
-InitialEpicenterNum	0
-OutbreakEpicenterCoeff	0.01
-OutbreakEpicenterThresh 0.0
-SeedEpicenter		yes		<<yes or no
-SeedEpicenterCoeff	0.5
-DispersalTemplate	MaxRadius	<<MaxRadius, 4N,
-					<<8N, 12N, or 24N
-
->>-- Intensity Class Thresholds --
->>IntensityClass1_BDP 	0.0 -- Hardwired value
-IntensityClass2_BDP 	0.25
-IntensityClass3_BDP 	0.50
-
+>>-------- Transmission Input ----------------------
+TransmissionRate	1.8	 <<beta0 = Mean rate at which an infected cell infects another cell (per time step)  
+AcquisitionRate		0.4	 <<rD = Rate of acquisition of detectable symptoms (per time step)
+>>InitialEpidemMap
+DispersalKernel		PowerLaw	<<PowerLaw, NegExp
+AlphaCoef		3.55		<<Exponent of dispersal kernel
 
 >>Ecoregion Modifiers
 
@@ -32,11 +24,9 @@ DisturbanceModifiers
     0.33	20		WindSeverity4 WindSeverity5 AspenClearcut
    -0.25	20		Fire MaxAgeClearcut
 
->>Climate Modifiers??
-
 EDASpeciesParameters
 >>         -------------Host Value--------------  -------------Vulnerability-------------
->>Species     Low    	  Medium       High	  Class3        Class2        Class1	    CFS
+>>Species     Low    	  Medium       High	  Low        	Medium        High	    CFS
 >>Name     Age Score    Age Score    Age Score    Age MortProb  Age MortProb  Age MortProb  Conifer?
 >> ---------------------------------------------------------------------------------------------
 Lithdens   1     0.25	20   0.5      40  1.0	  11  1.0	20  1.0	     50  1.0		yes
@@ -45,10 +35,10 @@ Querchry   999		999
 Querkell   999		999
 Umbecali   1
 
-IgnoredSpecies
-pinubank
-pinuresi
-pinustro
-thujocci
-tsugcana
+IgnoredSpecies   << list species to be ignored in the SHI calculation
 
+
+MortalitySpecies  << list species to be considered for cohort mortality by disease (and mapping)
+Queragri
+Querchry
+Querkell

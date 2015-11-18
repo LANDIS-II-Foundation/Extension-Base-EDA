@@ -4,29 +4,33 @@ using System.Linq;
 using System.Text;
 using Landis.Library.Metadata;
 
+
 namespace Landis.Extension.BaseEDA
 {
     public class EventsLog
     {
-        //log.Write("CurrentTime, ROS, AgentName, NumCohortsKilled, NumSitesDamaged, MeanSeverity");
-
+      
+        //Specify attributes to be written in the log file?
         [DataFieldAttribute(Unit = FieldUnits.Year, Desc = "Simulation Year")]
         public int Time {set; get;}
 
         [DataFieldAttribute(Desc = "Agent Name")]
         public string AgentName { set; get; }
 
-        //[DataFieldAttribute(Unit = FiledUnits.None, Desc = "Total Number of Sites in Event")]
-        //public int TotalSites { set; get; }
+        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Susceptible Sites in Event")]
+        public int SusceptibleSites { set; get; }
 
-        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Cohorts Killed")]
+        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Infected Sites in Event")]
+        public int InfectedSites { set; get; }
+
+        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Diseased Sites in Event")]
+        public int DiseasedSites { set; get; }
+
+        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Cohorts Killed for Selected Species of Interest")]
         public int CohortsKilled { set; get; }
 
-        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Damaged Sites in Event")]
-        public int DamagedSites { set; get; }
-
-        [DataFieldAttribute(Desc = "Mean Severity (1-5)", Format="0.00")]
-        public double MeanSeverity { set; get; }
+        //[DataFieldAttribute(Desc = "Mean Severity (1-5)", Format="0.00")]
+        //public double MeanSeverity { set; get; }
 
     }
 }

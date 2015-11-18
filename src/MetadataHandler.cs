@@ -19,8 +19,6 @@ namespace Landis.Extension.BaseEDA
 
         public static void InitializeMetadata(int Timestep, 
             string intensityMapFileName,   //should this name be MapFileName instead or does not matter?
-            //string srdMapFileName, 
-            //string nrdMapFileName,
             string mortalityMapFileName,   //should this name be epiMapFileName instead or does not matter?
             string logFileName, 
             IEnumerable<IAgent> manyAgentParameters, 

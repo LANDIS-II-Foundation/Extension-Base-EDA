@@ -14,30 +14,29 @@ namespace Landis.Extension.BaseEDA
     {
         private static IEcoregionDataset ecoregions;
 
-        //WE ARE INTERESTED NOT ONLY IN THE INTENSITY OF AN INFECTION BUT ALSO IN DISEASE INTENSITY
-        //WHILE INFECTION INTENSITY IS A FUNCTION OF THE DISTURBANCE PROBABILITY OF A SITE (see Class_SS thresholds)
-        //DISEASE INTENSITY IF A FUNCTION OF THE NUMBER OF COHORTS KILLED IN A SITE (we MUST get this info)
-
         private IAgent epidemicParms;
-        private int totalSitesDamaged;
-        private int totalCohortsKilled;
-        private double meanIntensity;   //changed to "Intensity" instead of "Severity"
-        private int siteIntensity;      //changed to "Intensity" instead of "Severity"
         private double random;
+        //private int advRegenAgeCutoff;  DOES THIS HAVE TO BE OUTCOMMENTED?
+
+        // - TOTAL -
+        //private int totalSitesDamaged; //not sure we need this...
+        private int totalCohortsKilled; //customize this to ONLY include the species of interest
+        //private double meanIntensity;   //changed to "Intensity" instead of "Severity"
+       
+        // - SITE -
+        //private int siteIntensity;      //changed to "Intensity" instead of "Severity"
         private double siteVulnerability;
-        //private int advRegenAgeCutoff;
-        private int siteCohortsKilled;
+        private int siteCohortsKilled; //customize this to ONLY include the species of interest
         private int siteCFSconifersKilled;
         private int[] sitesInEvent;
 
-        private ActiveSite currentSite; // current site where cohorts are being damaged
+        private ActiveSite currentSite; // current site where cohorts are being affected
 
-        //ROS
-        //private enum TempPattern        {random, cyclic};   
-        //NRD 
-        //private enum NeighborShape      {uniform, linear, gaussian};
+        // - Transmission - 
+        private enum DispersalTemplate {PowerLaw, NegExp};   
+
         private enum InitialCondition   {map, none};   //is this to use initial map of infected sites?
-        private enum SHSmode { SHSmax, SHSmean };
+        private enum SHImode { SHImax, SHImean };
 
 
         //---------------------------------------------------------------------
@@ -61,24 +60,6 @@ namespace Landis.Extension.BaseEDA
         {
             get {
                 return totalCohortsKilled;
-            }
-        }
-
-        //---------------------------------------------------------------------
-
-        public double MeanIntensity
-        {
-            get {
-                return meanIntensity;
-            }
-        }
-
-        //---------------------------------------------------------------------
-
-        public int TotalSitesDamaged
-        {
-            get {
-                return totalSitesDamaged;
             }
         }
         //---------------------------------------------------------------------
@@ -120,9 +101,8 @@ namespace Landis.Extension.BaseEDA
 
             ecoregions = PlugIn.ModelCore.Ecoregions;
 
-
             //.ActiveSiteValues allows you to reset all active site at once.
-            //SiteVars.NeighborResourceDom.ActiveSiteValues = 0;
+
             SiteVars.EpidemDistProb.ActiveSiteValues = 0;
             SiteVars.SiteHostSusceptMod.ActiveSiteValues = 0;
             SiteVars.SiteHostSuscept.ActiveSiteValues = 0;
