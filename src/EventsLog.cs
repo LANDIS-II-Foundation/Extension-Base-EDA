@@ -17,20 +17,20 @@ namespace Landis.Extension.BaseEDA
         [DataFieldAttribute(Desc = "Agent Name")]
         public string AgentName { set; get; }
 
-        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Susceptible Sites in Event")]
-        public int SusceptibleSites { set; get; }
-
         [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Infected Sites in Event")]
         public int InfectedSites { set; get; }
 
         [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Diseased Sites in Event")]
         public int DiseasedSites { set; get; }
 
-        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Cohorts Killed for Selected Species of Interest")]
+        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Damaged Sites (Mortality) in Event")]
+        public int DamagedSites { set; get; }
+
+        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Cohorts Killed (All Species) in Event")]
         public int CohortsKilled { set; get; }
 
-        //[DataFieldAttribute(Desc = "Mean Severity (1-5)", Format="0.00")]
-        //public double MeanSeverity { set; get; }
+        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Cohorts Killed (Selected Species) in Event")]
+        public int CohortsMortSppKilled { set; get; }
 
     }
 }
