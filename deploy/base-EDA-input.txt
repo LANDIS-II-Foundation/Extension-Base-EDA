@@ -2,9 +2,7 @@ LandisData "Base EDA"
 
 Timestep	1
 
-INFMapNames	eda/{agentName}-INF-{timestep}.img
-
-DISMapNames     eda/{agentName}-DIS-{timestep}.img
+MapNames	eda/{agentName}-{timestep}.img
 
 MORTMapNames     eda/{agentName}-MORT-{timestep}.img
 
