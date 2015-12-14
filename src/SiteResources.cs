@@ -182,33 +182,33 @@ namespace Landis.Extension.BaseEDA
                                 }
                             }
                         }
-                        /*Check for Biological Disturbance Agents (BDA) effects on SHI
-                        if (SiteVars.WindSeverity != null && SiteVars.WindSeverity[site] > 0)
+                        //Check for Biological Disturbance Agents (BDA) effects on SHI
+                        if (SiteVars.BDASeverity != null && SiteVars.BDASeverity[site] > 0)
                         {
-                            lastDisturb = SiteVars.TimeOfLastWind[site];
+                            lastDisturb = SiteVars.TimeOfLastBDA[site];
                             duration = disturbance.ImpactDuration;
 
-                            if (SiteVars.TimeOfLastWind != null &&
+                            if (SiteVars.TimeOfLastBDA != null &&
                                 (PlugIn.ModelCore.CurrentTime - lastDisturb <= duration))
                             {
                                 foreach (string pName in disturbance.PrescriptionNames)
                                 {
-                                    if (pName.StartsWith("WindSeverity"))
+                                    if (pName.StartsWith("BDASeverity"))
                                     {
-                                        if ((pName.Substring((pName.Length - 1), 1)).ToString() == SiteVars.WindSeverity[site].ToString())
+                                        if ((pName.Substring((pName.Length - 1), 1)).ToString() == SiteVars.BDASeverity[site].ToString())
                                         {
                                             disturbMod = disturbance.SHIModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
                                             sumDisturbMods += disturbMod;
                                         }
                                     }
-                                    else if (pName.Trim() == "Wind") // Generic for all wind
+                                    else if (pName.Trim() == "BDA") // Generic for all BDAs
                                     {
                                         disturbMod = disturbance.SHIModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
                                         sumDisturbMods += disturbMod;
                                     }
                                 }
                             }
-                        }*/
+                        }
                         //Check for Biomass Insects effects on SHI
                         if (SiteVars.TimeOfLastBiomassInsects != null && SiteVars.TimeOfLastBiomassInsects[site] > 0)
                         {
