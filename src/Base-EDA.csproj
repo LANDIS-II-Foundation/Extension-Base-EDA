@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="Agent.cs" />
     <Compile Include="AgentParameterParser.cs" />
+    <Compile Include="BytePixel.cs" />
     <Compile Include="ClimateData.cs" />
     <Compile Include="CSVParser.cs" />
     <Compile Include="DisturbanceType.cs" />
@@ -92,7 +93,6 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ShortPixel.cs" />
     <Compile Include="EcoParameters.cs" />
-    <Compile Include="Epicenters.cs" />
     <Compile Include="Epidemic.cs" />
     <Compile Include="InputParameterParser.cs" />
     <Compile Include="InputParameters.cs" />
