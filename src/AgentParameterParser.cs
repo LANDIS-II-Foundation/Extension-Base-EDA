@@ -98,11 +98,13 @@ namespace Landis.Extension.BaseEDA
             InputVar<string> ecoName = new InputVar<string>("Ecoregion Name");
             InputVar<double> ecoModifier = new InputVar<double>("Ecoregion Modifier");
 
-            Dictionary <string, int> lineNumbers = new Dictionary<string, int>();
+            Dictionary<string, int> lineNumbers = new Dictionary<string, int>();
             const string DistParms = "DisturbanceModifiers";
             const string SppParms = "EDASpeciesParameters";
 
-            while (! AtEndOfInput && CurrentName != DistParms && CurrentName != SppParms) {
+            while (!AtEndOfInput && CurrentName != DistParms && CurrentName != SppParms)
+            {
+
                 StringReader currentLine = new StringReader(CurrentLine);
 
                 ReadValue(ecoName, currentLine);
@@ -150,7 +152,7 @@ namespace Landis.Extension.BaseEDA
                     StringReader currentLine = new StringReader(CurrentLine);
 
                     ReadValue(distModifier, currentLine);
-                                     
+
                     IDisturbanceType currentDisturbanceType = new DisturbanceType();
                     agentParameters.DisturbanceTypes.Add(currentDisturbanceType);
 
@@ -178,6 +180,7 @@ namespace Landis.Extension.BaseEDA
                     GetNextLine();
                 }
             }
+
             //--------- Read In Species Table ---------------------------------------
             PlugIn.ModelCore.UI.WriteLine("Begin parsing SPECIES table.");
 
@@ -188,11 +191,11 @@ namespace Landis.Extension.BaseEDA
 
             //SHI (Host Index)
             InputVar<int> lowHostAge = new InputVar<int>("Low Host Index Age");
-            InputVar<double> lowHostScore = new InputVar<double>("Low Host Index Score");
+            InputVar<int> lowHostScore = new InputVar<int>("Low Host Index Score");
             InputVar<int> mediumHostAge = new InputVar<int>("Medium Host Index Age");
-            InputVar<double> mediumHostScore = new InputVar<double>("Medium Host Index Score");
+            InputVar<int> mediumHostScore = new InputVar<int>("Medium Host Index Score");
             InputVar<int> highHostAge = new InputVar<int>("High Host Index Age");
-            InputVar<double> highHostScore = new InputVar<double>("High Host Index Score");
+            InputVar<int> highHostScore = new InputVar<int>("High Host Index Score");
 
             //SHV (Vulnerability)
             InputVar<int> lowVulnHostAge = new InputVar<int>("Low Vulnerability Host Age");
@@ -207,14 +210,11 @@ namespace Landis.Extension.BaseEDA
 
             const string NegSpp = "IgnoredSpecies";  //does this include all spp that are not in the Species Table?
 
-            const string AdvRegenSpp = "AdvancedRegenSpecies"; //WHAT IS THIS?
-            const string AdvRegenMaxAge = "AgeCutoff";          //WHAT IS THIS?
-
             //LIST OF ALL SPECIES TO BE LOOKED AT FOR MORTALITY CAUSED DISEASE (for mapping purposes also). 
             //Not all species that die from a disease may be of interest...
             const string MortSpp = "MortalitySpecies";
 
-            while ((!AtEndOfInput) && (CurrentName != NegSpp) && (CurrentName != AdvRegenSpp) && (CurrentName != AdvRegenMaxAge))
+            while ((!AtEndOfInput) && (CurrentName != NegSpp))
             {
                 StringReader currentLine = new StringReader(CurrentLine);
 
@@ -285,14 +285,13 @@ namespace Landis.Extension.BaseEDA
             }
 
             //--------- Read In Ignored Species List ---------------------------------------
-
             List<ISpecies> negSppList = new List<ISpecies>();
-            if (!AtEndOfInput && (CurrentName != AdvRegenSpp) && (CurrentName != AdvRegenMaxAge) && (CurrentName != MortSpp))
+            if (!AtEndOfInput && (CurrentName != MortSpp))
             {
                 ReadName(NegSpp);
                 InputVar<string> negSppName = new InputVar<string>("Ignored Spp Name");
 
-                while (!AtEndOfInput && (CurrentName != AdvRegenSpp) && (CurrentName != AdvRegenMaxAge) && (CurrentName != MortSpp))
+                while (!AtEndOfInput && (CurrentName != MortSpp))
                 {
                     StringReader currentLine = new StringReader(CurrentLine);
 
@@ -316,81 +315,8 @@ namespace Landis.Extension.BaseEDA
             }
             agentParameters.NegSppList = negSppList;
 
-            //--------- Read In Mortality Species List ---------------------------------------
+        }                     
 
-            List<ISpecies> mortSppList = new List<ISpecies>();
-            if (!AtEndOfInput && (CurrentName != AdvRegenSpp) && (CurrentName != AdvRegenMaxAge) && (CurrentName != NegSpp))
-            {
-                ReadName(MortSpp);
-                InputVar<string> mortSppName = new InputVar<string>("Mortality Spp Name");
-                while (!AtEndOfInput && (CurrentName != AdvRegenSpp) && (CurrentName != AdvRegenMaxAge) && (CurrentName != NegSpp))
-                {
-                    StringReader currentLine = new StringReader(CurrentLine);
-                    ReadValue(mortSppName, currentLine);
-                    ISpecies species = SpeciesDataset[mortSppName.Value.Actual];
-                    if (species == null)
-                        throw new InputValueException(mortSppName.Value.String,
-                                                      "{0} is not a species name.",
-                                                      mortSppName.Value.String);
-                    int lineNumber;
-                    if (lineNumbers.TryGetValue(species.Name, out lineNumber))
-                        PlugIn.ModelCore.UI.WriteLine("WARNING: The species {0} was previously used on line {1}.", mortSppName.Value.String, lineNumber);
-                    else
-                        lineNumbers[species.Name] = LineNumber;
-
-                    mortSppList.Add(species);
-
-                    GetNextLine();
-                }
-            }
-            agentParameters.MortSppList = mortSppList;
-
-
-            //--------- Read In Advanced Regen Species List ---------------------------------------
-
-            List<ISpecies> advRegenSppList = new List<ISpecies>();
-            if (!AtEndOfInput && (CurrentName != AdvRegenMaxAge))
-            {
-                ReadName(AdvRegenSpp);
-                InputVar<string> advRegenSppName = new InputVar<string>("Advanced Regen Spp Name");
-
-                while (!AtEndOfInput && CurrentName != "AgeCutoff")
-                {
-                    StringReader currentLine = new StringReader(CurrentLine);
-
-                    ReadValue(advRegenSppName, currentLine);
-                    ISpecies species = SpeciesDataset[advRegenSppName.Value.Actual];
-                    if (species == null)
-                        throw new InputValueException(advRegenSppName.Value.String,
-                                                      "{0} is not a species name.",
-                                                      advRegenSppName.Value.String);
-
-                    lineNumbers[species.Name] = LineNumber;
-
-                    advRegenSppList.Add(species);
-
-                    GetNextLine();
-
-                }
-            }
-            agentParameters.AdvRegenSppList = advRegenSppList;
-
-            InputVar<int> advRegenAgeCutoff = new InputVar<int>("AgeCutoff");
-            if (!AtEndOfInput)
-            {
-                ReadVar(advRegenAgeCutoff);
-                agentParameters.AdvRegenAgeCutoff = advRegenAgeCutoff.Value;
-            }
-            else
-            {
-                agentParameters.AdvRegenAgeCutoff = 0;
-            }
-
-
-            return agentParameters; //.GetComplete();
-        }
-
-        //--------------------------------------------------------------------------------
         public static SHImode SHIParse(string word)
         {
             if (word == "max")
