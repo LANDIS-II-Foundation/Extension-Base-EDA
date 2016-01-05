@@ -71,6 +71,123 @@ namespace Landis.Extension.BaseEDA
 
             // - Climate Input - 
             //ADD HERE
+            // Read Climate Variables
+            ReadName("ClimateVariables");
+            Dictionary<string, int> lineNumbers = new Dictionary<string, int>();
+            lineNumbers.Clear();
+            InputVar<string> climateVarName = new InputVar<string>("Climate Variable Name");
+            InputVar<string> climateLibraryVarName = new InputVar<string>("Climate Library Variable Name");
+            InputVar<string> sourceName = new InputVar<string>("Source Name");
+            InputVar<int> minMonth = new InputVar<int>("Min Month");
+            InputVar<int> maxMonth = new InputVar<int>("Max Month");
+            InputVar<string> transform = new InputVar<string>("Tranformation");
+           
+            IClimateVariableDefinition climateVarDefn = null;
+            while (!AtEndOfInput && (CurrentName != "DerivedClimateVariables"))
+            {
+                StringReader currentLine = new StringReader(CurrentLine);
+                ReadValue(climateVarName, currentLine);
+                CheckForRepeatedName(climateVarName.Value, "var name", lineNumbers);
+
+                climateVarDefn = new ClimateVariableDefinition();
+                climateVarDefn.Name = climateVarName.Value;
+                
+                ReadValue(minMonth, currentLine);
+                climateVarDefn.MinMonth = minMonth.Value;
+
+                TextReader.SkipWhitespace(currentLine);
+                string currentWord = TextReader.ReadWord(currentLine);
+                if (currentWord != "to")
+                {
+                    StringBuilder message = new StringBuilder();
+                    message.AppendFormat("Expected \"to\" after the minimum month ({0})",
+                                         minMonth.Value.String);
+                    if (currentWord.Length > 0)
+                        message.AppendFormat(", but found \"{0}\" instead", currentWord);
+                    throw NewParseException(message.ToString());
+                }
+
+                ReadValue(maxMonth, currentLine);
+                climateVarDefn.MaxMonth = maxMonth.Value;
+
+                ReadValue(sourceName, currentLine);
+                climateVarDefn.SourceName = sourceName.Value;
+
+                ReadValue(climateLibraryVarName, currentLine);
+                climateVarDefn.ClimateLibVariable = climateLibraryVarName.Value;
+
+                ReadValue(transform, currentLine);
+                climateVarDefn.Transform = transform.Value;
+
+                agentParameters.ClimateVars.Add(climateVarDefn);
+                GetNextLine();
+            }
+            // Read Derived Climate Variables
+            ReadName("DerivedClimateVariables");
+            lineNumbers.Clear();
+            InputVar<string> derivedClimateVarName = new InputVar<string>("Derived Climate Variable Name");
+            InputVar<string> function = new InputVar<string>("Function");
+            InputVar<string> time = new InputVar<string>("Time");
+            InputVar<int> count = new InputVar<int>("Count");
+            IDerivedClimateVariable derivedClimateVars = null;
+            while (!AtEndOfInput && (CurrentName != "TempIndex"))
+            {
+                StringReader currentLine = new StringReader(CurrentLine);
+                ReadValue(derivedClimateVarName, currentLine);
+                CheckForRepeatedName(derivedClimateVarName.Value, "var name", lineNumbers);
+
+                derivedClimateVars = new DerivedClimateVariable();
+                derivedClimateVars.Name = derivedClimateVarName.Value;
+
+                ReadValue(function, currentLine);
+                derivedClimateVars.Function = function.Value;
+
+                ReadValue(time, currentLine);
+                derivedClimateVars.Time = time.Value;
+
+                ReadValue(count, currentLine);
+                derivedClimateVars.Count = count.Value;
+
+                agentParameters.DerivedClimateVars.Add(derivedClimateVars);
+
+                GetNextLine();
+            }
+            // Read Temp Index model
+            ReadName("TempIndex");
+            lineNumbers.Clear();
+            InputVar<string> tempIndexVarName = new InputVar<string>("Temp Index Variable Name");
+            InputVar<string> tempIndexParamValue = new InputVar<string>("Parameter Value");
+            List<string> tempIndexParameters = new List<string>();
+            List<string> tempIndexParamValues = new List<string>();
+
+             while (!AtEndOfInput && (CurrentName != "WeatherIndexVariables"))
+            {
+                StringReader currentLine = new StringReader(CurrentLine);
+                ReadValue(tempIndexVarName, currentLine);
+                CheckForRepeatedName(tempIndexVarName.Value, "var name", lineNumbers);
+
+                agentParameters.TempIndexModel.Parameters.Add(tempIndexVarName.Value);
+
+                ReadValue(tempIndexParamValue, currentLine);
+                agentParameters.TempIndexModel.Values.Add(tempIndexParamValue.Value);
+
+                GetNextLine();
+            }
+
+             // Read Weather Index Variables
+             ReadName("WeatherIndexVariables");
+             lineNumbers.Clear();
+             InputVar<string> weatherIndexVarName = new InputVar<string>("Weather Index Variable Name");
+             while (!AtEndOfInput && (CurrentName != "TransmissionRate"))
+             {
+                 StringReader currentLine = new StringReader(CurrentLine);
+                 ReadValue(weatherIndexVarName, currentLine);
+                 CheckForRepeatedName(weatherIndexVarName.Value, "var name", lineNumbers);
+
+                 agentParameters.WeatherIndexVars.Add(weatherIndexVarName.Value);
+
+                 GetNextLine();
+             }
 
             // - Transmission Input -
 
@@ -366,6 +483,18 @@ namespace Landis.Extension.BaseEDA
             Type.SetDescription<DispersalTemplate>("Dispersal Template");
             InputValues.Register<DispersalTemplate>(DispTParse);
 
+        }
+        //---------------------------------------------------------------------
+        private void CheckForRepeatedName(InputValue<string> name,
+                                          string description,
+                                          Dictionary<string, int> lineNumbers)
+        {
+            int lineNumber;
+            if (lineNumbers.TryGetValue(name.Actual, out lineNumber))
+                throw new InputValueException(name.String,
+                                              "The {0} {1} was previously used on line {2}",
+                                              description, name.String, lineNumber);
+            lineNumbers[name.Actual] = LineNumber;
         }
     }
 }
