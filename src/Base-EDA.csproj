@@ -85,11 +85,14 @@
     <Compile Include="Agent.cs" />
     <Compile Include="AgentParameterParser.cs" />
     <Compile Include="ClimateData.cs" />
+    <Compile Include="DerivedClimateVariable.cs" />
+    <Compile Include="ClimateVariableDefinition.cs" />
     <Compile Include="CSVParser.cs" />
     <Compile Include="DisturbanceType.cs" />
     <Compile Include="EventsLog.cs" />
     <Compile Include="MetadataHandler.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="TempIndexModel.cs" />
     <Compile Include="ShortPixel.cs" />
     <Compile Include="EcoParameters.cs" />
     <Compile Include="Epicenters.cs" />

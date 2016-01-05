@@ -65,10 +65,11 @@ namespace Landis.Extension.BaseEDA
         private SHImode shiMode;
 
         // - Climate - PLACEHOLDER FOR CLIMATE INPUTS
-        //VariableNames {get; set;}
-        //StartMonth {get; set;}
-        //EndMonth {get; set;}
-        //ADD HERE!
+        private List<IClimateVariableDefinition> climateVarDefn;
+        private List<IDerivedClimateVariable> varDefn;
+        private ITempIndexModel tempIndexModel;
+        private List<string> weatherIndexVars;
+        private DataTable climateDataTable;
 
         //-- Transmission -------------
         private double transmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
@@ -133,10 +134,45 @@ namespace Landis.Extension.BaseEDA
         }
         //---------------------------------------------------------------------
         // - Climate - PLACEHOLDER FOR CLIMATE INPUTS
-        //VariableNames {get; set;}
-        //StartMonth {get; set;}
-        //EndMonth {get; set;}
-        //ADD HERE!
+
+        public List<IClimateVariableDefinition> ClimateVars
+        {
+            get { return climateVarDefn; }
+        
+        }
+        //---------------------------------------------------------------------
+        public List<IDerivedClimateVariable> DerivedClimateVars
+        {
+            get { return varDefn; }
+        }
+        //---------------------------------------------------------------------
+        public ITempIndexModel TempIndexModel
+        {
+            get
+            {
+                return tempIndexModel;
+            }
+        }
+        //---------------------------------------------------------------------
+        public List<string> WeatherIndexVars
+        {
+            get { return weatherIndexVars; }
+        }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Climate Data Table.
+        /// </summary>
+        public DataTable ClimateDataTable
+        {
+            get
+            {
+                return climateDataTable;
+            }
+            set
+            {
+                climateDataTable = value;
+            }
+        }
 
         //-- Transmission -------------
         public double TransmissionRate

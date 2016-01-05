@@ -6,9 +6,33 @@ SHIMode			mean     <<possibly add weighted by biomass!
 >>EndYear   100
 
 >>-------- Climate Input ----------------
->>VariableNames	Precip MeanTemp	
->>StartMonth	April
->>EndMonth	June
+ClimateVariables
+>> Var Name	Months	Source	  ClimateVar	Transform	
+>> --------	------	------	  ----------	---------
+    temp	4 to 6	Library	  Temp		none
+    precip	4 to 6  Library	  Precip	Precip5DSum
+
+DerivedClimateVariables
+>> Var Name	Function	Time	Count  << Function = Mean or Sum; Time = Day, Week or Month
+>> --------	--------	----	-----
+  Precip5DSum	Sum		Day	  5
+
+TempIndex	<< a + b * exp(c[ln(Variable / d) / e] ^ f)
+>> Parameter	Value
+>> --------	-----
+  Variable	Temp
+  a		108.6
+  b		904.8
+  c		-0.5
+  d		15.87
+  e		0.2422
+  f		2
+
+
+WeatherIndexVariables  << Var1 * Var2*...
+Precip5Dsum
+TempIndex
+
 
 >>-------- Transmission Input ----------------------
 TransmissionRate	1.8	 <<beta0 = Mean rate at which an infected cell infects another cell (per time step)  
