@@ -84,6 +84,10 @@ namespace Landis.Extension.BaseEDA
 
             // InitialEpidemMap ??
 
+            InputVar<DispersalType> dt = new InputVar<DispersalType>("DispersalType");
+            ReadVar(dt);
+            agentParameters.DispersalType = dt.Value;
+
             InputVar<DispersalTemplate> dk = new InputVar<DispersalTemplate>("DispersalKernel");
             ReadVar(dk);
             agentParameters.DispersalKernel = dk.Value;
@@ -208,11 +212,11 @@ namespace Landis.Extension.BaseEDA
             //CFS
             InputVar<bool> cfsConifer = new InputVar<bool>("CFS Conifer type:  yes/no");
 
-            const string NegSpp = "IgnoredSpecies";  //does this include all spp that are not in the Species Table?
+            //MORTALITY SPECIES TO CONSIDER FOR PLOTTING
+            InputVar<bool> mortSppFlag = new InputVar<bool>("Mortality plot:  yes/no");
 
-            //LIST OF ALL SPECIES TO BE LOOKED AT FOR MORTALITY CAUSED DISEASE (for mapping purposes also). 
-            //Not all species that die from a disease may be of interest...
-            const string MortSpp = "MortalitySpecies";
+            // species to ignore in SHI calculation
+            const string NegSpp = "IgnoredSpecies";
 
             while ((!AtEndOfInput) && (CurrentName != NegSpp))
             {
@@ -277,21 +281,24 @@ namespace Landis.Extension.BaseEDA
                 ReadValue(cfsConifer, currentLine);
                 sppParms.CFSConifer = cfsConifer.Value;
 
-                CheckNoDataAfter("the " + cfsConifer.Name + " column",
+                //MORTALITY SPECIES FLAG
+                ReadValue(mortSppFlag, currentLine);
+                sppParms.MortSppFlag = mortSppFlag.Value;
+
+                CheckNoDataAfter("the " + mortSppFlag.Name + " column",
                                  currentLine);
-
-
+                
                 GetNextLine();
             }
 
             //--------- Read In Ignored Species List ---------------------------------------
             List<ISpecies> negSppList = new List<ISpecies>();
-            if (!AtEndOfInput && (CurrentName != MortSpp))
+            if (!AtEndOfInput)
             {
                 ReadName(NegSpp);
                 InputVar<string> negSppName = new InputVar<string>("Ignored Spp Name");
 
-                while (!AtEndOfInput && (CurrentName != MortSpp))
+                while (!AtEndOfInput)
                 {
                     StringReader currentLine = new StringReader(CurrentLine);
 
@@ -326,7 +333,16 @@ namespace Landis.Extension.BaseEDA
             throw new System.FormatException("Valid algorithms: max, mean");
         }
 
-         public static DispersalTemplate DispTParse(string word)
+        public static DispersalType DispTypeParse(string word)
+        {
+            if (word == "STATIC")
+                return DispersalType.STATIC;
+            else if (word == "DYNAMIC")
+                return DispersalType.DYNAMIC;
+            throw new System.FormatException("Valid algorithms: STATIC, DYNAMIC");
+        }
+
+        public static DispersalTemplate DispTParse(string word)
         {
             if (word == "PowerLaw")
                 return DispersalTemplate.PowerLaw;
@@ -343,6 +359,9 @@ namespace Landis.Extension.BaseEDA
         {
             Type.SetDescription<SHImode>("Site Host Index Mode");
             InputValues.Register<SHImode>(SHIParse);
+
+            Type.SetDescription<DispersalType>("Dispersal Type");
+            InputValues.Register<DispersalType>(DispTypeParse);
 
             Type.SetDescription<DispersalTemplate>("Dispersal Template");
             InputValues.Register<DispersalTemplate>(DispTParse);
