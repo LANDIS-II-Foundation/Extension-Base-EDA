@@ -85,6 +85,7 @@
     <Compile Include="Agent.cs" />
     <Compile Include="AgentParameterParser.cs" />
     <Compile Include="BytePixel.cs" />
+    <Compile Include="Dispersal.cs" />
     <Compile Include="ClimateData.cs" />
     <Compile Include="CSVParser.cs" />
     <Compile Include="DisturbanceType.cs" />
