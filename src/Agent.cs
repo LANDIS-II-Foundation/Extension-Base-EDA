@@ -11,6 +11,7 @@ namespace Landis.Extension.BaseEDA
 {
 
     public enum SHImode { max, mean };  //maybe add something new here, like weighted by biomass, or mean for each cohort?
+    public enum DispersalType { STATIC, DYNAMIC };
     public enum DispersalTemplate { PowerLaw, NegExp };
 
     /// <summary>
@@ -34,7 +35,9 @@ namespace Landis.Extension.BaseEDA
         double TransmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
         double AcquisitionRate  { get; set; }  //rD = Rate of acquisition of detectable symptoms (per time step)
         //>>InitialEpidemMap? do I need to add this here?
+        DispersalType DispersalType { get; set; }
         DispersalTemplate DispersalKernel { get; set; }
+        int DispersalMaxDist { get; set; }
         double AlphaCoef { get; set; }
 
         //List of tree species to be ignored
@@ -73,6 +76,8 @@ namespace Landis.Extension.BaseEDA
         private double acquisitionRate { get; set; }  //rD = Rate of acquisition of detectable symptoms (per time step)
         //>>InitialEpidemMap? do I need to add this here?
         private DispersalTemplate dispersalKernel { get; set; }
+        private DispersalType dispersalType { get; set; }
+        private int dispersalMaxDist { get; set; }
         private double alphaCoef { get; set; }
 
         private IEnumerable<ISpecies> negSppList;  //List of tree species to be ignored
@@ -160,6 +165,18 @@ namespace Landis.Extension.BaseEDA
         //>>InitialEpidemMap? do I need to add this here?
 
         //---------------------------------------------------------------------
+        public DispersalType DispersalType
+        {
+            get
+            {
+                return dispersalType;
+            }
+            set
+            {
+                dispersalType = value;
+            }
+        }
+        //---------------------------------------------------------------------
         public DispersalTemplate DispersalKernel
         {
             get
@@ -169,6 +186,18 @@ namespace Landis.Extension.BaseEDA
             set
             {
                 dispersalKernel = value;
+            }
+        }
+        //---------------------------------------------------------------------
+        public int DispersalMaxDist
+        {
+            get
+            {
+                return dispersalMaxDist;
+            }
+            set
+            {
+                dispersalMaxDist = value;
             }
         }
         //---------------------------------------------------------------------
