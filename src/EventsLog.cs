@@ -27,7 +27,7 @@ namespace Landis.Extension.BaseEDA
         public int DamagedSites { set; get; }
 
         [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Cohorts Killed (All Species) in Event")]
-        public int CohortsKilled { set; get; }
+        public int TotalCohortsKilled { set; get; }
 
         [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Cohorts Killed (Selected Species) in Event")]
         public int CohortsMortSppKilled { set; get; }
