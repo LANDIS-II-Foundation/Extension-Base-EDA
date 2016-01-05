@@ -50,26 +50,10 @@ namespace Landis.Extension.BaseEDA
             //----------------------------------------------------------
             // Read in Maps and Log file names.
 
-            // - infected -
-            InputVar<string> infMapNames = new InputVar<string>("INFMapNames");
-            ReadVar(infMapNames);
-            parameters.InfMapNames = infMapNames.Value; //check why this is different from others below
-
-            // - diseased -
-            InputVar<string> disMapNames = new InputVar<string>("DISMapNames");
-            try
-            {
-                ReadVar(disMapNames);
-                parameters.DisMapNames = disMapNames.Value;
-            }
-            catch (LineReaderException errString)
-            {
-                if (!(errString.MultiLineMessage[1].Contains("Found the name \"EPDMapNames\" but expected \"DISMapNames\"")))
-                {
-                    throw errString;
-                }
-
-            }
+            // - infection status (0=Susceptible;1=Infected;2=Diseased). -
+            InputVar<string> statusMapNames = new InputVar<string>("MapNames");
+            ReadVar(statusMapNames);
+            parameters.StatusMapNames = statusMapNames.Value; //check why this is different from others below
 
             // - mortality -
             InputVar<string> mortMapNames = new InputVar<string>("MORTMapNames");

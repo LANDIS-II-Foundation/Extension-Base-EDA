@@ -15,11 +15,11 @@ namespace Landis.Extension.BaseEDA
         /// </summary>
         // Site Host Index to infection by DISEASE AGENT using 3 classes (Low, Medium, High)
         int LowHostAge { get; set; }
-        double LowHostScore { get; set; }
+        int LowHostScore { get; set; }
         int MediumHostAge { get; set; }
-        double MediumHostScore { get; set; }
+        int MediumHostScore { get; set; }
         int HighHostAge { get; set; }
-        double HighHostScore { get; set; }
+        int HighHostScore { get; set; }
 
         // Site Host Vulnerability (SHV) to DISEASE (and mortality) using 3 classes (Low Vulnerability, Medium Vulnerability, High Vulnerability)
         int LowVulnHostAge { get; set; }
@@ -31,6 +31,9 @@ namespace Landis.Extension.BaseEDA
 
         //Conifer Flag for dead fuels (specifically designed for Canadian fire model)
         bool CFSConifer{ get; set; }
+
+        //Mortality Flag for spp to be included in mortality plot
+        bool MortSppFlag { get; set; }
     }
 }
 
@@ -44,11 +47,11 @@ namespace Landis.Extension.BaseEDA
         // Site Host Index:  susceptibility to become infected and suitability to produce infectious spores of the
         //                   pathogen using 3 classes (Low, Medium, High)
         private int lowHostAge;
-        private double lowHostScore;
+        private int lowHostScore;
         private int mediumHostAge;
-        private double mediumHostScore;
+        private int mediumHostScore;
         private int highHostAge;
-        private double highHostScore;
+        private int highHostScore;
 
         // Site Host Vulnerability (SHV) to DISEASE (and mortality) using 3 classes (Low Vulnerability, Medium Vulnerability, High Vulnerability)
         private int lowVulnHostAge;
@@ -59,6 +62,7 @@ namespace Landis.Extension.BaseEDA
         private double highVulnHostMortProb;
 
         private bool cfsConifer;
+        private bool mortSppFlag;
 
         //---------------------------------------------------------------------
 
@@ -85,7 +89,7 @@ namespace Landis.Extension.BaseEDA
         /// <summary>
         /// HOST SCORE: score for hosts with LOW susceptibility/suitability to produce infectious spores of the pathogen
         /// </summary>
-        public double LowHostScore
+        public int LowHostScore
         {
             get
             {
@@ -95,10 +99,10 @@ namespace Landis.Extension.BaseEDA
             {
                 if (value < 0)
                     throw new InputValueException(value.ToString(),
-                        "Value must be = or > 0.");
-                if (value > 1)
+                        "Value must be = or > 0");
+                if (value > 3)
                     throw new InputValueException(value.ToString(),
-                        "Value must be = or < 1.");
+                        "Value must be = or < 3");
                 lowHostScore = value;
             }
         }
@@ -125,7 +129,7 @@ namespace Landis.Extension.BaseEDA
         /// <summary>
         /// HOST SCORE: score for hosts with MEDIUM susceptibility/suitability to produce infectious spores of the pathogen
         /// </summary>
-        public double MediumHostScore
+        public int MediumHostScore
         {
             get
             {
@@ -133,12 +137,12 @@ namespace Landis.Extension.BaseEDA
             }
             set
             {
-                if (value < 0)
+                if (value < 4)
                     throw new InputValueException(value.ToString(),
-                        "Value must be = or > 0.");
-                if (value > 1)
+                        "Value must be = or > 4");
+                if (value > 6)
                     throw new InputValueException(value.ToString(),
-                        "Value must be = or < 1.");
+                        "Value must be = or < 6");
                 mediumHostScore = value;
             }
         }
@@ -165,7 +169,7 @@ namespace Landis.Extension.BaseEDA
         /// <summary>
         /// HOST SCORE: score for hosts with HIGH susceptibility/suitability to produce infectious spores of the pathogen
         /// </summary>
-        public double HighHostScore
+        public int HighHostScore
         {
             get
             {
@@ -173,12 +177,12 @@ namespace Landis.Extension.BaseEDA
             }
             set
             {
-                if (value < 0)
+                if (value < 7)
                     throw new InputValueException(value.ToString(),
-                        "Value must be = or > 0.");
-                if (value > 1)
+                        "Value must be = or > 7");
+                if (value > 10)
                     throw new InputValueException(value.ToString(),
-                        "Value must be = or < 1.");
+                        "Value must be = or < 10");
                 highHostScore = value;
             }
         }
@@ -320,6 +324,22 @@ namespace Landis.Extension.BaseEDA
             }
         }
 
+        /// <summary>
+        /// MORTALITY FLAG: Host species can be flagged for inclusion in the list of species to be plotted for mortality by disease
+        /// </summary>
+        public bool MortSppFlag
+        {
+            get
+            {
+                return mortSppFlag;
+            }
+
+            set
+            {
+                mortSppFlag = value;
+            }
+        }
+
         //---------------------------------------------------------------------
         public SppParameters()
         {
@@ -339,6 +359,8 @@ namespace Landis.Extension.BaseEDA
             this.highVulnHostMortProb = 0;
             //conifer flag
             this.cfsConifer = false;
+            //mortality flag
+            this.mortSppFlag = false;
         }
  
     }

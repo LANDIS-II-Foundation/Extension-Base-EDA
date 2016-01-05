@@ -18,8 +18,8 @@ namespace Landis.Extension.BaseEDA
         public static ExtensionMetadata Extension {get; set;}
 
         public static void InitializeMetadata(int Timestep, 
-            string intensityMapFileName,   //should this name be MapFileName instead or does not matter?
-            string mortalityMapFileName,   //should this name be epiMapFileName instead or does not matter?
+            string statusMapFileName,
+            string mortalityMapFileName,   
             string logFileName, 
             IEnumerable<IAgent> manyAgentParameters, 
             ICore mCore)
@@ -74,55 +74,38 @@ namespace Landis.Extension.BaseEDA
 
             foreach (IAgent activeAgent in manyAgentParameters)
             {
-                string mapTypePath = MapNames.ReplaceTemplateVarsMetadata(intensityMapFileName, activeAgent.AgentName);
+                string mapTypePath = MapNames.ReplaceTemplateVarsMetadata(statusMapFileName, activeAgent.AgentName);
 
-                OutputMetadata mapOut_Intensity = new OutputMetadata()
+                OutputMetadata mapOut_Status = new OutputMetadata()
                 {
                     Type = OutputType.Map,
-                    Name = string.Format(activeAgent.AgentName + " Outbreak Infection Intensity"),
+                    Name = string.Format(activeAgent.AgentName + " Cell Infection Status "),
                     FilePath = @mapTypePath,
                     Map_DataType = MapDataType.Ordinal,
                     Map_Unit = FieldUnits.Severity_Rank, //based on the metadata library (https://github.com/LANDIS-II-Foundation/Libraries/blob/master/metadata/trunk/src/FieldUnits.cs)
                     Visualize = true,                    //it seems like Severity_Rank can have values between 1-5 
                 };
-                Extension.OutputMetadatas.Add(mapOut_Intensity);
+                Extension.OutputMetadatas.Add(mapOut_Status);
 
-                /*if (srdMapFileName != null)
+                if (mortalityMapFileName != null)
                 {
-                    mapTypePath = MapNames.ReplaceTemplateVarsMetadata(srdMapFileName, activeAgent.AgentName);
-                    OutputMetadata mapOut_SRD = new OutputMetadata()
+                    mapTypePath = MapNames.ReplaceTemplateVarsMetadata(mortalityMapFileName, activeAgent.AgentName);
+                    OutputMetadata mapOut_MORT = new OutputMetadata()
                     {
                         Type = OutputType.Map,
-                        Name = "Site Resource Dominance",
+                        Name = "Cohort Mortality (Flagged Species)",
                         FilePath = @mapTypePath,
                         Map_DataType = MapDataType.Continuous,
-                        Map_Unit = FieldUnits.Percentage,
+                        Map_Unit = FieldUnits.Count,
                         Visualize = false,
                     };
-                    Extension.OutputMetadatas.Add(mapOut_SRD);
+                    Extension.OutputMetadatas.Add(mapOut_MORT);
                 }
 
-                if (nrdMapFileName != null)
-                {
-                    mapTypePath = MapNames.ReplaceTemplateVarsMetadata(nrdMapFileName, activeAgent.AgentName);
-                    OutputMetadata mapOut_NRD = new OutputMetadata()
-                    {
-                        Type = OutputType.Map,
-                        Name = "Neighborhood Resource Dominance",
-                        FilePath = @mapTypePath,
-                        Map_DataType = MapDataType.Continuous,
-                        Map_Unit = FieldUnits.Percentage,
-                        Visualize = false,
-                    };
-                    Extension.OutputMetadatas.Add(mapOut_NRD);
-                }*/
             }
             //---------------------------------------
             MetadataProvider mp = new MetadataProvider(Extension);
             mp.WriteMetadataToXMLFile("Metadata", Extension.Name, Extension.Name);
-
-
-
 
         }
     }

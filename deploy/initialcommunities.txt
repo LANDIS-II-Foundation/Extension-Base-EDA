@@ -1,0 +1,1425 @@
+LandisData  "Initial Communities"
+
+MapCode  0
+
+MapCode  1
+
+MapCode  67844
+   Aesccali 60
+   Querdoug 70 80 180
+
+MapCode  67936
+   Pinusabi 50 90
+   Querwisl 40
+
+MapCode  67939
+   Acermacr 30 40
+   Queragri 30 40 50 100 110 130
+
+MapCode  67944
+   Arbumenz 90
+   Lithdens 60 70 80
+   Querwisl 70 80
+   Sequsemp 20 70 80 90 100 110 120 140 160 180 190 210 240 250 270 280 290 300 630
+   Umbecali 40
+
+MapCode  67952
+   Arbumenz 40 50 60
+   Queragri 50 60 70 90
+
+MapCode  67954
+   Aesccali 30 40
+   Queragri 70 90 120 130
+   Umbecali 40 80
+
+MapCode  67959
+   Queragri 40 50 60 70 80 90 100 120
+
+MapCode  67961
+   Queragri 40 50 60 70 90 120
+
+MapCode  68019
+   Arbumenz 40 50 60
+   Pseumenz 70
+   Queragri 40 50 60 70 80 100
+   Umbecali 40 50 70 80 90
+
+MapCode  68072
+   Queragri 60 70 80 100 110
+   Umbecali 30 40 60 70 90
+
+MapCode  68074
+   Pinumono 60
+   Pinusabi 40
+
+MapCode  68134
+   Platrace 80
+   Querdoug 60 150 170 180 190
+
+MapCode  68374
+   Acermacr 30 40 50 60 80
+   Queragri 50 60 70 80 90
+   Querloba 60 70 90
+   Umbecali 20 40 50 60 80
+
+MapCode  68382
+   Aesccali 40 50
+   Queragri 40 50 60 70 80 110 140
+   Querkell 50 60 70 80
+
+MapCode  68384
+   Lithdens 20 30 40 50 60 70 80 90 110
+   Pseumenz 50 100 130 140
+   Sequsemp 30 40 50 70 80 100 130 140 150 160 170 200 210
+
+MapCode  68387
+   Aesccali 20 30 40 50 60
+   Umbecali 90
+
+MapCode  68388
+   Queragri 130 200
+   Querloba 110 150
+
+MapCode  68394
+   Queragri 130 140 190
+
+MapCode  68398
+   Queragri 60 100 120 150
+
+MapCode  68414
+   Queragri 40 50 60 80 120
+   Sequsemp 150 170 200 220
+   Umbecali 40 50 110 120 140
+
+MapCode  68416
+   Arbumenz 40 70
+   Lithdens 40 50 60 70 80 90 100
+   Pseumenz 30 40 50 60
+   Sequsemp 20 30 40 50 60 70 80 90 100 110 120 130 140 150 160 170 190 200 210 220 230
+
+MapCode  68417
+   Arbumenz 50 60 70 80 90
+   Lithdens 20 30 40 50 60 70
+   Pinuradi 30 100
+   Pseumenz 150
+   Sequsemp 40 60 100 110 120 130
+
+MapCode  68418
+   Lithdens 60 80
+   Pseumenz 30 100 110 130 180
+   Sequsemp 10 20 30 40 50 60 70 90 100 110 120 130 140 150 170 180 200 220 250 260
+
+MapCode  68419
+   Pseumenz 30 40 50 60 80 90 100 120
+   Queragri 40 50 60 70 80
+   Umbecali 30
+
+MapCode  68543
+   Aesccali 40 50
+   Queragri 50 60 70 80 90
+
+MapCode  68546
+   Queragri 40 50 60 70 80 130
+
+MapCode  68583
+   Queragri 40 50 60 80 90 100
+
+MapCode  69805
+   Platrace 160
+   Querkell 40 80
+   Umbecali 40 60
+
+MapCode  69812
+   Acermacr 40
+   Queragri 10 60 70 80 90 110 160
+   Umbecali 10 40 110 160
+
+MapCode  70625
+   Querwisl 20
+
+MapCode  70626
+   Querdoug 60 110 160 260
+
+MapCode  70636
+   Querchry 30 130 170 180 310
+   Umbecali 20
+
+MapCode  70638
+   Lithdens 20 40 50 60 70 80 90 160 170 210 230
+   Sequsemp 20 30 40 50 60 70 80 90 100 160 170 190 210 240 260 310 390 410 430 490 560 590 610 620 710
+
+MapCode  70639
+   Pinupond 30
+   Querchry 30 70 80 90
+
+MapCode  71155
+   Queragri 50 70 160
+   Umbecali 40 50 110
+
+MapCode  71166
+   Quergarr 30 40 50 70 80 90
+
+MapCode  71173
+   Queragri 60 70 80 90 110 160
+
+MapCode  71206
+   Querkell 30 40 60 70 80 130
+   Umbecali 60
+
+MapCode  71207
+   Queragri 20 30 40 50 80 90 100 110
+   Querkell 40 60 80
+   Querwisl 20
+   Umbecali 30 40 50 60
+
+MapCode  71208
+   Queragri 20 70
+   Querloba 60 70
+   Umbecali 70 80
+
+MapCode  71219
+   Queragri 70 80 100 110 120 130 150
+   Sequsemp 60 100 110 120 130 140 150
+   Umbecali 20 70 80 90 100 120
+
+MapCode  71221
+   Arbumenz 40 50 90 100
+   Queragri 30 90 100 120 130
+   Umbecali 30 80 100
+
+MapCode  71590
+   Pinulamb 290
+   Pseumacr 270 300
+
+MapCode  71701
+   Pinucoul 10 50 110
+   Querwisl 60 170
+
+MapCode  71959
+   Aesccali 50 60 70
+   Queragri 50 70 130 190
+   Querloba 140
+   Umbecali 50 110
+
+MapCode  72707
+   Pinumono 20 30 40 50 60 70 90 100 110 120
+
+MapCode  72963
+   Queragri 90 100 110 120 130 170
+
+MapCode  72974
+   Pinusabi 30 40
+   Platrace 40 60 90 130
+   Queragri 50 120 130
+   Querloba 60 90 120 130 160 210
+
+MapCode  73003
+   Lithdens 50
+   Sequsemp 20 30 40 50 60 70 80 90 100 140 180 200 240 360
+
+MapCode  73006
+   Queragri 40 50 60 70 100 110 130 140 150
+   Umbecali 130
+
+MapCode  73008
+   Pseumenz 40
+   Queragri 90
+
+MapCode  73072
+   Querdoug 60
+   Querkell 70 100 110 140 150
+   Umbecali 40 60 70
+
+MapCode  73089
+   Acermacr 30 40
+   Lithdens 20 30
+   Pseumenz 30 130
+   Sequsemp 40 60 100 110 120 130 140
+
+MapCode  73980
+
+MapCode  74005
+   Platrace 90 100
+   Queragri 50 110 120 130 140
+
+MapCode  74011
+   Queragri 40 50 60 70 80 90 110 120 150
+
+MapCode  74024
+   Arbumenz 50 60 70 80 90 110
+   Queragri 30
+
+MapCode  74041
+   Queragri 40 50 60 70 80
+
+MapCode  74075
+   Lithdens 50 60
+   Queragri 40 50 60 70 80
+   Sequsemp 50 70 100 140 150 160 170 180 190 210 230
+   Umbecali 110
+
+MapCode  74078
+   Lithdens 50 70 80 90 120
+   Sequsemp 30 40 70 80 90 110 120 130 140 150 160 170 180 190 200 210 220 230 240 340
+
+MapCode  74079
+   Arbumenz 110
+   Lithdens 180
+   Querwisl 120 150 170 190
+   Sequsemp 60 120 130 140 150 160 170
+   Umbecali 30
+
+MapCode  74080
+   Arbumenz 50 60 80 90 100 110
+   Lithdens 40 50 60 70 80 90 100 110
+   Pseumenz 40 80
+   Querchry 50 70 100
+   Sequsemp 140 150 160 210 280 360 460
+
+MapCode  74282
+   Querchry 40 50 60 70
+
+MapCode  74290
+   Aesccali 40
+
+MapCode  74695
+   Pinupond 40
+   Queragri 50 60 70 80 100 120 140
+   Umbecali 60
+
+MapCode  74697
+   Querdoug 50 70 80 90 140 150
+
+MapCode  75331
+   Arbumenz 20 30 40 50 60 70 90 100
+   Queragri 40 60 70 100 110 140
+
+MapCode  75612
+   Queragri 40 50 60 70 80 120 160
+
+MapCode  75634
+   Queragri 60
+   Querdoug 50 60 70 80 100 110 130
+
+MapCode  75635
+   Pinusabi 60
+   Queragri 80 90 100
+   Querdoug 50 70 80 100 120
+
+MapCode  75676
+   Queragri 50 60 70 80 90 110
+   Querloba 60 70 80 140
+   Umbecali 30
+
+MapCode  75684
+   Aesccali 50 80
+   Queragri 130
+   Querkell 90 100 110
+   Umbecali 130
+
+MapCode  75690
+   Lithdens 40
+   Pseumenz 70 80 90
+   Sequsemp 40 50 60 70 80 90 100 110 120 130 140 150 160 180 200
+
+MapCode  75864
+   Querdoug 50 60 70 80 90 160
+
+MapCode  76060
+   Arbumenz 40 50
+   Querwisl 50 60 70 80 90 100 110 120 130 140 150 160 170 180 210 230
+   Umbecali 50
+
+MapCode  76064
+   Querloba 80 130 140 180 220 230 250 320
+
+MapCode  76070
+   Querwisl 50 60 70 80 90 100 110
+
+MapCode  76079
+   Arbumenz 10
+   Lithdens 30 50 60
+   Pinucoul 130
+   Queragri 80
+   Querwisl 120 130 170 190
+
+MapCode  77059
+   Queragri 50 60 70 120
+   Umbecali 40 50 110
+
+MapCode  77151
+   Queragri 40 50 60 70 80 90 100 110 120
+
+MapCode  77180
+   Lithdens 60 70 80 90
+   Pseumenz 60 70 100 140 150 200 270
+   Sequsemp 10 50 60 70 80 90 110 120 130 140 150 160 170 190 200 210 230 240 250 320
+
+MapCode  77732
+   Queragri 70 90 100 110 120 130 140 170 180
+
+MapCode  77735
+
+MapCode  77860
+   Pinucoul 120
+   Queragri 60 90 130
+   Querchry 60 140
+
+MapCode  77864
+   Querchry 60 70 80 90 100 160
+   Umbecali 40 50
+
+MapCode  77874
+   Arbumenz 30
+
+MapCode  78408
+   Lithdens 40 80 90 100 110
+   Sequsemp 60 70 80 90 110 140 160 210 220 230 240 250 270 280 290 300 310 330 340 350 370 410 420 460 560 640
+   Umbecali 50
+
+MapCode  84540
+   Pinusabi 30 70
+   Querdoug 50 60 70 80 90
+
+MapCode  84554
+   Arbumenz 70
+   Queragri 50 60 70 80
+   Querchry 60 80 90 100 110 150
+   Querkell 60 70 80 90 100
+
+MapCode  84810
+   Arbumenz 50 60 70 80 90 100 110
+   Lithdens 10 30 40 50 60 70
+   Pseumenz 70 90 150 170 180
+   Sequsemp 100 110 120 130 150 170 180 210 270
+   Umbecali 50
+
+MapCode  85047
+   Pinusabi 30 50
+   Queragri 50 120 190
+
+MapCode  85205
+   Acermacr 30
+   Arbumenz 50 60
+   Lithdens 10 20 30
+   Querchry 60
+   Umbecali 40
+
+MapCode  85591
+   Querchry 50 60
+
+MapCode  85628
+   Lithdens 10 50 60 80
+   Querchry 150 170 180
+
+MapCode  85765
+   Arbumenz 70 80 120
+   Lithdens 120
+   Queragri 40 50 60
+   Sequsemp 30 50 60 80 90 100 110 120 130 140 150 160 170 180 190 200 210
+
+MapCode  86146
+   Pinucoul 60 70 80 90 110
+
+MapCode  86454
+   Popubals 50 70
+   Queragri 70 90 110 120 130 140
+   Umbecali 30
+
+MapCode  86480
+   Sequsemp 50 60 80 90 100 110 120 130 140 150 160 170 180 190 210
+   Umbecali 40 50 60 80 90
+
+MapCode  86934
+   Umbecali 30
+
+MapCode  88147
+
+MapCode  88640
+   Queragri 60 80 90 100
+
+MapCode  88657
+   Queragri 40 50 60 70
+
+MapCode  88721
+   Arbumenz 50 60 70 80 100 110 150
+   Lithdens 30 50 60 70 90 100 110 130 150
+   Querwisl 170
+   Sequsemp 60 150 160 170 190 200 210 220 240 260 300 320 350
+
+MapCode  89498
+   Arbumenz 50 60 70 90 100 110
+   Lithdens 20 30 40 50 60 70 80 90 100 110 120 150
+   Pseumenz 140 150 180
+   Sequsemp 120 130 140 150 160 180 210 230 490
+   Umbecali 40
+
+MapCode  89695
+   Lithdens 40 50 60 70 80 90
+   Pseumenz 80 100 110 120 140
+   Sequsemp 40 50 60 80 90 120 130 150 170 180
+
+MapCode  90293
+   Queragri 90
+   Querdoug 50 60 70 80 90
+   Querkell 70 80 120
+   Umbecali 50
+
+MapCode  90487
+   Platrace 30 40
+   Queragri 50 60 70 80 120 130
+
+MapCode  95654
+   Acermacr 20 30
+   Queragri 40 50 60 70 80
+   Umbecali 20
+
+MapCode  95658
+   Arbumenz 20 30 40 50 70 80 90
+   Queragri 30 70
+   Umbecali 30 50
+
+MapCode  95661
+   Arbumenz 10 20
+   Queragri 70 80
+
+MapCode  96037
+   Querwisl 10 100 170 180 220 360 370
+
+MapCode  96058
+   Queragri 60 80 100
+
+MapCode  97540
+   Lithdens 20 60
+   Pseumenz 120
+   Sequsemp 30 70 80 90 100 110 120 260
+
+MapCode  98511
+   Acermacr 100
+   Arbumenz 10 30 40 50 80 90 100
+   Queragri 20 80
+   Querchry 100
+   Querkell 100
+
+MapCode  98535
+   Pinuradi 40
+   Queragri 80 110
+
+MapCode  98541
+   Queragri 50 60 80 90 100 110
+   Querkell 90
+   Umbecali 40 60 70 110
+
+MapCode  98560
+   Querloba 70 260
+
+MapCode  98562
+   Queragri 40 60 70 80 90 160
+   Querloba 60
+   Umbecali 70
+
+MapCode  98579
+   Pinusabi 20 30
+   Querdoug 100 220
+
+MapCode  99230
+   Pinusabi 130 140
+   Querdoug 50 70
+
+MapCode  99233
+   Querdoug 110 160 210
+   Querloba 110 160 210
+
+MapCode  99295
+   Queragri 50 60 70
+
+MapCode  99741
+   Queragri 40 70 90 100
+   Querdoug 60 80 90
+
+MapCode  99750
+   Queragri 40 50 60 70 80 90 100 110 120 130
+
+MapCode  99762
+   Platrace 70 80
+   Queragri 20 60 70 80 90 100
+
+MapCode  99782
+   Platrace 10 60
+   Queragri 10 40 50 60 70
+
+MapCode  99830
+   Querdoug 50 60 130
+
+MapCode  99833
+   Queragri 50 60 210
+   Querloba 260 310
+
+MapCode  99885
+   Queragri 60 70 80 90 100 120
+   Umbecali 70
+
+MapCode  99916
+   Queragri 80
+
+MapCode  99931
+   Lithdens 20 30 40
+   Pseumenz 40
+   Sequsemp 30 40 50 60 70 80 90 100 110 260 320
+
+MapCode  99934
+   Lithdens 20 30 50 70 80 90 130 140 150 170
+   Pseumenz 270
+   Sequsemp 50 60 80 110 130 150 160 170
+
+MapCode  99935
+   Lithdens 10 20 30 40 60 70 80 90
+   Pseumenz 30 40 50 60 70 90 100 110 130 190 200 260 270
+   Queragri 30 70 100
+   Sequsemp 50 80 110 120 130 140 180 200 270 370
+
+MapCode  99942
+   Arbumenz 50
+   Pseumenz 110 130
+   Umbecali 50
+
+MapCode  99991
+   Platrace 40 70
+   Queragri 130 160
+
+MapCode  100046
+   Queragri 40 50 60 70 80 90 100 110 160
+
+MapCode  100090
+   Queragri 40 80
+
+MapCode  100132
+   Queragri 40 50 60
+
+MapCode  100141
+   Aesccali 10 40 70
+   Arbumenz 80
+   Queragri 30 40 60 70 90 130 160 260
+
+MapCode  100150
+   Platrace 90
+   Queragri 30 40 60 70 80 90
+   Umbecali 10 90
+
+MapCode  100156
+   Queragri 40 80 90 110 120 170
+   Quergarr 90 100 110
+
+MapCode  100158
+   Aesccali 20 70
+   Queragri 40 70
+   Querloba 70 120 130 170
+
+MapCode  100162
+   Aesccali 30
+   Queragri 30 40
+
+MapCode  100174
+   Queragri 70 80
+   Querdoug 40 50 60 100 140
+
+MapCode  100179
+   Platrace 60 100 110
+   Queragri 180
+   Querdoug 40 60
+   Querloba 40 70
+   Umbecali 40 50 60 100
+
+MapCode  100182
+   Aesccali 60
+   Queragri 40 50 60 70 90
+   Querdoug 80 100
+   Umbecali 80
+
+MapCode  100185
+   Queragri 40 50
+   Umbecali 50
+
+MapCode  100206
+   Arbumenz 120
+   Lithdens 20 90 100 110 120
+   Pseumenz 30 40 160
+   Sequsemp 30 40 50 60 90 100 110 120 130 150 160 190 200 210
+
+MapCode  100226
+   Pinuradi 70 80 90 110
+   Queragri 40 60 80 100 170
+   Querwisl 20 30
+   Sequsemp 80 170
+
+MapCode  100228
+   Pseumenz 20
+   Queragri 60 70 80 90
+   Sequsemp 80 90 100
+
+MapCode  100237
+   Arbumenz 40 50 80 90
+   Lithdens 20 30 40 50 60
+   Pseumenz 50 70 80
+   Sequsemp 30 40 50 60 70 80 90 100 170
+
+MapCode  100238
+   Arbumenz 90
+   Lithdens 20 40 60
+   Pseumenz 50 80
+   Queragri 70 90
+   Querwisl 20
+   Sequsemp 30 40 50 60 90
+
+MapCode  100239
+   Queragri 60 80 90 100 120
+   Sequsemp 90 100 120
+   Umbecali 30 40 80 90
+
+MapCode  100241
+   Acermacr 30
+   Lithdens 10 100
+   Pseumenz 120
+   Sequsemp 30 40 50 60 70 80 90 120 130 150 270 370 510
+
+MapCode  100245
+   Arbumenz 80
+   Lithdens 20 30
+   Pinupond 140
+   Pseumenz 70 80 90
+   Queragri 70
+
+MapCode  100250
+   Arbumenz 50 130 140
+   Lithdens 20 40
+   Queragri 30 40 110 120 280
+   Sequsemp 30 40 60 70 80 90 100 110 140
+
+MapCode  100254
+   Acermacr 20 30
+   Lithdens 10 20 30 40 50
+   Pseumenz 20
+   Sequsemp 30 70 80 100 110 120 130 140
+
+MapCode  100260
+   Arbumenz 10 20 30 60 70 80
+   Lithdens 10 20 50 70 80
+   Pseumenz 20
+   Sequsemp 20 30 40 50 70 80 90
+
+MapCode  100263
+   Pseumenz 30 40 50 70 80 90
+   Queragri 40 50 60 70
+   Umbecali 30
+
+MapCode  103025
+
+MapCode  103063
+
+MapCode  103862
+   Arbumenz 60 70 80 90 110
+   Queragri 30
+
+MapCode  103863
+   Arbumenz 100
+   Queragri 70 110 120
+   Querchry 30 40
+
+MapCode  103864
+   Querchry 40 50 60 70 80 90 100
+
+MapCode  103865
+   Arbumenz 60 70 80
+   Querkell 80
+
+MapCode  103866
+   Arbumenz 30
+   Queragri 70 80 90 110
+
+MapCode  103869
+   Lithdens 10 30 40 50 60 70 80 90
+   Querchry 80 90 110 120 130 140 150 160 170 200 240
+
+MapCode  103870
+   Querchry 110 120
+
+MapCode  103871
+
+MapCode  103873
+   Arbumenz 60 90
+   Lithdens 70 90
+   Queragri 60 100
+   Sequsemp 50 70 80 90 110 120 130 140 150 160 170 210 230 240 260 280 290 300
+
+MapCode  103874
+   Lithdens 30 40 80 100 110
+   Queragri 90 100
+   Querchry 30
+   Sequsemp 20 30 40 80 100 150 180 200 240 280 290 300 310 340 350 360 380 400 450 460 490 530 550
+   Umbecali 50
+
+MapCode  103875
+
+MapCode  103884
+
+MapCode  103886
+
+MapCode  103889
+   Acermacr 20 30
+   Queragri 90 110 120 130 140
+
+MapCode  103890
+   Alnurubr 40
+
+MapCode  103891
+
+MapCode  103893
+   Querdoug 50 60 70 80 130 140 150 180
+
+MapCode  103894
+   Querchry 40 50 60 70 80 90 100 110 120 240
+
+MapCode  103896
+   Pinucoul 40 60 70 130
+   Queragri 40 60 80 90 110 120 140
+   Querchry 100 120 130
+
+MapCode  103897
+   Queragri 50 60 70 80 100 110
+
+MapCode  103898
+   Arbumenz 50 60 80
+   Pinucoul 10 20 30 40 70 80
+
+MapCode  103905
+   Arbumenz 40 50 60 70 80 90 120 150
+   Querkell 110 140 180
+
+MapCode  103906
+   Acermacr 60 100 110 140 160 190
+   Alnurhom 70 90 110 160
+   Arbumenz 40 60 80 90 100 110
+   Umbecali 20 30 40 50 70
+
+MapCode  103907
+   Arbumenz 50
+   Lithdens 30 40
+   Querwisl 30 40 50 130 150
+
+MapCode  103908
+   Arbumenz 90 100
+   Lithdens 70 80 100 110 120 150
+   Pinupond 140
+   Queragri 40 60 70 80 90 100 110 140
+   Querkell 90 100 110 120 150 160 170
+
+MapCode  103909
+   Abiebrac 10 30 50 60 100 170 180
+   Acermacr 70 80
+   Arbumenz 90 110
+   Lithdens 40 50 60 70 80
+   Querchry 40 50 70 80 90 100 110
+
+MapCode  103910
+   Lithdens 10 50
+   Pinupond 100 120 130 170 210 230
+   Querchry 50 60 70 90 100 110 120 130 140
+
+MapCode  103911
+   Arbumenz 40
+   Lithdens 20
+   Queragri 80 90
+   Querchry 30 40 120
+
+MapCode  103912
+   Abiebrac 10 50 110
+   Arbumenz 40 70 80 100 110
+   Querchry 50 60 70 80 100 110 150
+   Umbecali 20 30 50
+
+MapCode  103913
+   Querchry 40 50 60 70 80
+
+MapCode  103914
+   Querchry 30 40 70 80 90 100
+   Umbecali 20
+
+MapCode  103915
+   Queragri 50 70 80 100 110 120 130 140 150 160 170 190
+
+MapCode  103916
+   Arbumenz 30 60 70 80
+   Lithdens 20 40
+   Queragri 30 60 70 80 90 100 110 120
+   Querchry 80
+   Umbecali 30 80
+
+MapCode  103917
+   Acermacr 70
+   Lithdens 20 50 70 100 110 120
+   Queragri 60 70 80 90 140 160 170
+   Querchry 60 100
+   Querwisl 100 110 120 130 150 180 190 210 230
+   Sequsemp 160 210 240 320 330 340 360
+   Umbecali 30 50 70 90
+
+MapCode  103919
+   Arbumenz 40 50 60
+   Lithdens 20 30 40 50 60
+   Querchry 20 30 40 70
+   Umbecali 20 30 40
+
+MapCode  103920
+   Arbumenz 40
+   Pinupond 120
+   Querchry 30 40 50 60 70 80 90 100 110 150 230
+   Umbecali 30 60 80
+
+MapCode  103921
+   Arbumenz 50 90
+   Lithdens 10 40 50
+   Pinucoul 100
+   Pseumenz 90 100 130 140 240
+   Queragri 30 50
+   Querwisl 30 80 100 110 140
+   Sequsemp 30 60 90 180 190 220 230 250 550
+
+MapCode  103922
+   Lithdens 40
+   Querwisl 30
+   Sequsemp 70 100 110 130 160 190 200 210 230 240 250 320 330 380 460 650 800
+   Umbecali 30 60 70 100
+
+MapCode  103924
+   Acermacr 20 30 40 50
+   Pseumenz 70
+   Queragri 80 90 110
+   Querwisl 30 130 180
+   Umbecali 30 40 70
+
+MapCode  104452
+
+MapCode  104453
+   Pinumono 90 100 110 120 130 160 170 180 190
+
+MapCode  104471
+
+MapCode  104546
+   Pinumono 80 90 100 110 120 130 140 160 190
+   Querchry 40 50 60
+   Querwisl 30 40 50 60 70
+
+MapCode  104749
+
+MapCode  104752
+   Platrace 80
+   Queragri 60 70 80 90 100 130 140
+
+MapCode  104762
+   Queragri 70 80 90 100 110 120 130 140 150 160
+
+MapCode  104763
+   Platrace 30 40
+   Queragri 60 70 80 90 100 110 120 130 140 160
+
+MapCode  104855
+   Acermacr 50
+   Umbecali 20 30 40
+
+MapCode  104856
+   Arbumenz 40 50
+   Querwisl 30 40 50
+   Umbecali 20 30
+
+MapCode  104859
+   Queragri 40 50 60 70 80
+
+MapCode  104867
+   Pinucoul 40 60 80 90 100
+   Queragri 40 50 60 70 80 90
+
+MapCode  104868
+   Queragri 60 80 120
+
+MapCode  127485
+   Pinucoul 130
+   Queragri 30 40 60 90 120 130
+   Querchry 150
+
+MapCode  127536
+
+MapCode  127746
+   Arbumenz 40
+   Umbecali 30 40
+
+MapCode  128057
+   Pinusabi 30 40 60
+   Querdoug 40 70 80
+
+MapCode  128108
+   Arbumenz 40
+   Lithdens 60 70 80 90 120
+   Pinupond 40 50 60 70 80 140
+   Pseumenz 50 70 90 100 120 130 140 150 160 170 200 230
+   Queragri 40 50 60
+
+MapCode  128325
+   Platrace 20 30 40 50 60
+   Queragri 130
+
+MapCode  128532
+   Lithdens 50
+   Queragri 50 60 70 80 110
+   Sequsemp 30 80 100 110 120 130 140 150 160 170 190 200 220 230
+
+MapCode  128716
+   Arbumenz 40
+   Querchry 50 60 80
+   Sequsemp 60 70
+
+MapCode  128781
+   Acermacr 40
+   Arbumenz 50 70 80
+   Lithdens 60 80 90
+   Pseumenz 40 150 180 240
+   Queragri 70
+   Querchry 30 40 50
+   Sequsemp 80 120 130 140 160 180 190 200
+   Umbecali 40 50 60 70 80
+
+MapCode  129181
+
+MapCode  129232
+   Arbumenz 50 60 80 120
+   Queragri 60 70 80 120 130 150 160
+   Sequsemp 140 170 180 210 220 230 280 290 430
+   Umbecali 30 40 50 60 110
+
+MapCode  129501
+   Querchry 60 70 80 90 100 240
+   Umbecali 30 50
+
+MapCode  129668
+   Queragri 30 60
+   Querdoug 50 60
+
+MapCode  129794
+   Arbumenz 40 50 70
+   Pinusabi 50
+   Queragri 50
+   Querkell 50 60 70 90
+   Sequsemp 110
+
+MapCode  130169
+   Lithdens 60
+   Querchry 140
+   Sequsemp 120 130 140 170 180 190 230 250
+
+MapCode  130271
+   Queragri 50 60 70 80 90
+   Querdoug 50 60 70 80 90 100 140
+
+MapCode  130715
+   Pinucoul 80 90
+
+MapCode  130768
+   Queragri 60 70 80 90 110 120 140
+   Quergarr 60 70 80 100 110
+   Umbecali 30 40 50
+
+MapCode  131186
+   Lithdens 40 80 90 110
+   Sequsemp 50 60 70 80 120 140 150 170 200 210 220 240 250 260 280 300 320 330 350 360 370 400 420 570 650
+   Umbecali 50
+
+MapCode  131303
+   Queragri 30 40
+   Querwisl 30 80 90 100
+   Umbecali 40 50 60
+
+MapCode  131485
+   Aesccali 40
+   Arbumenz 40 50 60
+   Queragri 50 70 110 130
+   Umbecali 20 30 40 50 70
+
+MapCode  131595
+   Acermacr 40 80
+   Queragri 50 60 70 80 110
+   Umbecali 30 40 50
+
+MapCode  132136
+   Pseumenz 40
+   Queragri 40 50 60 70 80 100
+   Umbecali 110
+
+MapCode  132204
+   Queragri 50 60 90 110 120
+   Umbecali 30 40 50
+
+MapCode  132228
+
+MapCode  132660
+   Queragri 50 60 70 80 90
+   Umbecali 20
+
+MapCode  132796
+   Pinusabi 20 30
+   Querchry 120
+   Querdoug 50 70 80 90 170
+   Querkell 60 80 90 110 120
+
+MapCode  132889
+
+MapCode  132924
+   Arbumenz 40 50
+   Queragri 40 60 80
+   Sequsemp 40
+   Umbecali 40 50 60
+
+MapCode  133017
+   Platrace 60 100
+   Queragri 50 100 120 130 140
+
+MapCode  134171
+   Pinusabi 30 50 60
+   Queragri 50 60 70 80 90
+   Querchry 40
+
+MapCode  134424
+   Queragri 80
+   Querchry 60 70 80 90 100 110
+   Querwisl 60 70 80 100
+   Umbecali 30 40
+
+MapCode  134574
+   Platrace 100
+   Querdoug 150
+   Umbecali 70 80
+
+MapCode  134598
+   Arbumenz 50 70 80 90 100 110
+   Lithdens 30 50 90 100
+   Pseumenz 70
+   Queragri 50
+   Querwisl 90
+   Sequsemp 40 50 80 90 100 110 120 130 140 150 160 170 180 190 210
+
+MapCode  134599
+   Queragri 40 50 60
+   Querchry 70 80 90
+   Umbecali 30 40 50 60
+
+MapCode  134784
+   Querdoug 60 70 80
+
+MapCode  135082
+   Queragri 60 70 80 100 110 130 150 170
+
+MapCode  135298
+   Arbumenz 30 40 50 80
+   Lithdens 50 60 70 80 90
+   Pinuatte 50 70
+   Pseumenz 50 60 70 140 170
+   Queragri 40
+   Querchry 40
+   Sequsemp 10 20 30 40 50 80 90 100 130 140
+
+MapCode  135319
+   Aesccali 30
+   Arbumenz 40 50 60 70 100 110
+   Queragri 50 60 70 90
+   Querchry 60 90
+
+MapCode  135640
+
+MapCode  136367
+   Umbecali 10
+
+MapCode  136597
+   Pinusabi 30 40
+   Querchry 80
+   Querdoug 60 70 100 130
+   Quergarr 40 50 110
+   Querkell 60 70 80 100 110
+
+MapCode  136652
+   Pinuatte 30
+   Queragri 30
+   Umbecali 30 40 50
+
+MapCode  136682
+   Queragri 120
+
+MapCode  137070
+   Queragri 50 60 70
+
+MapCode  138442
+   Platrace 110
+   Queragri 90 120
+   Querkell 60 70 90 100 140
+
+MapCode  138701
+   Queragri 50 60 70 80 90 110 120 130 150 160
+
+MapCode  138897
+   Queragri 70 80 90 100 110
+
+MapCode  139052
+   Alnurhom 30
+   Queragri 40 60 70 80 90 100 110
+   Umbecali 30 40 50 60 70 110
+
+MapCode  139170
+   Querkell 50
+   Querwisl 30 40 50
+   Umbecali 20 30
+
+MapCode  139203
+
+MapCode  139211
+   Queragri 50 60 70 80 120 130
+
+MapCode  139264
+   Pinuradi 10 20 30 40 60 80 90
+   Queragri 70
+
+MapCode  139265
+   Queragri 30 40 50 60
+
+MapCode  139315
+   Queragri 70 100 110 120
+
+MapCode  139394
+   Aesccali 20 50
+   Pseumenz 30 100 120 230
+   Sequsemp 30 40 60 80 90 100 110 120 130 140 150 160 170 180 200 210 240 290 300 450 730
+   Umbecali 20 30 40
+
+MapCode  139395
+   Aesccali 20 50
+   Arbumenz 80
+   Lithdens 50
+   Pseumenz 100 110 220
+   Sequsemp 30 40 60 70 90 100 110 120 130 140 150 160 170 180 200 210 230 270 280 440 710
+   Umbecali 30
+
+MapCode  139396
+   Lithdens 60 70 80 130
+   Sequsemp 20 30 40 70 80 110 120 130 140 150 160 170 180 190 200 210 220 230 270 320
+
+MapCode  139415
+   Aesccali 30 40
+   Pinusabi 50 80
+   Queragri 60 90
+   Querkell 90
+   Umbecali 30 40
+
+MapCode  139435
+   Queragri 100 110 120 130 140
+   Querkell 80 90
+   Umbecali 40 70
+
+MapCode  139443
+   Queragri 30 40 50 60 70 80
+
+MapCode  139447
+   Queragri 140
+   Querkell 100 130
+   Querloba 70 150 190
+
+MapCode  139490
+   Queragri 60
+   Querkell 70 80 90 100
+   Querloba 50
+   Umbecali 40 50
+
+MapCode  139530
+   Aesccali 30 40
+   Queragri 60 70 80 110
+   Querloba 160 190
+   Umbecali 40 50 60 70
+
+MapCode  139597
+   Aesccali 40 50
+   Queragri 90 100 120
+   Querdoug 150
+
+MapCode  140497
+   Querkell 140 150
+
+MapCode  140498
+   Arbumenz 40 50 60 100
+   Lithdens 50 60 120 150
+   Pinupond 150
+   Queragri 40 110 120
+   Querkell 100 130 150 160 180
+
+MapCode  140499
+   Lithdens 40 50 80 110
+   Sequsemp 110 120 130 140 150 160 170 180 200 220 290
+   Umbecali 40 80 90
+
+MapCode  140501
+   Querwisl 80 90 100 120 200
+   Sequsemp 230 340
+   Umbecali 40
+
+MapCode  143081
+   Pinumono 60 90 110 120 130 140 160
+
+MapCode  143108
+   Arbumenz 40 50 60
+   Querchry 90
+   Umbecali 40
+
+MapCode  143187
+   Acermacr 50
+   Queragri 70 80 90 110
+
+MapCode  143543
+   Umbecali 40
+
+MapCode  143553
+
+MapCode  143684
+   Queragri 30 40 50 60
+
+MapCode  143686
+   Pinusabi 20
+   Querdoug 60 70 80 90 120 140
+
+MapCode  143694
+   Queragri 40 50 60 70
+
+MapCode  143769
+   Pseumenz 70
+   Querwisl 60 130 140 180 220 230 270
+   Sequsemp 50 70 90 100 130 140 160 230
+
+MapCode  143790
+   Lithdens 20 30 40 50 60 80 90 100 110
+   Sequsemp 130 140 160 170 180 200 230
+
+MapCode  143803
+   Queragri 30 40 90
+   Querwisl 70 90 130
+   Umbecali 40 50 60 80
+
+MapCode  143812
+   Querdoug 50 60 70 80 100 140 210
+   Querkell 50 80 150
+   Umbecali 30 40 50 110
+
+MapCode  143819
+   Arbumenz 50
+   Lithdens 30 40 50 60 70 80 90
+   Pseumenz 40 50
+   Sequsemp 10 20 30 40 50 60 70 80 100 110 120 130 140 150 160 170 180 190 250 280
+
+MapCode  143832
+   Acermacr 90
+   Alnurubr 40 70
+   Pseumenz 30 50 70 80 90 100 150 200
+   Querchry 50 60 100
+   Umbecali 30 40 60
+
+MapCode  143897
+   Querdoug 70 80 90 110 120
+
+MapCode  143932
+   Querwisl 60 70 80 90 100 110 120
+   Umbecali 20 40 50 60
+
+MapCode  147249
+   Pinumono 90 110 130 160
+
+MapCode  147286
+   Pseumacr 110 150
+
+MapCode  147487
+   Querdoug 70 100 110 160
+
+MapCode  147677
+
+MapCode  147699
+
+MapCode  147738
+   Arbumenz 50 60 70 80 100 110 120
+   Lithdens 50 70 80 90 100 110 130 150
+   Querwisl 170
+   Sequsemp 100 140 170 190 200 210 220 250 260 270 290 340 350
+
+MapCode  147739
+   Lithdens 90
+   Querchry 180
+
+MapCode  147761
+
+MapCode  147797
+   Queragri 40 50 60 70 80 90
+
+MapCode  147844
+   Arbumenz 50 60
+   Lithdens 20 30 40 50 60
+   Pinusabi 60 70 80
+   Querchry 60 70 80 90 110 130 140 150 170 180
+
+MapCode  147915
+   Queragri 40 50 60 70 80 120
+   Sequsemp 30 60 70 130 150 160 170 190 230 280 310
+   Umbecali 30 60 70 80 90 120
+
+MapCode  147938
+   Arbumenz 40 50 60 70
+   Queragri 60 70 80 110 140 150
+   Umbecali 40 50 60
+
+MapCode  147956
+   Acermacr 50
+   Queragri 50 70 80 90
+   Umbecali 20 30 40 50 60 70 80
+
+MapCode  147957
+   Aesccali 30 40
+   Querkell 50 60 70 80 90 100 120 130 140 150
+   Umbecali 50 60
+
+MapCode  147963
+   Aesccali 40 50 60
+   Queragri 30 40 50 60 80 90 100
+   Quergarr 50 70
+   Umbecali 40 50
+
+MapCode  147978
+   Aesccali 40 50 60
+   Lithdens 120 140
+   Queragri 50 60 70 80 100 120
+   Sequsemp 70 80 90 100 110 120 130 140 150 170 180 200 210 270 280 330
+   Umbecali 30 40 50 60 70 80
+
+MapCode  147979
+   Queragri 30 40
+   Querchry 80 90
+   Umbecali 50 60 70
+
+MapCode  147998
+   Acermacr 40 50 60 80
+   Querchry 60 70 80 150 190
+   Umbecali 30 40 50 60
+
+MapCode  148019
+   Queragri 40 50 60 70 80 90 120
+
+MapCode  148021
+   Acermacr 60
+   Platrace 160
+   Querkell 50
+   Umbecali 40 50 60 70 80 100
+
+MapCode  148059
+   Acermacr 40
+   Aesccali 20 30
+   Queragri 60 70 90 110 120 130
+   Umbecali 20 30 40 50 100 120 130
+

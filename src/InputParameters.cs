@@ -17,14 +17,9 @@ namespace Landis.Extension.BaseEDA
         int Timestep {get;set;}
         //---------------------------------------------------------------------
         /// <summary>
-        /// Template for the filenames for output INFECTED maps.
+        /// Template for the filenames for output maps with infection status (0=Susceptible;1=Infected;2=Diseased).
         /// </summary>
-        string InfMapNames {get;set;}
-        //---------------------------------------------------------------------
-        /// <summary>
-        /// Template for the filenames for output DISEASED maps.
-        /// </summary>
-        string DisMapNames{get;set;}
+        string StatusMapNames {get;set;}
         //---------------------------------------------------------------------
         /// <summary>
         /// Template for the filenames for mortality output maps (number of cohorts killed for each species of interest).
@@ -52,8 +47,7 @@ namespace Landis.Extension.BaseEDA
         : IInputParameters
     {
         private int timestep;
-        private string infMapNames;
-        private string disMapNames;
+        private string statusMapNames;
         private string mortMapNames;
         private string logFileName;
         private IEnumerable<IAgent> manyAgentParameters;
@@ -77,32 +71,16 @@ namespace Landis.Extension.BaseEDA
 
         //---------------------------------------------------------------------
         /// <summary>
-        /// Template for the filenames for output INFECTED maps.
+        /// Template for the filenames for output maps with infection status (0=Susceptible;1=Infected;2=Diseased).
         /// </summary>
-        public string InfMapNames
+        public string StatusMapNames
         {
             get {
-                return infMapNames;
+                return statusMapNames;
             }
             set {
                 MapNames.CheckTemplateVars(value);
-                infMapNames = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        /// <summary>
-        /// Template for the filenames for output DISEASED maps.
-        /// </summary>
-        public string DisMapNames
-        {
-            get
-            {
-                return disMapNames;
-            }
-            set
-            {
-                MapNames.CheckTemplateVars(value);
-                disMapNames = value;
+                statusMapNames = value;
             }
         }
         //---------------------------------------------------------------------

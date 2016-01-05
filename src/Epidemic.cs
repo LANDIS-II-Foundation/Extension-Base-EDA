@@ -13,49 +13,35 @@ namespace Landis.Extension.BaseEDA
 
     {
         private static IEcoregionDataset ecoregions;
-
         private IAgent epidemicParms;
         private double random;
-        //private int advRegenAgeCutoff;  DOES THIS HAVE TO BE OUTCOMMENTED?
 
         // - TOTAL -
-        //private int totalSitesDamaged; //not sure we need this...
-        private int totalCohortsKilled; //customize this to ONLY include the species of interest
-        //private double meanIntensity;   //changed to "Intensity" instead of "Severity"
-       
+        private int totalSitesInfected;
+        private int totalSitesDiseased; //disease does not ALWAYS translated into mortality (damage)
+        private int totalSitesDamaged;  //sites that are diseased AND experienced mortality
+        private int totalCohortsKilled; //all mortality
+        private int totalMortSppCohortsKilled; //only mortality of spp of interest (Mort Flag = YES)
+
         // - SITE -
-        //private int siteIntensity;      //changed to "Intensity" instead of "Severity"
-        private double siteVulnerability;
+        //private double siteVulnerability;
         private int siteCohortsKilled; //customize this to ONLY include the species of interest
         private int siteCFSconifersKilled;
+        private int siteMortSppKilled; //spp that are included in the mortality species list
         private int[] sitesInEvent;
 
         private ActiveSite currentSite; // current site where cohorts are being affected
 
         // - Transmission - 
-        private enum DispersalTemplate {PowerLaw, NegExp};   
-
-        private enum InitialCondition   {map, none};   //is this to use initial map of infected sites?
+        private enum DispersalTemplate { PowerLaw, NegExp };   
+        private enum InitialCondition   { map, none };   //is this to use initial map of infected sites?
         private enum SHImode { SHImax, SHImean };
 
-
         //---------------------------------------------------------------------
-
         static Epidemic()
         {
         }
-
         //---------------------------------------------------------------------
-
-        public int[] SitesInEvent
-        {
-            get {
-                return sitesInEvent;
-            }
-        }
-
-        //---------------------------------------------------------------------
-
         public int CohortsKilled
         {
             get {
@@ -63,16 +49,45 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-
+        public int MortSppCohortsKilled
+        {
+            get
+            {
+                return totalMortSppCohortsKilled;
+            }
+        }
+        //---------------------------------------------------------------------
+        public int TotalSitesInfected
+        {
+            get
+            {
+                return totalSitesInfected;
+            }
+        }
+        //---------------------------------------------------------------------
+        public int TotalSitesDiseased
+        {
+            get
+            {
+                return totalSitesDiseased;
+            }
+        }
+        //---------------------------------------------------------------------
+        public int TotalSitesDamaged
+        {
+            get
+            {
+                return totalSitesDamaged;
+            }
+        }
+        //---------------------------------------------------------------------
         ExtensionType IDisturbance.Type
         {
             get {
                 return PlugIn.type;
             }
         }
-
         //---------------------------------------------------------------------
-
         ActiveSite IDisturbance.CurrentSite
         {
             get {
@@ -80,7 +95,6 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-
         IAgent EpidemicParameters
         {
             get
@@ -88,7 +102,14 @@ namespace Landis.Extension.BaseEDA
                 return epidemicParms;
             }
         }
-
+        //---------------------------------------------------------------------
+        public int[] SitesInEvent
+        {
+            get
+            {
+                return sitesInEvent;
+            }
+        }
         //---------------------------------------------------------------------
         ///<summary>
         ///Initialize an Epidemic - defined as an agent outbreak for an entire landscape
@@ -102,18 +123,8 @@ namespace Landis.Extension.BaseEDA
             ecoregions = PlugIn.ModelCore.Ecoregions;
 
             //.ActiveSiteValues allows you to reset all active site at once.
-
-            SiteVars.EpidemDistProb.ActiveSiteValues = 0;
-            SiteVars.SiteHostSusceptMod.ActiveSiteValues = 0;
-            SiteVars.SiteHostSuscept.ActiveSiteValues = 0;
-
-            foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
-            {
-                if(agent.OutbreakZone[site] == Zone.Newzone)
-                    agent.OutbreakZone[site] = Zone.Lastzone;
-                else
-                    agent.OutbreakZone[site] = Zone.Nozone;
-            }
+            SiteVars.SiteHostIndexMod.ActiveSiteValues = 0;
+            SiteVars.SiteHostIndex.ActiveSiteValues = 0;
 
         }
 
@@ -122,48 +133,16 @@ namespace Landis.Extension.BaseEDA
         ///Simulate an Epidemic - This is the controlling function that calls the
         ///subsequent function.  The basic logic of an epidemic resides here.
         ///</summary>
-        public static Epidemic Simulate(IAgent agent,
-                                        int currentTime,
-                                        int timestep)//,
-                                        //int ROS)
+        public static Epidemic Simulate(IAgent agent, int currentTime)
         {
-
 
             Epidemic CurrentEpidemic = new Epidemic(agent);
             PlugIn.ModelCore.UI.WriteLine("   New EDA Epidemic Started.");
 
-            //SiteResources.SiteResourceDominance(agent, ROS, SiteVars.Cohorts);
-            //SiteResources.SiteResourceDominance(agent, ROS);
-            SiteResources.SiteHostSusceptibility(agent);   //WHY IS SiteResources UNDERLINED?
-            SiteResources.SiteHostSusceptibilityModifier(agent);  //WHY IS SiteResources UNDERLINED?
-
-            if (agent.Dispersal) {
-                //Asynchronous - Simulate Agent Dispersal
-
-                // Calculate Site Disturbance Probability
-                // If neither disturbance modifiers nor ecoregion modifiers are active,
-                // Site Disturbance Probability will equal SiteHostSusceptibility.
-                SiteResources.SiteHostSusceptibility(agent, ROS, false);
-
-                Epicenters.NewEpicenters(agent, timestep);
-
-            } else
-            {
-                //Synchronous:  assume that all Active sites can potentially be
-                //disturbed without regard to initial locations.
-                foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
-                    agent.OutbreakZone[site] = Zone.Newzone;
-
-            }
-
-            //Consider the Neighborhood if requested:
-            if (agent.NeighborFlag)
-                SiteResources.NeighborResourceDominance(agent);
-
-            //Recalculate Site Vulnerability considering neighbors if necessary:
-            SiteResources.SiteVulnerability(agent, ROS, agent.NeighborFlag);
-
-            CurrentEpidemic.DisturbSites(agent);
+            SiteResources.SiteHostIndexCompute(agent);   
+            SiteResources.SiteHostIndexModCompute(agent);
+            
+            CurrentEpidemic.ComputeSiteInfStatus(agent);
 
             return CurrentEpidemic;
         }
@@ -172,56 +151,67 @@ namespace Landis.Extension.BaseEDA
         // Epidemic Constructor
         private Epidemic(IAgent agent)
         {
-            this.sitesInEvent = new int[ecoregions.Count];
+            sitesInEvent = new int[ecoregions.Count];
             foreach(IEcoregion ecoregion in ecoregions)
-                this.sitesInEvent[ecoregion.Index] = 0;
-            this.epidemicParms = agent;
-            this.totalCohortsKilled = 0;
-            this.meanSeverity = 0.0;
-            this.totalSitesDamaged = 0;
-
-            //PlugIn.ModelCore.Log.WriteLine("New Agent event");
+                sitesInEvent[ecoregion.Index] = 0;
+            epidemicParms = agent;
+            totalCohortsKilled = 0;
+            totalMortSppCohortsKilled = 0;
+            totalSitesInfected = 0;
+            totalSitesDiseased = 0;
+            totalSitesDamaged = 0;
         }
-
         //---------------------------------------------------------------------
-        //Go through all active sites and damage them according to the
-        //Site Vulnerability.
-        private void DisturbSites(IAgent agent)
+        //Go through all active sites and update their infection status according to the
+        //probs of being S, I, D.
+        private void ComputeSiteInfStatus(IAgent agent)
         {
-            int totalSiteSeverity = 0;
-            int siteCohortsKilled = 0;
-            int[] cohortsKilled = new int[2];
-            //this.advRegenAgeCutoff = agent.AdvRegenAgeCutoff;
 
+            double deltaPSusceptible = 0;  //do I need to initialize to 0 these?
+            double deltaPInfected = 0;     //do I need to initialize to 0 these?
+            double deltaPDiseased = 0;     //do I need to initialize to 0 these?
+
+            int siteCohortsKilled = 0; //why initialize this here since you reset to 0 inside the foreach loop?
+            int[] cohortsKilled = new int[3];
+
+            //for each active site calculate the probability of changing status between S-I-D
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
             {
-                siteCohortsKilled = 0;
-                this.siteSeverity = 0;
-                this.random = 0;
+
+                siteCohortsKilled = 0; //see comment above...
+                random = 0;
 
                 double myRand = PlugIn.ModelCore.GenerateUniform();
 
-                if(agent.OutbreakZone[site] == Zone.Newzone
-                    && SiteVars.Vulnerability[site] > myRand)
+                //force of infection depends on the dispersal kernel, weather index, SHI of neighboring sites and itself, pSusceptible & pInfected of neighboring sites 
+                //FOI_i = Beta * sum(SHI_j * SHI_i * PSusceptible_j * PInfected_j * Kernel(dist_i_j))
+
+                deltaPSusceptible = -FOI * SiteVars.PSusceptible[site];
+                deltaPInfected = FOI * SiteVars.PSusceptible[site] - agent.AcquisitionRate * SiteVars.PInfected[site];  //rD = acquisition rate
+                deltaPDiseased = agent.AcquisitionRate * SiteVars.PInfected[site];
+
+                SiteVars.PSusceptible[site] = SiteVars.PSusceptible[site] + deltaPSusceptible;
+                SiteVars.PInfected[site] = SiteVars.PInfected[site] + deltaPInfected;
+                SiteVars.PDiseased[site] = SiteVars.PDiseased[site] + deltaPDiseased;
+
+                // SUSCEPTIBLE --->> INFECTED
+                if (SiteVars.InfStatus[site] == 0 && SiteVars.PInfected[site] >= myRand)  //if site is Susceptible (S) 
                 {
-                    //PlugIn.ModelCore.Log.WriteLine("Zone={0}, agent.OutbreakZone={1}", Zone.Newzone.ToString(), agent.OutbreakZone[site]);
-                    //PlugIn.ModelCore.Log.WriteLine("Vulnerability={0}, Randnum={1}", SiteVars.Vulnerability[site], PlugIn.ModelCore.GenerateUniform());
-                    double vulnerability = SiteVars.Vulnerability[site];
+                    //update state of current site from S to I
+                    SiteVars.InfStatus[site] = 1;
+                    totalSitesInfected++;
+                }
 
-                    if(vulnerability >= 0) this.siteSeverity= 1;
-
-                    if(vulnerability >= agent.Class2_SV) this.siteSeverity= 2;
-
-                    if(vulnerability >= agent.Class3_SV) this.siteSeverity= 3;
-
-                    this.random = myRand;
-                    this.siteVulnerability = SiteVars.Vulnerability[site];
-
-                    if(this.siteSeverity > 0)
-                        cohortsKilled = KillSiteCohorts(site);
-
+                // INFECTED --->> DISEASED -mortality-
+                if (SiteVars.InfStatus[site] == 2 && SiteVars.PDiseased[site] >= myRand) //if site is "diseased" then apply the mortality to affected cohorts 
+                {
+                    totalSitesDiseased++;
+                    random = myRand;
+                    cohortsKilled = KillSiteCohorts(site);
                     siteCohortsKilled = cohortsKilled[0];
+                    siteMortSppKilled = cohortsKilled[2];
 
+                    //check with Brian to better understand what this does... 
                     if (SiteVars.NumberCFSconifersKilled[site].ContainsKey(PlugIn.ModelCore.CurrentTime))
                     {
                         int prevKilled = SiteVars.NumberCFSconifersKilled[site][PlugIn.ModelCore.CurrentTime];
@@ -232,106 +222,93 @@ namespace Landis.Extension.BaseEDA
                         SiteVars.NumberCFSconifersKilled[site].Add(PlugIn.ModelCore.CurrentTime, cohortsKilled[1]);
                     }
 
+                    //check with Brian to better understand what this does... 
+                    if (SiteVars.NumberMortSppKilled[site].ContainsKey(PlugIn.ModelCore.CurrentTime))
+                    {
+                        int prevKilled = SiteVars.NumberMortSppKilled[site][PlugIn.ModelCore.CurrentTime];
+                        SiteVars.NumberMortSppKilled[site][PlugIn.ModelCore.CurrentTime] = prevKilled + cohortsKilled[2];
+                    }
+                    else
+                    {
+                        SiteVars.NumberMortSppKilled[site].Add(PlugIn.ModelCore.CurrentTime, cohortsKilled[2]);
+                    }
+
+                    //if there is at least one cohort killed by current epidemic event
                     if (siteCohortsKilled > 0)
                     {
-                        this.totalCohortsKilled += siteCohortsKilled;
-                        this.totalSitesDamaged++;
-                        totalSiteSeverity += this.siteSeverity;
-                        SiteVars.Disturbed[site] = true;
+                        totalCohortsKilled += siteCohortsKilled;  //cumulate number of cohorts killed
+                        totalSitesDamaged++; //cumulate number of sites damaged
                         SiteVars.TimeOfLastEvent[site] = PlugIn.ModelCore.CurrentTime;
-                        SiteVars.AgentName[site] = agent.AgentName;
-                    } else
-                        this.siteSeverity = 0;
+
+                        //if there is at least one cohort killed by current epidemic event (among selected species of interest - FLAG YES)
+                        if (siteMortSppKilled > 0)
+                            totalMortSppCohortsKilled += siteMortSppKilled; //cumulate number of cohorts killed
+                    }
                 }
-                agent.Severity[site] = (byte) this.siteSeverity;
             }
-            if (this.totalSitesDamaged > 0)
-                this.meanSeverity = (double) totalSiteSeverity / (double) this.totalSitesDamaged;
-        }
+        }  
 
         //---------------------------------------------------------------------
         //A small helper function for going through list of cohorts at a site
         //and checking them with the filter provided by RemoveMarkedCohort(ICohort).
         private int[] KillSiteCohorts(ActiveSite site)
         {
-            this.siteCohortsKilled = 0;
-            this.siteCFSconifersKilled = 0;
+            siteCohortsKilled = 0;
+            siteCFSconifersKilled = 0;
+            siteMortSppKilled = 0;
 
             currentSite = site;
 
-            SiteVars.Cohorts[site].RemoveMarkedCohorts(this); 
+            SiteVars.Cohorts[site].RemoveMarkedCohorts(this);
 
-            int[] cohortsKilled = new int[2];
+            int[] cohortsKilled = new int[3];
 
-            cohortsKilled[0] = this.siteCohortsKilled;
-            cohortsKilled[1] = this.siteCFSconifersKilled;
+            cohortsKilled[0] = siteCohortsKilled;
+            cohortsKilled[1] = siteCFSconifersKilled;
+            cohortsKilled[2] = siteMortSppKilled;
 
-
-            return cohortsKilled; 
-        }
-
+            return cohortsKilled;
+        }        
+        
         //---------------------------------------------------------------------
-        // DamageCohort is a filter to determine which cohorts are removed.
+        // This is a filter to determine which cohorts are removed.
         // Each cohort is passed into the function and tested whether it should
         // be killed.
         bool ICohortDisturbance.MarkCohortForDeath(ICohort cohort)
         {
-            //PlugIn.ModelCore.Log.WriteLine("Cohort={0}, {1}, {2}.", cohort.Species.Name, cohort.Age, cohort.Species.Index);
             
             bool killCohort = false;
-           // bool advRegenSpp = false;
 
             ISppParameters sppParms = epidemicParms.SppParameters[cohort.Species.Index];
-
-            //foreach (ISpecies mySpecies in epidemicParms.AdvRegenSppList)
-            //{
-            //   if (cohort.Species == mySpecies)
-            //   {
-            //        advRegenSpp = true;
-            //        break;
-            //    }
-
-            //}
-
-            if (cohort.Age >= sppParms.ResistantHostAge)
+ 
+            if (cohort.Age >= sppParms.LowVulnHostAge)
             {
-                if (this.random <= this.siteVulnerability * sppParms.ResistantHostVuln)
-                {
-                    //if (advRegenSpp && cohort.Age <= this.advRegenAgeCutoff)
-                    //    killCohort = false;
-                    //else
-                        killCohort = true;
-                }
+                if (random <= sppParms.LowVulnHostMortProb)
+                   killCohort = true;
             }
 
-            if (cohort.Age >= sppParms.TolerantHostAge)
+            if (cohort.Age >= sppParms.MediumVulnHostAge)
             {
-                if (this.random <= this.siteVulnerability * sppParms.TolerantHostVuln)
-                {
-                    //if (advRegenSpp && cohort.Age <= this.advRegenAgeCutoff)
-                     //   killCohort = false;
-                    //else
-                        killCohort = true;
-                }
+                if (random <= sppParms.MediumVulnHostMortProb)
+                    killCohort = true;
             }
 
-            if (cohort.Age >= sppParms.VulnerableHostAge)
+            if (cohort.Age >= sppParms.HighVulnHostAge)
             {
-                if (this.random <= this.siteVulnerability * sppParms.VulnerableHostVuln)
-                {
-                    //if (advRegenSpp && cohort.Age <= this.advRegenAgeCutoff)
-                     //   killCohort = false;
-                    //else
-                        killCohort = true;
-                }
+                if (random <= sppParms.HighVulnHostMortProb)
+                    killCohort = true;
             }
-            
 
             if (killCohort)
             {
-                this.siteCohortsKilled++;
+                siteCohortsKilled++;
+
                 if (sppParms.CFSConifer)
-                    this.siteCFSconifersKilled++;
+                    siteCFSconifersKilled++;
+
+                if (sppParms.MortSppFlag)
+                    siteMortSppKilled++;
+
             }
 
             return killCohort;

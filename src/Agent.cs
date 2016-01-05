@@ -10,7 +10,7 @@ using System.Data;
 namespace Landis.Extension.BaseEDA
 {
 
-    public enum SHImode {max, mean};  //maybe add something new here, like weighted by biomass, or mean for each cohort?
+    public enum SHImode { max, mean };  //maybe add something new here, like weighted by biomass, or mean for each cohort?
     public enum DispersalTemplate { PowerLaw, NegExp };
 
     /// <summary>
@@ -18,7 +18,7 @@ namespace Landis.Extension.BaseEDA
     /// </summary>
     public interface IAgent
     {
-        string AgentName{get;set;}
+        string AgentName{ get;set; }
         int StartYear { get; set; }
         int EndYear { get; set; }
 
@@ -39,13 +39,11 @@ namespace Landis.Extension.BaseEDA
 
         //List of tree species to be ignored
         IEnumerable<ISpecies> NegSppList { get; set; }
-        //List of tree species to be considered for mortality outputs
-        IEnumerable<ISpecies> MortSppList { get; set; }
 
         ISppParameters[] SppParameters { get; set; }
         IEcoParameters[] EcoParameters { get; set; }
         List<IDisturbanceType> DisturbanceTypes { get;  }
-        //ISiteVar<byte> Severity { get; set; }
+
     }
 }
 
@@ -78,15 +76,11 @@ namespace Landis.Extension.BaseEDA
         private DispersalTemplate dispersalKernel { get; set; }
         private double alphaCoef { get; set; }
 
-        //List of tree species to be ignored
-        private IEnumerable<ISpecies> negSppList;
+        private IEnumerable<ISpecies> negSppList;  //List of tree species to be ignored
+
         private ISppParameters[] sppParameters;
         private IEcoParameters[] ecoParameters;
         private List<IDisturbanceType> disturbanceTypes;
-        //private ISiteVar<byte> severity;
-
-        private IEnumerable<ISpecies> advRegenSppList;  //WHAT IS THIS?
-        private int advRegenAgeCutoff; //WHAT IS THIS?
 
         //---------------------------------------------------------------------
         public string AgentName
@@ -257,16 +251,6 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-        /*public ISiteVar<byte> Intensity
-        {
-            get {
-                return intensity;
-            }
-            set {
-                intensity = value;
-            }
-        }*/
-        //---------------------------------------------------------------------
         public IEnumerable<ISpecies> NegSppList
         {
             get
@@ -279,43 +263,6 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-        public IEnumerable<ISpecies> MortSppList
-        {
-            get
-            {
-                return mortSppList;
-            }
-            set
-            {
-                mortSppList = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public IEnumerable<ISpecies> AdvRegenSppList   //DO WE NEED THIS? IT's NOT DEFINED IN THE IAGENT interface
-        {
-            get
-            {
-                return advRegenSppList;
-            }
-            set
-            {
-                advRegenSppList = value;
-            }
-        }
-        //---------------------------------------------------------------------
-        public int AdvRegenAgeCutoff   //DO WE NEED THIS? IT's NOT DEFINED IN THE IAGENT interface
-        {
-            get
-            {
-                return advRegenAgeCutoff;
-            }
-            set
-            {
-                advRegenAgeCutoff = value;
-            }
-        }
-
-        //---------------------------------------------------------------------
         /// <summary>
         /// Objects and Lists must be initialized.
         /// </summary>
@@ -326,10 +273,6 @@ namespace Landis.Extension.BaseEDA
             disturbanceTypes = new List<IDisturbanceType>();
             negSppList = new List<ISpecies>();
 
-            //advRegenSppList = new List<ISpecies>(); //DO WE NEED THIS? IT's NOT DEFINED IN THE IAGENT interface
-
-            //severity = PlugIn.ModelCore.Landscape.NewSiteVar<byte>();
-            
             for (int i = 0; i < sppCount; i++)
                 SppParameters[i] = new SppParameters();
             for (int i = 0; i < ecoCount; i++)

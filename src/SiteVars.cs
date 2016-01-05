@@ -28,23 +28,29 @@ namespace Landis.Extension.BaseEDA
         private static ISiteVar<int> timeOfLastBiomassInsects;
         private static ISiteVar<string> biomassInsectsAgent;
         //biological disturbance agent (BDA)
-        //private static ISiteVar<int> timeOfLastBDA; CHANGE THIS TO MATCH BDA
-        //private static ISiteVar<byte> windSeverity; CHANGE THIS TO MATCH SEVERITY CAUSED BY BDA
-
-        //epidem
+        private static ISiteVar<int> timeOfLastBDA; 
+        private static ISiteVar<byte> bdaSeverity;
+        //epidem:
+        //Host Index defined as "susceptibility of each non-infected cell to become infected 
+        //and the suitability of each infected cell to produce infectious spores of the pathogen"
         private static ISiteVar<int> timeOfLastEDA;
         private static ISiteVar<double> siteHostIndexMod;
-        private static ISiteVar<double> siteHostIndex;   //Host Index defined as "susceptibility of each non-infected cell to become infected 
-                                                         //and the suitability of each infected cell to produce infectious spores of the pathogen"
+        private static ISiteVar<double> siteHostIndex;   
         
-        //STATE OF A CELL: SUSCEPTIBLE (S), INFECTED (cryptic-non symptomatic) (I), DISEASED (symptomatic) (D)
-        private static ISiteVar<string> susceptible;
-        private static ISiteVar<string> infected;  //non-symptomatic but can infect!
-        private static ISiteVar<string> diseased;  //BUT not all diseased die, this is controlled by mortality probability and vuln class
+        //STATE OF A CELL: SUSCEPTIBLE (0), INFECTED (cryptic-non symptomatic) (1), DISEASED (symptomatic) (2)
+        private static ISiteVar<byte> infStatus;
+        private static ISiteVar<double> pSusceptible;
+        private static ISiteVar<double> pInfected;
+        private static ISiteVar<double> pDiseased;
 
-        private static ISiteVar<Dictionary<int,int>> numberCFSconifersKilled;  //this specific naming convention is defined by the Canadian fire model. Keep as is.
-        private static ISiteVar<ISiteCohorts> cohorts;                         //the list of species to be used as FUEL for the fire extension can be specified in the Fire Fuel extension!                     
-        private static ISiteVar<int> timeOfNext;
+        //this specific naming convention is defined by the Canadian fire model. Keep as is.
+        //the list of species to be used as FUEL for the fire extension can be specified in the Fire Fuel extension!
+        private static ISiteVar<Dictionary<int,int>> numberCFSconifersKilled;  
+                                                                               
+        //list of spp to be included in the mortality plot.
+        private static ISiteVar<Dictionary<int, int>> numberMortSppKilled;
+
+        private static ISiteVar<ISiteCohorts> cohorts;                                              
         private static ISiteVar<string> agentName;
 
         //---------------------------------------------------------------------
@@ -54,41 +60,46 @@ namespace Landis.Extension.BaseEDA
             timeOfLastEDA  = modelCore.Landscape.NewSiteVar<int>();
             siteHostIndexMod = modelCore.Landscape.NewSiteVar<double>();
             siteHostIndex = modelCore.Landscape.NewSiteVar<double>();
-            susceptible = modelCore.Landscape.NewSiteVar<string>();
-            infected = modelCore.Landscape.NewSiteVar<string>();
-            diseased = modelCore.Landscape.NewSiteVar<string>();
-            numberCFSconifersKilled = modelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
-            timeOfNext = modelCore.Landscape.NewSiteVar<int>();
+            infStatus = modelCore.Landscape.NewSiteVar<byte>();
+            pSusceptible = modelCore.Landscape.NewSiteVar<double>();
+            pInfected = modelCore.Landscape.NewSiteVar<double>();
+            pDiseased = modelCore.Landscape.NewSiteVar<double>();
             agentName = modelCore.Landscape.NewSiteVar<string>();
             biomassInsectsAgent = modelCore.Landscape.NewSiteVar<string>();
+
+            numberCFSconifersKilled = modelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
+            numberMortSppKilled = modelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
 
             //initialize starting values
             TimeOfLastEvent.ActiveSiteValues = -10000; //why this?
             SiteHostIndexMod.ActiveSiteValues = 0.0;
             SiteHostIndex.ActiveSiteValues = 0.0;
-            //EpidemDistProb.ActiveSiteValues = 0.0;
-            TimeOfNext.ActiveSiteValues = 9999;    //why this?
+            //InfStatus.ActiveSiteValues = 0; //not sure I should initialize to 0 all sites since I will use initial infection map OR random place starting infections
+            //PSusceptible.ActiveSiteValues = 1;  //for all sites with infStatus = 0
+            //PInfected.ActiveSiteValues = 0; //set = 1 for initial sites of outbreak (infStatus = 1) based on map or random (see above)
+            //PDiseased.ActiveSiteValues = 0; //this should be = 0 for all sites
+            
             AgentName.ActiveSiteValues = "";
 
             cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.AgeCohorts"); //get age cohorts from succession extension
 
             //LOOP through each active pixel in the landscape and for each one of them
-            //initialize a dictionary to keep track of numbers of cohorts killed as part of special dead fuel
-            foreach(ActiveSite site in modelCore.Landscape)
+            //initialize a dictionary to keep track of numbers of cohorts killed as part of special dead fuel or as those for inclusion in mortality plot
+            foreach (ActiveSite site in modelCore.Landscape)
+            {
                 NumberCFSconifersKilled[site] = new Dictionary<int, int>();
+                NumberMortSppKilled[site] = new Dictionary<int, int>();
+            }
 
-            // Enable interactions with CFS fuels extension.
-            modelCore.RegisterSiteVar(NumberCFSconifersKilled, "EDA.NumCFSConifers");
+            modelCore.RegisterSiteVar(NumberCFSconifersKilled, "EDA.NumCFSConifers");  // Enable interactions with CFS fuels extension.
+            modelCore.RegisterSiteVar(NumberMortSppKilled, "EDA.NumMortSppKilled");  // Enable interactions with fire/fuel extension (B. Miranda add this please).
 
             modelCore.RegisterSiteVar(TimeOfLastEvent, "EDA.TimeOfLastEvent");
             modelCore.RegisterSiteVar(AgentName, "EDA.AgentName");
-            // Added to enable interactions with other extensions (Presalvage harvest)
-            modelCore.RegisterSiteVar(TimeOfNext, "EDA.TimeOfNext");
 
         }
 
         //---------------------------------------------------------------------
-
         public static void InitializeTimeOfLastDisturbances()
         {
             //harvest
@@ -102,8 +113,8 @@ namespace Landis.Extension.BaseEDA
             timeOfLastWind = PlugIn.ModelCore.GetSiteVar<int>("Wind.TimeOfLastEvent");
             windSeverity = PlugIn.ModelCore.GetSiteVar<byte>("Wind.Severity");
             //bda
-            //timeOfLastBDA = PlugIn.ModelCore.GetSiteVar<int>("BDA.TimeOfLastEvent"); //HOW DO WE CHANGE THIS?
-            //windSeverity = PlugIn.ModelCore.GetSiteVar<byte>("BDA.Severity");  //HOW DO WE CHANGE THIS?
+            timeOfLastBDA = PlugIn.ModelCore.GetSiteVar<int>("BDA.TimeOfLastEvent");
+            bdaSeverity = PlugIn.ModelCore.GetSiteVar<byte>("BDA.Severity");
             //biomass
             timeOfLastBiomassInsects = PlugIn.ModelCore.GetSiteVar<int>("BiomassInsects.TimeOfLastEvent");
             biomassInsectsAgent = PlugIn.ModelCore.GetSiteVar<string>("BiomassInsects.InsectName");
@@ -118,7 +129,6 @@ namespace Landis.Extension.BaseEDA
         }
 
         //---------------------------------------------------------------------
-
         public static ISiteVar<string> HarvestPrescriptionName
         {
             get
@@ -127,7 +137,6 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-
         public static ISiteVar<int> TimeOfLastHarvest
         {
             get
@@ -136,7 +145,6 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-
         public static ISiteVar<int> HarvestCohortsKilled
         {
             get
@@ -153,7 +161,6 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-
         public static ISiteVar<byte> FireSeverity
         {
             get
@@ -170,12 +177,27 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-
         public static ISiteVar<byte> WindSeverity
         {
             get
             {
                 return windSeverity;
+            }
+        }
+        //---------------------------------------------------------------------
+        public static ISiteVar<int> TimeOfLastBDA
+        {
+            get
+            {
+                return timeOfLastBDA;
+            }
+        }
+        //---------------------------------------------------------------------
+        public static ISiteVar<byte> BDASeverity
+        {
+            get
+            {
+                return bdaSeverity;
             }
         }
         //---------------------------------------------------------------------
@@ -192,39 +214,39 @@ namespace Landis.Extension.BaseEDA
                 return siteHostIndexMod;
             }
         }
-
-        //public static ISiteVar<bool> Disturbed
-        //{
-        //    get {
-        //        return disturbed;
-        //   }
-        //}
-
-        public static ISiteVar<string> Susceptible
+        //---------------------------------------------------------------------
+        public static ISiteVar<byte> InfStatus
         {
             get {
-                return susceptible;
+                return infStatus;
            }
         }
-
-        public static ISiteVar<string> Infected
-        {
-            get
-            {
-                return infected;
-            }
-        }
-
-        public static ISiteVar<string> Diseased
-        {
-            get
-            {
-                return diseased;
-            }
-        }
-
         //---------------------------------------------------------------------
-        public static ISiteVar<Dictionary<int,int>> NumberCFSconifersKilled  //should we change this name or fire ext needs it as is?
+        public static ISiteVar<double> PSusceptible
+        {
+            get
+            {
+                return pSusceptible;
+            }
+        }
+        //---------------------------------------------------------------------
+        public static ISiteVar<double> PInfected
+        {
+            get
+            {
+                return pInfected;
+            }
+        }
+        //---------------------------------------------------------------------
+        public static ISiteVar<double> PDiseased
+        {
+            get
+            {
+                return pDiseased;
+            }
+        }
+        //---------------------------------------------------------------------
+        public static ISiteVar<Dictionary<int,int>> NumberCFSconifersKilled 
         {
             get {
                 return numberCFSconifersKilled;
@@ -234,20 +256,23 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
+        public static ISiteVar<Dictionary<int, int>> NumberMortSppKilled
+        {
+            get
+            {
+                return numberMortSppKilled;
+            }
+            set
+            {
+                numberMortSppKilled = value;
+            }
+        }
+        //---------------------------------------------------------------------
         public static ISiteVar<ISiteCohorts> Cohorts
         {
             get
             {
                 return cohorts;
-            }
-
-        }
-        //---------------------------------------------------------------------
-        public static ISiteVar<int> TimeOfNext
-        {
-            get
-            {
-                return timeOfNext;
             }
 
         }
@@ -277,6 +302,6 @@ namespace Landis.Extension.BaseEDA
             }
 
         }
-        //---------------------------------------------------------------------
+        
     }
 }
