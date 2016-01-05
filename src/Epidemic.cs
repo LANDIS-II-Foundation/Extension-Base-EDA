@@ -42,7 +42,7 @@ namespace Landis.Extension.BaseEDA
         {
         }
         //---------------------------------------------------------------------
-        public int CohortsKilled
+        public int TotalCohortsKilled
         {
             get {
                 return totalCohortsKilled;
