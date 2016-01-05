@@ -185,7 +185,7 @@ namespace Landis.Extension.BaseEDA
             el.InfectedSites = CurrentEvent.TotalSitesInfected;  //total number of infected sites
             el.DiseasedSites = CurrentEvent.TotalSitesDiseased;  //total number of diseased sites
             el.DamagedSites = CurrentEvent.TotalSitesDamaged;    //total number of damaged (i.e. with mortality) sites
-            el.CohortsKilled = CurrentEvent.CohortsKilled; //total number of cohorts killed (all species)
+            el.TotalCohortsKilled = CurrentEvent.TotalCohortsKilled; //total number of cohorts killed (all species)
             el.CohortsMortSppKilled = CurrentEvent.MortSppCohortsKilled; //total number of cohorts killed (species of interest)
 
             EventLog.AddObject(el);
