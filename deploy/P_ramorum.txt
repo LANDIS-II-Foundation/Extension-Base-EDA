@@ -6,15 +6,41 @@ SHIMode			mean     <<possibly add weighted by biomass!
 >>EndYear   100
 
 >>-------- Climate Input ----------------
->>VariableNames	Precip MeanTemp	
->>StartMonth	April
->>EndMonth	June
+ClimateVariables
+>> Var Name	Months	Source	  ClimateVar	Transform	
+>> --------	------	------	  ----------	---------
+    temp	4 to 6	Library	  Temp		none
+    precip	4 to 6  Library	  Precip	Precip5DSum
+
+DerivedClimateVariables
+>> Var Name	Function	Time	Count  << Function = Mean or Sum; Time = Day, Week or Month
+>> --------	--------	----	-----
+  Precip5DSum	Sum		Day	  5
+
+TempIndex	<< a + b * exp(c[ln(Variable / d) / e] ^ f)
+>> Parameter	Value
+>> --------	-----
+  Variable	Temp
+  a		108.6
+  b		904.8
+  c		-0.5
+  d		15.87
+  e		0.2422
+  f		2
+
+
+WeatherIndexVariables  << Var1 * Var2*...
+Precip5Dsum
+TempIndex
+
 
 >>-------- Transmission Input ----------------------
 TransmissionRate	1.8	 <<beta0 = Mean rate at which an infected cell infects another cell (per time step)  
 AcquisitionRate		0.4	 <<rD = Rate of acquisition of detectable symptoms (per time step)
 >>InitialEpidemMap
+DispersalType		STATIC          <<STATIC, DYNAMIC (Dynamic = anisotropic, NOT implemented YET!)
 DispersalKernel		PowerLaw	<<PowerLaw, NegExp
+DispersalMaxDist	1000            << meters, cut-off distance to consider for dispersal kernel window               
 AlphaCoef		3.55		<<Exponent of dispersal kernel
 
 >>Ecoregion Modifiers
@@ -25,20 +51,37 @@ DisturbanceModifiers
    -0.25	20		Fire MaxAgeClearcut
 
 EDASpeciesParameters
->>         -------------Host Value--------------  -------------Vulnerability-------------
->>Species     Low    	  Medium       High	  Low        	Medium        High	    CFS
->>Name     Age Score    Age Score    Age Score    Age MortProb  Age MortProb  Age MortProb  Conifer?
->> ---------------------------------------------------------------------------------------------
-Lithdens   1     0.25	20   0.5      40  1.0	  11  1.0	20  1.0	     50  1.0		yes
-Queragri   999   0.25	999  0.5      40  1.0	  0   0		20  0.15     50  0.42		yes
-Querchry   999		999
-Querkell   999		999
-Umbecali   1
+>> ------------------------Host Index-------------------  -----------------Vulnerability-------------   --------  -------
+>>Species      Low    	      Medium         High	      Low            Medium         High        CFS       Mortality
+>>Name     Age Score(1-3) Age Score(4-6) Age Score(7-10)  Age  MortProb  Age  MortProb  Age  MortProb   Conifer?  Plot?
+>> -----------------------------------------------------  --------------------------------------------  --------  --------
+Umbecali   10  3          20  5          40  10		  999  0	 999  0         999  0	        no	  no					
+Lithdens   10  2	  20  5          999 NA           10   ?	 20   ?         50   ?		no	  no
+Sequsemp   50  3          999 NA         999 NA           10   ?         20   ?         50   ?		yes       no
+Acermacr   50  1          999 NA         999 NA           10   ?         20   ?         50   ?		no        no
+Aesccali   50  1          999 NA         999 NA           10   ?         20   ?         50   ?		no        no                            
+Arbumenz   50  1          999 NA         999 NA           10   ?         20   ?         50   ?		no        no                              
+Pseumenz   50  1          999 NA         999 NA           10   ?         20   ?         50   ?		no        no                                
+Querchry   999 NA	  999 NA         999 NA  	  10   ?	 20   ?         50   ?          no        yes
+Querkell   999 NA	  999 NA         999 NA  	  10   ?	 20   ?         50   ?          no	  yes
+Queragri   999 NA	  999 NA         999 NA  	  10   ?	 20   ?         50   ?          no	  yes
 
 IgnoredSpecies   << list species to be ignored in the SHI calculation
-
-
-MortalitySpecies  << list species to be considered for cohort mortality by disease (and mapping)
-Queragri
-Querchry
-Querkell
+Abiebrac
+Abiegran
+Alnurhom
+Alnurubr
+Pinuatte
+Pinucoul
+Pinulamb
+Pinumono
+Pinupond
+Pinuradi
+Pinusabi
+Platrace
+Popubals
+Pseumacr
+Querdoug
+Quergarr
+Querloba
+Querwisl
