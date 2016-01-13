@@ -26,11 +26,11 @@ namespace Landis.Extension.BaseEDA
         SHImode SHImode { get; set; }
 
         // - Climate - PLACEHOLDER FOR CLIMATE INPUTS
-        //VariableNames {get; set;}
-        //StartMonth {get; set;}
-        //EndMonth {get; set;}
-        //ADD HERE!
-
+        List<IClimateVariableDefinition> ClimateVars { get; set; }
+        List<IDerivedClimateVariable> DerivedClimateVars { get; set; }
+        ITempIndexModel TempIndexModel { get; set; }
+        List<string> WeatherIndexVars { get; set; }
+        DataTable ClimateDataTable { get; set; }
         //- Transmission -
         double TransmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
         double AcquisitionRate  { get; set; }  //rD = Rate of acquisition of detectable symptoms (per time step)
@@ -67,7 +67,7 @@ namespace Landis.Extension.BaseEDA
 
         // - Climate - PLACEHOLDER FOR CLIMATE INPUTS
         private List<IClimateVariableDefinition> climateVarDefn;
-        private List<IDerivedClimateVariable> varDefn;
+        private List<IDerivedClimateVariable> derivedClimateVars;
         private ITempIndexModel tempIndexModel;
         private List<string> weatherIndexVars;
         private DataTable climateDataTable;
@@ -137,12 +137,14 @@ namespace Landis.Extension.BaseEDA
         public List<IClimateVariableDefinition> ClimateVars
         {
             get { return climateVarDefn; }
+            set { climateVarDefn = value; }
         
         }
         //---------------------------------------------------------------------
         public List<IDerivedClimateVariable> DerivedClimateVars
         {
-            get { return varDefn; }
+            get { return derivedClimateVars; }
+            set { derivedClimateVars = value; }
         }
         //---------------------------------------------------------------------
         public ITempIndexModel TempIndexModel
@@ -151,11 +153,16 @@ namespace Landis.Extension.BaseEDA
             {
                 return tempIndexModel;
             }
+            set
+            {
+                tempIndexModel = value;
+            }
         }
         //---------------------------------------------------------------------
         public List<string> WeatherIndexVars
         {
             get { return weatherIndexVars; }
+            set { weatherIndexVars = value; }
         }
         //---------------------------------------------------------------------
         /// <summary>
@@ -301,6 +308,10 @@ namespace Landis.Extension.BaseEDA
             EcoParameters = new IEcoParameters[ecoCount];
             disturbanceTypes = new List<IDisturbanceType>();
             negSppList = new List<ISpecies>();
+            climateVarDefn = new List<IClimateVariableDefinition>();
+            derivedClimateVars = new List<IDerivedClimateVariable>();
+            weatherIndexVars = new List<string>();
+            climateDataTable = new DataTable();
 
             for (int i = 0; i < sppCount; i++)
                 SppParameters[i] = new SppParameters();

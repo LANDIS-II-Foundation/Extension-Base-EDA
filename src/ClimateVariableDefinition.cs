@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using Landis.Library.Climate;
 using System.Data;
 using System;
+using Landis.Core;
+using System.Linq;
+using Landis.SpatialModeling;
 
 namespace Landis.Extension.BaseEDA
 {
@@ -235,5 +238,187 @@ namespace Landis.Extension.BaseEDA
             return weatherTable;
         }
         //---------------------------------------------------------------------
+
+        public static void CalculateClimateVariables(IAgent agent)
+        {
+            // Calculate Derived Climate Variables
+            DerivedClimateVariable.CalculateDerivedClimateVariables(agent);
+
+            // Calculate Climate Variables
+            
+            foreach (IClimateVariableDefinition climateVar in agent.ClimateVars)
+            {
+                Dictionary<IEcoregion, Dictionary<string, double>> ecoClimateVars = new Dictionary<IEcoregion, Dictionary<string, double>>();
+
+                string varName = climateVar.Name;
+                string climateLibVar = climateVar.ClimateLibVariable;
+                int minMonth = climateVar.MinMonth;
+                int maxMonth = climateVar.MaxMonth;
+                string transform = climateVar.Transform;
+
+                int currentYear = PlugIn.ModelCore.CurrentTime;
+                int actualYear = currentYear;
+
+                int firstActiveEco = 0;
+                foreach (IEcoregion ecoregion in PlugIn.ModelCore.Ecoregions)
+                {
+                    if (ecoregion.Active)
+                    {
+                        firstActiveEco = ecoregion.Index;
+                        break;
+                    }
+                }
+                if (Climate.Future_MonthlyData != null)
+                {
+                    AnnualClimate_Monthly AnnualWeather = Climate.Future_MonthlyData[Climate.Future_MonthlyData.Keys.Min()][firstActiveEco];
+                    int maxSpinUpYear = Climate.Spinup_MonthlyData.Keys.Max();
+
+                    if (PlugIn.ModelCore.CurrentTime > 0)
+                    {
+                        currentYear = (PlugIn.ModelCore.CurrentTime - 1) + Climate.Future_MonthlyData.Keys.Min();
+
+                        AnnualWeather = Climate.Future_MonthlyData[currentYear][firstActiveEco];
+                       
+                    }
+                    if (PlugIn.ModelCore.CurrentTime == 0)
+                    {
+                        AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][firstActiveEco];
+                       
+                    }
+                    actualYear = AnnualWeather.Year;
+                }
+
+                if (climateVar.SourceName.Equals("library", StringComparison.OrdinalIgnoreCase))
+                {
+                    foreach (IEcoregion ecoregion in PlugIn.ModelCore.Ecoregions)
+                    {
+                        if (ecoregion.Active)
+                        {
+                            if (!ecoClimateVars.ContainsKey(ecoregion))
+                            {
+                                ecoClimateVars.Add(ecoregion, new Dictionary<string, double>());
+                            }
+                            AnnualClimate_Monthly AnnualWeather = Climate.Future_MonthlyData[Climate.Future_MonthlyData.Keys.Min()][ecoregion.Index];
+                            int maxSpinUpYear = Climate.Spinup_MonthlyData.Keys.Max();
+
+                            if (PlugIn.ModelCore.CurrentTime == 0)
+                            {
+                                    AnnualWeather = Climate.Spinup_MonthlyData[maxSpinUpYear][ecoregion.Index];
+                            }
+                            else
+                            {
+                                AnnualWeather = Climate.Future_MonthlyData[currentYear][ecoregion.Index];
+                            }
+
+                            double monthTotal = 0;
+                            int monthCount = 0;
+                            double varValue = 0;
+                            var monthRange = Enumerable.Range(minMonth, (maxMonth - minMonth) + 1);
+
+                            foreach (int monthIndex in monthRange)
+                            {
+                                
+                                if (climateVar.ClimateLibVariable.Equals("precip", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    double monthPrecip = AnnualWeather.MonthlyPrecip[monthIndex - 1];
+                                    varValue = monthPrecip * 10.0; //Convert cm to mm
+                                }
+                                else if (climateVar.ClimateLibVariable.Equals("temp", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    double monthTemp = AnnualWeather.MonthlyTemp[monthIndex - 1];
+                                    varValue = monthTemp;
+                                }
+                                else
+                                {
+                                    string mesg = string.Format("Climate variable {0} is {1}; expected 'precip' or 'temp'.", climateVar.Name, climateVar.ClimateLibVariable);
+                                    throw new System.ApplicationException(mesg);
+                                }
+                                monthTotal += varValue;
+                                monthCount++;
+                            }
+                            double avgValue = monthTotal / (double)monthCount;
+                            double transformValue = avgValue;
+                            if (transform.Equals("log10", StringComparison.OrdinalIgnoreCase))
+                            //if (transform == "Log10")
+                            {
+                                transformValue = Math.Log10(avgValue + 1);
+                            }
+                            else if (transform.Equals("ln", StringComparison.OrdinalIgnoreCase))
+                            //else if (transform == "ln")
+                            {
+                                transformValue = Math.Log(avgValue + 1);
+                            }
+                            if (!ecoClimateVars[ecoregion].ContainsKey(varName))
+                            {
+                                ecoClimateVars[ecoregion].Add(varName, 0.0);
+                            }
+                            ecoClimateVars[ecoregion][varName] = transformValue;
+                        }
+                    }
+
+                    foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
+                    {
+                        IEcoregion ecoregion = PlugIn.ModelCore.Ecoregion[site];
+                        double climateValue = 0;
+                        if (ecoregion != null)
+                        {
+                            climateValue = ecoClimateVars[ecoregion][varName];
+                        }
+                        // Write Site Variable
+                        SiteVars.ClimateVars[site][varName] = (float)climateValue;
+                    }
+                }
+                else if (climateVar.SourceName.Equals("Derived", StringComparison.OrdinalIgnoreCase))
+                { 
+                  // FIXME
+                  // Use values from the derived climate data in place of from the Climate Library
+
+                }
+                else  // Use the provided climate data table
+                {
+                    double monthTotal = 0;
+                    int monthCount = 0;
+                    double varValue = 0;
+                    var monthRange = Enumerable.Range(minMonth, (maxMonth - minMonth) + 1);
+                    foreach (int monthIndex in monthRange)
+                    {
+                        string selectString = "Year = '" + actualYear + "' AND Month = '" + monthIndex + "'";
+                        DataRow[] rows = agent.ClimateDataTable.Select(selectString);
+                        if (rows.Length == 0)
+                        {
+                            string mesg = string.Format("Climate data is empty. No record exists for variable {0} in year {1}.", climateVar.Name, actualYear);
+                            if (actualYear == 0)
+                            {
+                                mesg = mesg + "  Note that if using the options Monthly_AverageAllYears or Daily_AverageAllYears you should provide average values for climate variables listed as Year 0.";
+                            }
+                            throw new System.ApplicationException(mesg);
+                        }
+                        foreach (DataRow row in rows)
+                        {
+                            varValue = Convert.ToDouble(row[climateVar.ClimateLibVariable]);
+                        }
+                        monthTotal += varValue;
+                        monthCount++;
+                    }
+                    double avgValue = monthTotal / (double)monthCount;
+                    double transformValue = avgValue;
+                    if (transform.Equals("log10", StringComparison.OrdinalIgnoreCase))
+                    //if (transform == "Log10")
+                    {
+                        transformValue = Math.Log10(avgValue + 1);
+                    }
+                    else if (transform.Equals("ln", StringComparison.OrdinalIgnoreCase))
+                    //else if (transform == "ln")
+                    {
+                        transformValue = Math.Log(avgValue + 1);
+                    }
+                    foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
+                    {
+                        SiteVars.ClimateVars[site][varName] = (float)transformValue;
+                    }
+                }
+            }
+        }
+            
     }
 }

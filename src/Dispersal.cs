@@ -54,7 +54,7 @@ namespace Landis.Extension.BaseEDA
         public double total_p;
         
        //class constructor
-        public Dispersal() { }
+       // public Dispersal() { }
 
         /// <summary>
         /// Get a list of distances for which dispersal probabilies have been computed
@@ -109,7 +109,7 @@ namespace Landis.Extension.BaseEDA
                     //calculate distance value for diagonal
                     r = Math.Sqrt(dx * dx + dy * dy);
 
-                    p = dispersal_prob(x, y);
+                    p = dispersal_prob(agent, x, y);
                     if (dispersal_probability.ContainsKey(r))
                     {
                         dispersal_probability[r] += p;
@@ -144,7 +144,7 @@ namespace Landis.Extension.BaseEDA
             Console.WriteLine("Dispersal Lookup Table Initialization Done.");
         }
 
-        private double dispersal_prob(int x, int y)
+        private double dispersal_prob(IAgent agent, int x, int y)
         {
             double prob;
             double[] p = new double[mc_draws];
@@ -155,7 +155,7 @@ namespace Landis.Extension.BaseEDA
                 double y0 = DrawFromUniformDistribution(0.0, 1.0) * PlugIn.ModelCore.CellLength - half_pixel_size;
                 double xl = x * PlugIn.ModelCore.CellLength + DrawFromUniformDistribution(0.0, 1.0) * PlugIn.ModelCore.CellLength - half_pixel_size;
                 double yl = y * PlugIn.ModelCore.CellLength + DrawFromUniformDistribution(0.0, 1.0) * PlugIn.ModelCore.CellLength - half_pixel_size;
-                p[m] = displacement_prob(x0, y0, xl, yl);
+                p[m] = displacement_prob(agent,x0, y0, xl, yl);
             }
             double p_mean = p.Average();
             prob = PlugIn.ModelCore.CellLength * PlugIn.ModelCore.CellLength * p_mean;
@@ -218,7 +218,7 @@ namespace Landis.Extension.BaseEDA
             return prob;
         }
 
-        private double marginal_prob(double r)
+        /*private double marginal_prob(double r)
         {
             double prob = 0;
             if (dispersal_model == Dispersal_Model.DOUBLE_EXPONENTIAL)
@@ -258,6 +258,6 @@ namespace Landis.Extension.BaseEDA
 
             return prob;
         }
-
+        */
     }
 }

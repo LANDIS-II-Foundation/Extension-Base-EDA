@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Landis.Library.Climate;
 using System.Data;
 using System;
+using Landis.Core;
 
 namespace Landis.Extension.BaseEDA
 {
@@ -18,6 +19,15 @@ namespace Landis.Extension.BaseEDA
         /// Var name
         /// </summary>
         string Name
+        {
+            get;
+            set;
+        }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Source name
+        /// </summary>
+        string Source
         {
             get;
             set;
@@ -68,6 +78,7 @@ namespace Landis.Extension.BaseEDA
         : IDerivedClimateVariable
     {
         private string name;
+        private string source;
         private string climateVariable;
         private string function;
         private string time;
@@ -86,6 +97,22 @@ namespace Landis.Extension.BaseEDA
             set
             {
                 name = value;
+            }
+        }
+
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Source name
+        /// </summary>
+        public string Source
+        {
+            get
+            {
+                return source;
+            }
+            set
+            {
+                source = value;
             }
         }
 
@@ -173,5 +200,21 @@ namespace Landis.Extension.BaseEDA
         {
         }
         //---------------------------------------------------------------------
+
+        public static void CalculateDerivedClimateVariables(IAgent agent)
+        {
+            // FIXME
+            //foreach derClimVar in agent.DerivedClimateVars
+
+            //if daily
+            // create daily record of derived variable to mimic fields of AnnualClimate_Daily
+
+            //if weekly
+            //  create weekly record of derived variable.  Include min and max julian days and month assignment to each weekly record
+
+            //if monthly
+            // create monthly record of derived variable to mimic field on AnnualClimate_Monthly
+
+        }
     }
 }

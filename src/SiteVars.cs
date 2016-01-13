@@ -43,6 +43,9 @@ namespace Landis.Extension.BaseEDA
         private static ISiteVar<double> pInfected;
         private static ISiteVar<double> pDiseased;
 
+        // Climate variables
+        private static ISiteVar<Dictionary<string, float>> climateVars;
+
         //this specific naming convention is defined by the Canadian fire model. Keep as is.
         //the list of species to be used as FUEL for the fire extension can be specified in the Fire Fuel extension!
         private static ISiteVar<Dictionary<int,int>> numberCFSconifersKilled;  
@@ -67,6 +70,8 @@ namespace Landis.Extension.BaseEDA
             agentName = modelCore.Landscape.NewSiteVar<string>();
             biomassInsectsAgent = modelCore.Landscape.NewSiteVar<string>();
 
+
+            climateVars = modelCore.Landscape.NewSiteVar<Dictionary<string, float>>();
             numberCFSconifersKilled = modelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
             numberMortSppKilled = modelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
 
@@ -87,6 +92,7 @@ namespace Landis.Extension.BaseEDA
             //initialize a dictionary to keep track of numbers of cohorts killed as part of special dead fuel or as those for inclusion in mortality plot
             foreach (ActiveSite site in modelCore.Landscape)
             {
+                SiteVars.ClimateVars[site] = new Dictionary<string, float>();
                 NumberCFSconifersKilled[site] = new Dictionary<int, int>();
                 NumberMortSppKilled[site] = new Dictionary<int, int>();
             }
@@ -302,6 +308,13 @@ namespace Landis.Extension.BaseEDA
             }
 
         }
-        
+        //---------------------------------------------------------------------
+        public static ISiteVar<Dictionary<string, float>> ClimateVars
+        {
+            get
+            {
+                return climateVars;
+            }
+        }
     }
 }

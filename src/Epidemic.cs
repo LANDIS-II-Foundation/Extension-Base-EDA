@@ -5,6 +5,7 @@ using Landis.Core;
 using Landis.Library.AgeOnlyCohorts;
 using Landis.SpatialModeling;
 using System.Collections.Generic;
+using System;
 
 namespace Landis.Extension.BaseEDA
 {
@@ -141,7 +142,7 @@ namespace Landis.Extension.BaseEDA
 
             SiteResources.SiteHostIndexCompute(agent);   
             SiteResources.SiteHostIndexModCompute(agent);
-            
+            ClimateVariableDefinition.CalculateClimateVariables(agent);
             CurrentEpidemic.ComputeSiteInfStatus(agent);
 
             return CurrentEpidemic;
@@ -183,8 +184,12 @@ namespace Landis.Extension.BaseEDA
 
                 double myRand = PlugIn.ModelCore.GenerateUniform();
 
+                double weatherIndex = CalculateWeatherIndex(agent, site);
+
                 //force of infection depends on the dispersal kernel, weather index, SHI of neighboring sites and itself, pSusceptible & pInfected of neighboring sites 
                 //FOI_i = Beta * sum(SHI_j * SHI_i * PSusceptible_j * PInfected_j * Kernel(dist_i_j))
+                
+                double FOI = 0;  // FIXME
 
                 deltaPSusceptible = -FOI * SiteVars.PSusceptible[site];
                 deltaPInfected = FOI * SiteVars.PSusceptible[site] - agent.AcquisitionRate * SiteVars.PInfected[site];  //rD = acquisition rate
@@ -314,7 +319,59 @@ namespace Landis.Extension.BaseEDA
             return killCohort;
         }
 
+        double CalculateWeatherIndex(IAgent agent, Site site)
+        {
+            double weatherIndex = 1;
+
+            foreach(string weatherVar in agent.WeatherIndexVars)
+            {
+                foreach(DerivedClimateVariable derClimVar in agent.DerivedClimateVars)
+                {
+                    if (derClimVar.Name == weatherVar)
+                    {
+
+                    }
+                }
+                if(weatherVar == "TempIndex")
+                {
+                    int indexa = agent.TempIndexModel.Parameters.FindIndex(i => i == "a");
+                    double a = Double.Parse(agent.TempIndexModel.Values[indexa]);
+                    int indexb = agent.TempIndexModel.Parameters.FindIndex(i => i == "b");
+                    double b = Double.Parse(agent.TempIndexModel.Values[indexb]);
+                    int indexc = agent.TempIndexModel.Parameters.FindIndex(i => i == "c");
+                    double c = Double.Parse(agent.TempIndexModel.Values[indexc]);
+                    int indexd = agent.TempIndexModel.Parameters.FindIndex(i => i == "d");
+                    double d = Double.Parse(agent.TempIndexModel.Values[indexd]);
+                    int indexe = agent.TempIndexModel.Parameters.FindIndex(i => i == "e");
+                    double e = Double.Parse(agent.TempIndexModel.Values[indexe]);
+                    int indexf = agent.TempIndexModel.Parameters.FindIndex(i => i == "f");
+                    double f = Double.Parse(agent.TempIndexModel.Values[indexf]);
+                    int indexVar = agent.TempIndexModel.Parameters.FindIndex(i => i == "Variable");
+                    string variableName = agent.TempIndexModel.Values[indexVar];
+
+                    double variable = 0;
+                    foreach(IClimateVariableDefinition climateVar in agent.ClimateVars)
+                    {
+                        if(climateVar.Name == variableName)
+                        {
+                            variable = SiteVars.ClimateVars[site][variableName];
+                        }
+                    }
+                    //tempIndex = a + b * exp(c[ln(Variable / d) / e] ^ f);
+                    double tempIndex = a + b * Math.Exp(c * Math.Pow((Math.Log(variable / d) / e),f));
+                    
+
+                    weatherIndex *= tempIndex;
+                }
+            }
+
+
+            return weatherIndex;
+        }
+
     }
+
+
 
 }
 

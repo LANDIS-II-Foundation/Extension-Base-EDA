@@ -7,20 +7,20 @@ SHIMode			mean     <<possibly add weighted by biomass!
 
 >>-------- Climate Input ----------------
 ClimateVariables
->> Var Name	Months	Source	  ClimateVar	Transform	
->> --------	------	------	  ----------	---------
-    temp	4 to 6	Library	  Temp		none
-    precip	4 to 6  Library	  Precip	Precip5DSum
+>> Var Name	Months	Source	  ClimateVar  Function	Transform	
+>> --------	------	------	  ----------  --------	---------
+    tempavg	4 to 6	Library	  Temp		Mean	 none
+    precipavg	4 to 6  Derived	  Precip5DSum	Mean	 none
 
 DerivedClimateVariables
->> Var Name	Function	Time	Count  << Function = Mean or Sum; Time = Day, Week or Month
->> --------	--------	----	-----
-  Precip5DSum	Sum		Day	  5
+>> Var Name	Source  ClimateVar  Function	Time	Count  << Function = Mean or Sum; Time = Day, Week or Month
+>> --------	------  ----------  --------	----	-----
+  Precip5DSum	Library Temp		Sum	Day	  5
 
 TempIndex	<< a + b * exp(c[ln(Variable / d) / e] ^ f)
 >> Parameter	Value
 >> --------	-----
-  Variable	Temp
+  Variable	temp
   a		108.6
   b		904.8
   c		-0.5
@@ -56,15 +56,15 @@ EDASpeciesParameters
 >>Name     Age Score(1-3) Age Score(4-6) Age Score(7-10)  Age  MortProb  Age  MortProb  Age  MortProb   Conifer?  Plot?
 >> -----------------------------------------------------  --------------------------------------------  --------  --------
 Umbecali   10  3          20  5          40  10		  999  0	 999  0         999  0	        no	  no					
-Lithdens   10  2	  20  5          999 NA           10   ?	 20   ?         50   ?		no	  no
-Sequsemp   50  3          999 NA         999 NA           10   ?         20   ?         50   ?		yes       no
-Acermacr   50  1          999 NA         999 NA           10   ?         20   ?         50   ?		no        no
-Aesccali   50  1          999 NA         999 NA           10   ?         20   ?         50   ?		no        no                            
-Arbumenz   50  1          999 NA         999 NA           10   ?         20   ?         50   ?		no        no                              
-Pseumenz   50  1          999 NA         999 NA           10   ?         20   ?         50   ?		no        no                                
-Querchry   999 NA	  999 NA         999 NA  	  10   ?	 20   ?         50   ?          no        yes
-Querkell   999 NA	  999 NA         999 NA  	  10   ?	 20   ?         50   ?          no	  yes
-Queragri   999 NA	  999 NA         999 NA  	  10   ?	 20   ?         50   ?          no	  yes
+Lithdens   10  2	  20  5          999 7            10   0.5	 20   0.5         50   0.5		no	  no
+Sequsemp   50  3          999 4         999 7            10   0.5         20   0.5         50   0.5		yes       no
+Acermacr   50  1          999 4         999 7             10   0.5         20   0.5         50   0.5		no        no
+Aesccali   50  1          999 4         999 7             10   0.5         20   0.5         50   0.5		no        no                            
+Arbumenz   50  1          999 4         999 7             10   0.5         20   0.5         50   0.5		no        no                              
+Pseumenz   50  1          999 4         999 7             10   0.5         20   0.5         50   0.5		no        no                                
+Querchry   999 1	  999 4         999 7  	  	  10   0.5	 20   0.5         50   0.5          no        yes
+Querkell   999 1	  999 4         999 7  	  	  10   0.5	 20   0.5         50   0.5          no	  yes
+Queragri   999 1	  999 4         999 7  	  	  10   0.5	 20   0.5         50   0.5          no	  yes
 
 IgnoredSpecies   << list species to be ignored in the SHI calculation
 Abiebrac

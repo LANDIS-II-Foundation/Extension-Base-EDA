@@ -3,9 +3,9 @@ LandisData  "Climate Config"
 >>-----monthly
 
 ClimateTimeSeries                 Monthly_RandomYears
-ClimateFile                       C:\Users\Chris\Desktop\LandisRun\BS_future_climate.csv
+ClimateFile                       BS_future_climate.csv
 ClimateFileFormat                 Monthly_Temp-C_Precip-mmMonth
 
 SpinUpClimateTimeSeries           Monthly_SequencedYears
-SpinUpClimateFile                 C:\Users\Chris\Desktop\LandisRun\BS_current_climate.csv
+SpinUpClimateFile                 BS_current_climate.csv
 SpinUpClimateFileFormat           Monthly_Temp-C_Precip-mmMonth

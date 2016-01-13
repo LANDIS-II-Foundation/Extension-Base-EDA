@@ -126,6 +126,8 @@ namespace Landis.Extension.BaseEDA
             ReadName("DerivedClimateVariables");
             lineNumbers.Clear();
             InputVar<string> derivedClimateVarName = new InputVar<string>("Derived Climate Variable Name");
+            InputVar<string> derSource = new InputVar<string>("Derived Climate Variable Source");
+            InputVar<string> derVariableName = new InputVar<string>("Derived Climate Variable source Variable Name");
             InputVar<string> function = new InputVar<string>("Function");
             InputVar<string> time = new InputVar<string>("Time");
             InputVar<int> count = new InputVar<int>("Count");
@@ -138,6 +140,12 @@ namespace Landis.Extension.BaseEDA
 
                 derivedClimateVars = new DerivedClimateVariable();
                 derivedClimateVars.Name = derivedClimateVarName.Value;
+
+                ReadValue(derSource, currentLine);
+                derivedClimateVars.Source = derSource.Value;
+
+                ReadValue(derVariableName, currentLine);
+                derivedClimateVars.ClimateVariable = derVariableName.Value;
 
                 ReadValue(function, currentLine);
                 derivedClimateVars.Function = function.Value;
@@ -159,20 +167,23 @@ namespace Landis.Extension.BaseEDA
             InputVar<string> tempIndexParamValue = new InputVar<string>("Parameter Value");
             List<string> tempIndexParameters = new List<string>();
             List<string> tempIndexParamValues = new List<string>();
+            ITempIndexModel tempIndexModel = new TempIndexModel();
 
              while (!AtEndOfInput && (CurrentName != "WeatherIndexVariables"))
             {
                 StringReader currentLine = new StringReader(CurrentLine);
                 ReadValue(tempIndexVarName, currentLine);
                 CheckForRepeatedName(tempIndexVarName.Value, "var name", lineNumbers);
-
-                agentParameters.TempIndexModel.Parameters.Add(tempIndexVarName.Value);
+                tempIndexModel.Parameters.Add(tempIndexVarName.Value);
+                //agentParameters.TempIndexModel.Parameters.Add(tempIndexVarName.Value);
 
                 ReadValue(tempIndexParamValue, currentLine);
-                agentParameters.TempIndexModel.Values.Add(tempIndexParamValue.Value);
+                tempIndexModel.Values.Add(tempIndexParamValue.Value);
+                //agentParameters.TempIndexModel.Values.Add(tempIndexParamValue.Value);
 
                 GetNextLine();
             }
+             agentParameters.TempIndexModel = tempIndexModel;
 
              // Read Weather Index Variables
              ReadName("WeatherIndexVariables");
@@ -209,6 +220,10 @@ namespace Landis.Extension.BaseEDA
             ReadVar(dk);
             agentParameters.DispersalKernel = dk.Value;
 
+            InputVar<int> dmax = new InputVar<int>("DispersalMaxDist");
+            ReadVar(dmax);
+            agentParameters.DispersalMaxDist = dmax.Value;
+
             InputVar<double> ac = new InputVar<double>("AlphaCoef");
             ReadVar(ac);
             agentParameters.AlphaCoef = ac.Value;
@@ -219,7 +234,7 @@ namespace Landis.Extension.BaseEDA
             InputVar<string> ecoName = new InputVar<string>("Ecoregion Name");
             InputVar<double> ecoModifier = new InputVar<double>("Ecoregion Modifier");
 
-            Dictionary<string, int> lineNumbers = new Dictionary<string, int>();
+            lineNumbers.Clear();
             const string DistParms = "DisturbanceModifiers";
             const string SppParms = "EDASpeciesParameters";
 
@@ -438,6 +453,7 @@ namespace Landis.Extension.BaseEDA
                 }
             }
             agentParameters.NegSppList = negSppList;
+            return agentParameters;
 
         }                     
 
