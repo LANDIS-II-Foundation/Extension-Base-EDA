@@ -39,6 +39,7 @@ namespace Landis.Extension.BaseEDA
         
         //STATE OF A CELL: SUSCEPTIBLE (0), INFECTED (cryptic-non symptomatic) (1), DISEASED (symptomatic) (2)
         private static ISiteVar<byte> infStatus;
+        //initial probs of being in each status
         private static ISiteVar<double> pSusceptible;
         private static ISiteVar<double> pInfected;
         private static ISiteVar<double> pDiseased;
