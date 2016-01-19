@@ -19,10 +19,13 @@ namespace Landis.Extension.BaseEDA
     /// </summary>
     public interface IAgent
     {
-        string AgentName{ get;set; }
+        //agent name
+        string AgentName { get;set; }
+
         int StartYear { get; set; }
         int EndYear { get; set; }
 
+        //site host index mode (mean, max)
         SHImode SHImode { get; set; }
 
         // - Climate - PLACEHOLDER FOR CLIMATE INPUTS
@@ -31,6 +34,7 @@ namespace Landis.Extension.BaseEDA
         ITempIndexModel TempIndexModel { get; set; }
         List<string> WeatherIndexVars { get; set; }
         DataTable ClimateDataTable { get; set; }
+
         //- Transmission -
         double TransmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
         double AcquisitionRate  { get; set; }  //rD = Rate of acquisition of detectable symptoms (per time step)
@@ -59,10 +63,14 @@ namespace Landis.Extension.BaseEDA
     public class Agent
         : IAgent
     {
+
+        //agent name
         private string agentName;
+
         private int startYear;
         private int endYear;
 
+        //site host index mode (mean, max)
         private SHImode shiMode;
 
         // - Climate - PLACEHOLDER FOR CLIMATE INPUTS
@@ -71,7 +79,7 @@ namespace Landis.Extension.BaseEDA
         private ITempIndexModel tempIndexModel;
         private List<string> weatherIndexVars;
         private DataTable climateDataTable;
-
+                
         //-- Transmission -------------
         private double transmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
         private double acquisitionRate { get; set; }  //rD = Rate of acquisition of detectable symptoms (per time step)
