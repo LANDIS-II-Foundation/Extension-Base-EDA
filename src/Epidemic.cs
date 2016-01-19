@@ -162,6 +162,7 @@ namespace Landis.Extension.BaseEDA
             totalSitesDiseased = 0;
             totalSitesDamaged = 0;
         }
+
         //---------------------------------------------------------------------
         //Go through all active sites and update their infection status according to the
         //probs of being S, I, D.
@@ -184,20 +185,20 @@ namespace Landis.Extension.BaseEDA
 
                 double myRand = PlugIn.ModelCore.GenerateUniform();
 
+                //get weather index for the current site
                 double weatherIndex = CalculateWeatherIndex(agent, site);
 
-                //force of infection depends on the dispersal kernel, weather index, SHI of neighboring sites and itself, pSusceptible & pInfected of neighboring sites 
-                //FOI_i = Beta * sum(SHI_j * SHI_i * PSusceptible_j * PInfected_j * Kernel(dist_i_j))
-                
-                double FOI = 0;  // FIXME
+                //calculate force of infection for current site                
+                double FOI = ComputeSiteFOI(agent, site, weatherIndex); 
 
                 deltaPSusceptible = -FOI * SiteVars.PSusceptible[site];
                 deltaPInfected = FOI * SiteVars.PSusceptible[site] - agent.AcquisitionRate * SiteVars.PInfected[site];  //rD = acquisition rate
                 deltaPDiseased = agent.AcquisitionRate * SiteVars.PInfected[site];
 
-                SiteVars.PSusceptible[site] = SiteVars.PSusceptible[site] + deltaPSusceptible;
-                SiteVars.PInfected[site] = SiteVars.PInfected[site] + deltaPInfected;
-                SiteVars.PDiseased[site] = SiteVars.PDiseased[site] + deltaPDiseased;
+                //update probs of being in each considered status (S, I, D)
+                SiteVars.PSusceptible[site] =+ deltaPSusceptible;
+                SiteVars.PInfected[site] =+ deltaPInfected;
+                SiteVars.PDiseased[site] =+ deltaPDiseased;
 
                 // SUSCEPTIBLE --->> INFECTED
                 if (SiteVars.InfStatus[site] == 0 && SiteVars.PInfected[site] >= myRand)  //if site is Susceptible (S) 
@@ -208,7 +209,7 @@ namespace Landis.Extension.BaseEDA
                 }
 
                 // INFECTED --->> DISEASED -mortality-
-                if (SiteVars.InfStatus[site] == 2 && SiteVars.PDiseased[site] >= myRand) //if site is "diseased" then apply the mortality to affected cohorts 
+                if (SiteVars.InfStatus[site] == 1 && SiteVars.PDiseased[site] >= myRand) //if site is "diseased" then apply the mortality to affected cohorts 
                 {
                     totalSitesDiseased++;
                     random = myRand;
@@ -319,6 +320,115 @@ namespace Landis.Extension.BaseEDA
             return killCohort;
         }
 
+        // check if the coordinates are inside the map 
+        private bool isInside(int x, int y) 
+        {
+            return (x > 0 && y > 0 && x < map_width_pixels && y < map_height_pixels); //FIXME:replace map_ with actual landscape dim.
+        }
+
+        ////-------------------------------------------------------
+        /////<summary>
+        /////Calculate the distance between two Sites
+        /////</summary>
+        //public static double DistanceBetweenSites(Site a, Site b)
+        //{
+
+        //    int Col = (int)a.Location.Column - (int)b.Location.Column;
+        //    int Row = (int)a.Location.Row - (int)b.Location.Row;
+
+        //    double aSq = System.Math.Pow(Col, 2);
+        //    double bSq = System.Math.Pow(Row, 2);
+        //    //PlugIn.ModelCore.Log.WriteLine("Col={0}, Row={1}.", Col, Row);
+        //    //PlugIn.ModelCore.Log.WriteLine("aSq={0}, bSq={1}.", aSq, bSq);
+        //    //PlugIn.ModelCore.Log.WriteLine("Distance in Grid Units = {0}.", System.Math.Sqrt(aSq + bSq));
+        //    return (System.Math.Sqrt(aSq + bSq) * (double)PlugIn.ModelCore.CellLength);
+
+        //}
+
+        //-------------------------------------------------------
+        //Calculate the distance from a location to a center
+        //point (row and column = 0).
+        private static double DistanceFromCenter(double row, double column)
+        {
+            double CellLength = PlugIn.ModelCore.CellLength;
+            row = System.Math.Abs(row) * CellLength;
+            column = System.Math.Abs(column) * CellLength;
+            double aSq = System.Math.Pow(column, 2);
+            double bSq = System.Math.Pow(row, 2);
+            return System.Math.Sqrt(aSq + bSq);
+        }
+
+        //define func to calculate Force of Infection (FOI) for a given agent and site
+        //force of infection depends on the dispersal kernel, weather index, SHI of neighboring sites and itself, pInfected & pDiseased of neighboring sites         
+        double ComputeSiteFOI(IAgent agent, Site site, double beta)
+        {
+            double kernelProb, cumSum = 0, forceOfInf = 0, centroidDistance = 0, CellLength = PlugIn.ModelCore.CellLength;
+            PlugIn.ModelCore.UI.WriteLine("Looking for infection sources within the chosen neighborhood...");
+            int maxRadius = agent.DispersalMaxDist;
+            int numCellRadius = (int)((double) maxRadius / CellLength);
+            Dispersal dsp = new Dispersal();
+
+            PlugIn.ModelCore.UI.WriteLine("MaximumDistance={0}, CellSize={1}, MaxPixelDistance={2}",
+                                            maxRadius, CellLength, numCellRadius);
+
+            if (agent.DispersalType == DispersalType.STATIC)
+            {
+                int source_x, source_y;
+
+                for (int row = (numCellRadius * -1); row <= numCellRadius; row++)
+                {
+                    for (int col = (numCellRadius * -1); col <= numCellRadius; col++)
+                    {
+
+                        //calculate location of source pixel 
+                        source_x = site.Location.Row + row;
+                        source_y = site.Location.Column + col;
+
+                        //is source site inside landscape? FIXME: need to check dimensions of landscape
+                        if (isInside(source_x, source_y))
+                        {
+                            //distance of source pixel from current target site
+                            centroidDistance = DistanceFromCenter(row, col);
+                            //check if source cell is within max disp dist
+                            if (centroidDistance <= maxRadius && centroidDistance > 0)
+                            {
+                                Site sourceSite = PlugIn.ModelCore.Landscape[source_x, source_y];
+                                if (sourceSite != null && sourceSite.IsActive)
+                                {
+                                    //check if source pixel is infectious (=infected or diseased):
+                                    if (SiteVars.InfStatus[sourceSite] == 1 || SiteVars.InfStatus[sourceSite] == 2)
+                                    {
+                                        //read kernel prob
+                                        kernelProb = dsp.GetDispersalProbability(centroidDistance);
+                                        //A_j: site host index modified -source-
+                                        //B_i: site host index modified -target, current site-
+                                        
+                                        //sum(A_j * B_i * P_Ij * P_Dj * Kernel(d_ij))
+                                        cumSum =+ (double)SiteVars.SiteHostIndexMod[sourceSite] * SiteVars.SiteHostIndexMod[site] * 
+                                                         SiteVars.PInfected[sourceSite] * SiteVars.PDiseased[sourceSite] * kernelProb;
+
+                                    }//end check if source site is infectious
+                                }//end check if source site is NOT null AND Active
+                            
+                            }//end check if distance < maxdist
+                        }//end check if source isInside
+
+                    }//end col loop                    
+                }//end row loop
+
+                //calculate force of infection: beta * cumSum
+                forceOfInf = beta * cumSum;
+            }
+            else if (agent.DispersalType == DispersalType.DYNAMIC)
+            {
+                /*****************TODO*******************/
+                Console.WriteLine("Dynamic dispersal type has not been implemented yet.");
+            }
+
+            return forceOfInf;
+        }
+
+        //define function to calculate weather index for a given agent and site
         double CalculateWeatherIndex(IAgent agent, Site site)
         {
             double weatherIndex = 1;
