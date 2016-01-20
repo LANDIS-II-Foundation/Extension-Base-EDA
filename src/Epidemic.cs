@@ -197,8 +197,22 @@ namespace Landis.Extension.BaseEDA
 
                 //update probs of being in each considered status (S, I, D)
                 SiteVars.PSusceptible[site] =+ deltaPSusceptible;
+                if (SiteVars.PSusceptible[site] > 1)
+                    SiteVars.PSusceptible[site] = 1;
+                //if (SiteVars.PSusceptible[site] < 0)
+                //    SiteVars.PSusceptible[site] = 0;
+
                 SiteVars.PInfected[site] =+ deltaPInfected;
+                if (SiteVars.PInfected[site] > 1)
+                    SiteVars.PInfected[site] = 1;
+                //if (SiteVars.PInfected[site] < 0)
+                //    SiteVars.PInfected[site] = 0;
+
                 SiteVars.PDiseased[site] =+ deltaPDiseased;
+                if (SiteVars.PDiseased[site] > 1)
+                    SiteVars.PDiseased[site] = 1;
+                //if (SiteVars.PDiseased[site] < 0)
+                //    SiteVars.PDiseased[site] = 0;
 
                 // SUSCEPTIBLE --->> INFECTED
                 if (SiteVars.InfStatus[site] == 0 && SiteVars.PInfected[site] >= myRand)  //if site is Susceptible (S) 
@@ -323,7 +337,7 @@ namespace Landis.Extension.BaseEDA
         // check if the coordinates are inside the map 
         private bool isInside(int x, int y) 
         {
-            return (x > 0 && y > 0 && x < map_width_pixels && y < map_height_pixels); //FIXME:replace map_ with actual landscape dim.
+            return (x >= 0 && y >= 0 && x <= PlugIn.ModelCore.Landscape.Dimensions.Columns && y <= PlugIn.ModelCore.Landscape.Dimensions.Rows); 
         }
 
         ////-------------------------------------------------------
