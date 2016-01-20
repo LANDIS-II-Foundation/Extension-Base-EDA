@@ -210,7 +210,9 @@ namespace Landis.Extension.BaseEDA
             ReadVar(ar);
             agentParameters.AcquisitionRate = ar.Value;
 
-            // InitialEpidemMap ??
+            InputVar<string> epiMap = new InputVar<string>("InitialEpidemMap");
+            ReadVar(epiMap);
+            EpidemicRegions.ReadMap(epiMap.Value);
 
             InputVar<DispersalType> dt = new InputVar<DispersalType>("DispersalType");
             ReadVar(dt);
