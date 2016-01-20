@@ -61,6 +61,7 @@ namespace Landis.Extension.BaseEDA
 
         public static void Initialize(ICore modelCore)
         {
+
             timeOfLastEDA  = modelCore.Landscape.NewSiteVar<int>();
             siteHostIndexMod = modelCore.Landscape.NewSiteVar<double>();
             siteHostIndex = modelCore.Landscape.NewSiteVar<double>();
@@ -71,7 +72,6 @@ namespace Landis.Extension.BaseEDA
             agentName = modelCore.Landscape.NewSiteVar<string>();
             biomassInsectsAgent = modelCore.Landscape.NewSiteVar<string>();
 
-
             climateVars = modelCore.Landscape.NewSiteVar<Dictionary<string, float>>();
             numberCFSconifersKilled = modelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
             numberMortSppKilled = modelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
@@ -80,11 +80,7 @@ namespace Landis.Extension.BaseEDA
             TimeOfLastEvent.ActiveSiteValues = -10000; //why this?
             SiteHostIndexMod.ActiveSiteValues = 0.0;
             SiteHostIndex.ActiveSiteValues = 0.0;
-            //InfStatus.ActiveSiteValues = 0; //not sure I should initialize to 0 all sites since I will use initial infection map OR random place starting infections
-            //PSusceptible.ActiveSiteValues = 1;  //for all sites with infStatus = 0
-            //PInfected.ActiveSiteValues = 0; //set = 1 for initial sites of outbreak (infStatus = 1) based on map or random (see above)
-            //PDiseased.ActiveSiteValues = 0; //this should be = 0 for all sites
-            
+            PDiseased.ActiveSiteValues = 0; 
             AgentName.ActiveSiteValues = "";
 
             cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.AgeCohorts"); //get age cohorts from succession extension
