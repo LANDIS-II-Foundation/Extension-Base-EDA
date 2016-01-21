@@ -71,6 +71,8 @@ namespace Landis.Extension.BaseEDA
         public override void Initialize()
         {
             reinitialized = false;
+
+            //initialize metadata
             MetadataHandler.InitializeMetadata(parameters.Timestep,
                parameters.StatusMapNames,
                parameters.MortMapNames,
@@ -78,10 +80,12 @@ namespace Landis.Extension.BaseEDA
                parameters.ManyAgentParameters,
                ModelCore);
 
+            //get input params map names
             Timestep = parameters.Timestep;
             statusMapName = parameters.StatusMapNames;
             mortMapNames = parameters.MortMapNames;
 
+            //initialize site variables
             SiteVars.Initialize(modelCore);
 
             manyAgentParameters = parameters.ManyAgentParameters;
@@ -96,7 +100,7 @@ namespace Landis.Extension.BaseEDA
 
         }
 
-        public new void InitializePhase2()
+        public new void InitializePhase2() 
         {
                 SiteVars.InitializeTimeOfLastDisturbances();
                 reinitialized = true;
