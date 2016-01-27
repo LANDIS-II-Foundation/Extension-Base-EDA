@@ -41,7 +41,7 @@ namespace Landis.Extension.BaseEDA
             if (landisData.Value.Actual != LandisDataValue)
                 throw new InputValueException(landisData.Value.String, "The value is not \"{0}\"", LandisDataValue);
 
-            Agent agentParameters = new Agent(PlugIn.ModelCore.Species.Count, PlugIn.ModelCore.Ecoregions.Count);
+            AgentParameters agentParameters = new AgentParameters(PlugIn.ModelCore.Species.Count, PlugIn.ModelCore.Ecoregions.Count);
 
             InputVar<string> agentName = new InputVar<string>("EDAAgentName");
             ReadVar(agentName);
