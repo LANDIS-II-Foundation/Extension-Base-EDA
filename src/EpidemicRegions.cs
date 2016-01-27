@@ -48,12 +48,12 @@ namespace Landis.Extension.BaseEDA
                         {
                             SiteVars.PSusceptible[site] = 1;
                             SiteVars.PInfected[site] = mapCode;
-                        }                            
+                        }
                         else
                         {
                             SiteVars.PSusceptible[site] = 0;
                             SiteVars.PInfected[site] = mapCode;
-                        }                            
+                        }
                     }
                 }
             }
