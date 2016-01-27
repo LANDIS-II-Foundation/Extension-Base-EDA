@@ -91,6 +91,7 @@
     <Compile Include="ClimateVariableDefinition.cs" />
     <Compile Include="CSVParser.cs" />
     <Compile Include="DisturbanceType.cs" />
+    <Compile Include="EpidemicRegions.cs" />
     <Compile Include="EventsLog.cs" />
     <Compile Include="MetadataHandler.cs" />
     <Compile Include="AssemblyInfo.cs" />
