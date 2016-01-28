@@ -134,7 +134,7 @@ namespace Landis.Extension.BaseEDA
         ///Simulate an Epidemic - This is the controlling function that calls the
         ///subsequent function.  The basic logic of an epidemic resides here.
         ///</summary>
-        public static Epidemic Simulate(IAgent agent, int currentTime)
+        public static Epidemic Simulate(IAgent agent, int currentTime, int agentIndex)
         {
 
             Epidemic CurrentEpidemic = new Epidemic(agent);
@@ -143,7 +143,7 @@ namespace Landis.Extension.BaseEDA
             SiteResources.SiteHostIndexCompute(agent);   
             SiteResources.SiteHostIndexModCompute(agent);
             ClimateVariableDefinition.CalculateClimateVariables(agent);
-            CurrentEpidemic.ComputeSiteInfStatus(agent);
+            CurrentEpidemic.ComputeSiteInfStatus(agent, agentIndex);
 
             return CurrentEpidemic;
         }
@@ -166,7 +166,7 @@ namespace Landis.Extension.BaseEDA
         //---------------------------------------------------------------------
         //Go through all active sites and update their infection status according to the
         //probs of being S, I, D.
-        private void ComputeSiteInfStatus(IAgent agent)
+        private void ComputeSiteInfStatus(IAgent agent, int agentIndex)
         {
 
             double deltaPSusceptible = 0;  //do I need to initialize to 0 these?
@@ -189,33 +189,33 @@ namespace Landis.Extension.BaseEDA
                 double weatherIndex = CalculateWeatherIndex(agent, site);
 
                 //calculate force of infection for current site                
-                double FOI = ComputeSiteFOI(agent, site, weatherIndex); 
+                double FOI = ComputeSiteFOI(agent, site, weatherIndex, agentIndex); 
 
-                deltaPSusceptible = -FOI * SiteVars.PSusceptible[site];
-                deltaPInfected = FOI * SiteVars.PSusceptible[site] - agent.AcquisitionRate * SiteVars.PInfected[site];  //rD = acquisition rate
-                deltaPDiseased = agent.AcquisitionRate * SiteVars.PInfected[site];
+                deltaPSusceptible = -FOI * SiteVars.PSusceptible[site][agentIndex];
+                deltaPInfected = FOI * SiteVars.PSusceptible[site][agentIndex] - agent.AcquisitionRate * SiteVars.PInfected[site][agentIndex];  //rD = acquisition rate
+                deltaPDiseased = agent.AcquisitionRate * SiteVars.PInfected[site][agentIndex];
 
                 //update probs of being in each considered status (S, I, D)
-                SiteVars.PSusceptible[site] =+ deltaPSusceptible;
-                if (SiteVars.PSusceptible[site] > 1)
-                    SiteVars.PSusceptible[site] = 1;
+                SiteVars.PSusceptible[site][agentIndex] = + deltaPSusceptible;
+                if (SiteVars.PSusceptible[site][agentIndex] > 1)
+                    SiteVars.PSusceptible[site][agentIndex] = 1;
                 //if (SiteVars.PSusceptible[site] < 0)
                 //    SiteVars.PSusceptible[site] = 0;
 
-                SiteVars.PInfected[site] =+ deltaPInfected;
-                if (SiteVars.PInfected[site] > 1)
-                    SiteVars.PInfected[site] = 1;
+                SiteVars.PInfected[site][agentIndex] = + deltaPInfected;
+                if (SiteVars.PInfected[site][agentIndex] > 1)
+                    SiteVars.PInfected[site][agentIndex] = 1;
                 //if (SiteVars.PInfected[site] < 0)
                 //    SiteVars.PInfected[site] = 0;
 
-                SiteVars.PDiseased[site] =+ deltaPDiseased;
-                if (SiteVars.PDiseased[site] > 1)
-                    SiteVars.PDiseased[site] = 1;
+                SiteVars.PDiseased[site][agentIndex] = + deltaPDiseased;
+                if (SiteVars.PDiseased[site][agentIndex] > 1)
+                    SiteVars.PDiseased[site][agentIndex] = 1;
                 //if (SiteVars.PDiseased[site] < 0)
                 //    SiteVars.PDiseased[site] = 0;
 
                 // SUSCEPTIBLE --->> INFECTED
-                if (SiteVars.InfStatus[site] == 0 && SiteVars.PInfected[site] >= myRand)  //if site is Susceptible (S) 
+                if (SiteVars.InfStatus[site][agentIndex] == 0 && SiteVars.PInfected[site][agentIndex] >= myRand)  //if site is Susceptible (S) 
                 {
                     //update state of current site from S to I
                     SiteVars.InfStatus[site] = 1;
@@ -223,7 +223,7 @@ namespace Landis.Extension.BaseEDA
                 }
 
                 // INFECTED --->> DISEASED -mortality-
-                if (SiteVars.InfStatus[site] == 1 && SiteVars.PDiseased[site] >= myRand) //if site is "diseased" then apply the mortality to affected cohorts 
+                if (SiteVars.InfStatus[site][agentIndex] == 1 && SiteVars.PDiseased[site][agentIndex] >= myRand) //if site is "diseased" then apply the mortality to affected cohorts 
                 {
                     totalSitesDiseased++;
                     random = myRand;
@@ -374,7 +374,7 @@ namespace Landis.Extension.BaseEDA
 
         //define func to calculate Force of Infection (FOI) for a given agent and site
         //force of infection depends on the dispersal kernel, weather index, SHI of neighboring sites and itself, pInfected & pDiseased of neighboring sites         
-        double ComputeSiteFOI(IAgent agent, Site site, double beta)
+        double ComputeSiteFOI(IAgent agent, Site site, double beta, int agentIndex)
         {
             double kernelProb, cumSum = 0, forceOfInf = 0, centroidDistance = 0, CellLength = PlugIn.ModelCore.CellLength;
             PlugIn.ModelCore.UI.WriteLine("Looking for infection sources within the chosen neighborhood...");
@@ -410,7 +410,7 @@ namespace Landis.Extension.BaseEDA
                                 if (sourceSite != null && sourceSite.IsActive)
                                 {
                                     //check if source pixel is infectious (=infected or diseased):
-                                    if (SiteVars.InfStatus[sourceSite] == 1 || SiteVars.InfStatus[sourceSite] == 2)
+                                    if (SiteVars.InfStatus[sourceSite][agentIndex] == 1 || SiteVars.InfStatus[sourceSite][agentIndex] == 2)
                                     {
                                         //read kernel prob
                                         kernelProb = dsp.GetDispersalProbability(centroidDistance);
@@ -419,7 +419,7 @@ namespace Landis.Extension.BaseEDA
                                         
                                         //sum(A_j * B_i * P_Ij * P_Dj * Kernel(d_ij))
                                         cumSum =+ (double)SiteVars.SiteHostIndexMod[sourceSite] * SiteVars.SiteHostIndexMod[site] * 
-                                                         SiteVars.PInfected[sourceSite] * SiteVars.PDiseased[sourceSite] * kernelProb;
+                                                         SiteVars.PInfected[sourceSite][agentIndex] * SiteVars.PDiseased[sourceSite][agentIndex] * kernelProb;
 
                                     }//end check if source site is infectious
                                 }//end check if source site is NOT null AND Active

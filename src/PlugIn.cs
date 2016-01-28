@@ -62,10 +62,7 @@ namespace Landis.Extension.BaseEDA
             }
         }
 
-        //---------------------------------------------------------------------
-
-
-        /// <summary>
+         /// <summary>
         /// Initializes the extension with a data file.
         /// </summary>
         public override void Initialize()
@@ -86,7 +83,9 @@ namespace Landis.Extension.BaseEDA
             mortMapNames = parameters.MortMapNames;
 
             //initialize site variables
-            SiteVars.Initialize(modelCore);
+            int numAgents = parameters.ManyAgentParameters.Count();
+
+            SiteVars.Initialize(modelCore, numAgents);  
 
             manyAgentParameters = parameters.ManyAgentParameters;
             foreach (IAgent activeAgent in manyAgentParameters)
@@ -118,11 +117,12 @@ namespace Landis.Extension.BaseEDA
 
             int eventCount = 0;
 
+            int agentIndex = 0;
             foreach(IAgent activeAgent in manyAgentParameters)
             {
 
                 Epidemic.Initialize(activeAgent);
-                Epidemic currentEpic = Epidemic.Simulate(activeAgent, ModelCore.CurrentTime);
+                Epidemic currentEpic = Epidemic.Simulate(activeAgent, ModelCore.CurrentTime, agentIndex);
                 
                 if (currentEpic != null)
                 {
@@ -137,7 +137,7 @@ namespace Landis.Extension.BaseEDA
                         {
                             if (site.IsActive)
                             {
-                                pixel.MapCode.Value = (byte) (SiteVars.InfStatus[site] + 1);
+                                pixel.MapCode.Value = (byte)(SiteVars.InfStatus[site][agentIndex] + 1);
                             }
                             else
                             {
@@ -160,7 +160,7 @@ namespace Landis.Extension.BaseEDA
                             {
                                 if (site.IsActive)
                                 {
-                                    pixel.MapCode.Value = (short)(SiteVars.NumberMortSppKilled[site].Sum(x => x.Value));  //How to distinguish from inactive = 0?
+                                    pixel.MapCode.Value = (short)(SiteVars.NumberMortSppKilled[site][ModelCore.CurrentTime]); //CurrentTime is the dict key
                                 }
                                 else
                                 {
@@ -174,6 +174,7 @@ namespace Landis.Extension.BaseEDA
                     
                     eventCount++;
                 }
+                agentIndex++;
             }
         }
 

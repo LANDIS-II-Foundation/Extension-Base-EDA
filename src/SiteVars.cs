@@ -35,14 +35,20 @@ namespace Landis.Extension.BaseEDA
         //and the suitability of each infected cell to produce infectious spores of the pathogen"
         private static ISiteVar<int> timeOfLastEDA;
         private static ISiteVar<double> siteHostIndexMod;
-        private static ISiteVar<double> siteHostIndex;   
-        
+        private static ISiteVar<double> siteHostIndex;
+
         //STATE OF A CELL: SUSCEPTIBLE (0), INFECTED (cryptic-non symptomatic) (1), DISEASED (symptomatic) (2)
-        private static ISiteVar<byte> infStatus;
+        //private static ISiteVar<byte> infStatus;
+        private static ISiteVar<Dictionary<int, byte>> infStatus;  //dictionary with keys corresponding to each agent
+                                                                   //necessary to adjust for multi-agents in the extension 
+
         //initial probs of being in each status
-        private static ISiteVar<double> pSusceptible;
-        private static ISiteVar<double> pInfected;
-        private static ISiteVar<double> pDiseased;
+        private static ISiteVar<Dictionary<int, double>> pSusceptible;   //dictionary with keys corresponding to each agent
+        private static ISiteVar<Dictionary<int, double>> pInfected;      //dictionary with keys corresponding to each agent
+        private static ISiteVar<Dictionary<int, double>> pDiseased;      //dictionary with keys corresponding to each agent
+        //private static ISiteVar<double> pSusceptible;
+        //private static ISiteVar<double> pInfected;
+        //private static ISiteVar<double> pDiseased;
 
         // Climate variables
         private static ISiteVar<Dictionary<string, float>> climateVars;
@@ -59,17 +65,23 @@ namespace Landis.Extension.BaseEDA
 
         //---------------------------------------------------------------------
 
-        public static void Initialize(ICore modelCore)
+        public static void Initialize(ICore modelCore, int numAgents) //---->>> see PlugIn.cs
         {
 
-            timeOfLastEDA  = modelCore.Landscape.NewSiteVar<int>();
+
+
+            timeOfLastEDA = modelCore.Landscape.NewSiteVar<int>();
             siteHostIndexMod = modelCore.Landscape.NewSiteVar<double>();
             siteHostIndex = modelCore.Landscape.NewSiteVar<double>();
-            infStatus = modelCore.Landscape.NewSiteVar<byte>();
-            pSusceptible = modelCore.Landscape.NewSiteVar<double>();
-            pInfected = modelCore.Landscape.NewSiteVar<double>();
-            pDiseased = modelCore.Landscape.NewSiteVar<double>();
-            agentName = modelCore.Landscape.NewSiteVar<string>();
+            infStatus = modelCore.Landscape.NewSiteVar<Dictionary<int, byte>>(); //dictionary with keys corresponding to each agent
+            pSusceptible = modelCore.Landscape.NewSiteVar<Dictionary<int, double>>(); //dictionary with keys corresponding to each agent
+            pInfected = modelCore.Landscape.NewSiteVar<Dictionary<int, double>>(); //dictionary with keys corresponding to each agent
+            pDiseased = modelCore.Landscape.NewSiteVar<Dictionary<int, double>>(); //dictionary with keys corresponding to each agent
+            //infStatus = modelCore.Landscape.NewSiteVar<byte>();
+            //pSusceptible = modelCore.Landscape.NewSiteVar<double>();
+            //pInfected = modelCore.Landscape.NewSiteVar<double>();
+            //pDiseased = modelCore.Landscape.NewSiteVar<double>();
+            //agentName = modelCore.Landscape.NewSiteVar<string>();
             biomassInsectsAgent = modelCore.Landscape.NewSiteVar<string>();
 
             climateVars = modelCore.Landscape.NewSiteVar<Dictionary<string, float>>();
@@ -80,7 +92,7 @@ namespace Landis.Extension.BaseEDA
             TimeOfLastEvent.ActiveSiteValues = -10000; //why this?
             SiteHostIndexMod.ActiveSiteValues = 0.0;
             SiteHostIndex.ActiveSiteValues = 0.0;
-            PDiseased.ActiveSiteValues = 0; 
+            //PDiseased.ActiveSiteValues = 0; uncomment only if not using multi-agent 
             AgentName.ActiveSiteValues = "";
 
             cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.AgeCohorts"); //get age cohorts from succession extension
@@ -89,11 +101,28 @@ namespace Landis.Extension.BaseEDA
             //initialize a dictionary to keep track of numbers of cohorts killed as part of special dead fuel or as those for inclusion in mortality plot
             foreach (ActiveSite site in modelCore.Landscape)
             {
-                SiteVars.ClimateVars[site] = new Dictionary<string, float>();
+                ClimateVars[site] = new Dictionary<string, float>();
+
+                //dictionary with keys corresponding to each agent
+                InfStatus[site] = new Dictionary<int, byte>();
+                PSusceptible[site] = new Dictionary<int, double>();
+                PInfected[site] = new Dictionary<int, double>();
+                PDiseased[site] = new Dictionary<int, double>();
+
                 NumberCFSconifersKilled[site] = new Dictionary<int, int>();
                 NumberMortSppKilled[site] = new Dictionary<int, int>();
-            }
 
+                //We now need to initialize and populate the otherwise empty dictionaries 
+                //with initial values for infection status and probs of being in each status
+                for (int i = 0; i < numAgents; i++){
+                    //should I initialize infStatus here or within Epidemics region?
+                    pSusceptible[site].Add(i, 0);
+                    pInfected[site].Add(i, 0);
+                    pDiseased[site].Add(i, 0);
+                }
+
+            }
+            
             modelCore.RegisterSiteVar(NumberCFSconifersKilled, "EDA.NumCFSConifers");  // Enable interactions with CFS fuels extension.
             modelCore.RegisterSiteVar(NumberMortSppKilled, "EDA.NumMortSppKilled");  // Enable interactions with fire/fuel extension (B. Miranda add this please).
 
@@ -218,6 +247,52 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
+        public static ISiteVar<Dictionary<int, byte>> InfStatus
+        {
+            get
+            {
+                return infStatus;
+            }
+            set
+            {
+                infStatus = value;
+            }
+        }
+        public static ISiteVar<Dictionary<int, double>> PSusceptible
+        {
+            get
+            {
+                return pSusceptible;
+            }
+            set
+            {
+                pSusceptible = value;
+            }
+        }
+        public static ISiteVar<Dictionary<int, double>> PInfected
+        {
+            get
+            {
+                return pInfected;
+            }
+            set
+            {
+                pInfected = value;
+            }
+        }
+        public static ISiteVar<Dictionary<int, double>> PDiseased
+        {
+            get
+            {
+                return pDiseased;
+            }
+            set
+            {
+                pDiseased = value;
+            }
+        }
+        /*
+        //---------------------------------------------------------------------
         public static ISiteVar<byte> InfStatus
         {
             get {
@@ -248,6 +323,7 @@ namespace Landis.Extension.BaseEDA
                 return pDiseased;
             }
         }
+        */
         //---------------------------------------------------------------------
         public static ISiteVar<Dictionary<int,int>> NumberCFSconifersKilled 
         {
