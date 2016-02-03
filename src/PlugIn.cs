@@ -1,7 +1,6 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin
-//  Authors:  Robert M. Scheller,   James B. Domingo
-//  BDA originally programmed by Wei (Vera) Li at University of Missouri-Columbia in 2004.
-//  Modified for budworm-BDA version by Brian Miranda, 2012
+//  Copyright 2016 North Carolina State University, Center for Geospatial Analytics & 
+//  Forest Service Northern Research Station, Institute for Applied Ecosystem Studies
+//  Authors:  Francesco Tonini, Brian R. Miranda
 
 using System;
 using System.Linq;
