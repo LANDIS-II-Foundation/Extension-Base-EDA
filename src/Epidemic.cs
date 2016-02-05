@@ -219,7 +219,7 @@ namespace Landis.Extension.BaseEDA
                 if (SiteVars.InfStatus[site][agentIndex] == 0 && SiteVars.PInfected[site][agentIndex] >= myRand)  //if site is Susceptible (S) 
                 {
                     //update state of current site from S to I
-                    SiteVars.InfStatus[site] = 1;
+                    SiteVars.InfStatus[site][agentIndex] = 1;
                     totalSitesInfected++;
                 }
 
@@ -459,20 +459,20 @@ namespace Landis.Extension.BaseEDA
                 }
                 if(weatherVar == "TempIndex")
                 {
-                    int indexa = agent.TempIndexModel.Parameters.FindIndex(i => i == "a");
-                    double a = Double.Parse(agent.TempIndexModel.Values[indexa]);
-                    int indexb = agent.TempIndexModel.Parameters.FindIndex(i => i == "b");
-                    double b = Double.Parse(agent.TempIndexModel.Values[indexb]);
-                    int indexc = agent.TempIndexModel.Parameters.FindIndex(i => i == "c");
-                    double c = Double.Parse(agent.TempIndexModel.Values[indexc]);
-                    int indexd = agent.TempIndexModel.Parameters.FindIndex(i => i == "d");
-                    double d = Double.Parse(agent.TempIndexModel.Values[indexd]);
-                    int indexe = agent.TempIndexModel.Parameters.FindIndex(i => i == "e");
-                    double e = Double.Parse(agent.TempIndexModel.Values[indexe]);
-                    int indexf = agent.TempIndexModel.Parameters.FindIndex(i => i == "f");
-                    double f = Double.Parse(agent.TempIndexModel.Values[indexf]);
-                    int indexVar = agent.TempIndexModel.Parameters.FindIndex(i => i == "Variable");
-                    string variableName = agent.TempIndexModel.Values[indexVar];
+                    int indexa = agent.VarFormula.Parameters.FindIndex(i => i == "a");
+                    double a = Double.Parse(agent.VarFormula.Values[indexa]);
+                    int indexb = agent.VarFormula.Parameters.FindIndex(i => i == "b");
+                    double b = Double.Parse(agent.VarFormula.Values[indexb]);
+                    int indexc = agent.VarFormula.Parameters.FindIndex(i => i == "c");
+                    double c = Double.Parse(agent.VarFormula.Values[indexc]);
+                    int indexd = agent.VarFormula.Parameters.FindIndex(i => i == "d");
+                    double d = Double.Parse(agent.VarFormula.Values[indexd]);
+                    int indexe = agent.VarFormula.Parameters.FindIndex(i => i == "e");
+                    double e = Double.Parse(agent.VarFormula.Values[indexe]);
+                    int indexf = agent.VarFormula.Parameters.FindIndex(i => i == "f");
+                    double f = Double.Parse(agent.VarFormula.Values[indexf]);
+                    int indexVar = agent.VarFormula.Parameters.FindIndex(i => i == "Variable");
+                    string variableName = agent.VarFormula.Values[indexVar];
 
                     double variable = 0;
                     foreach(IClimateVariableDefinition climateVar in agent.ClimateVars)

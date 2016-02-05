@@ -79,8 +79,6 @@ namespace Landis.Extension.BaseEDA
             InputVar<string> climateVarName = new InputVar<string>("Climate Variable Name");
             InputVar<string> climateLibraryVarName = new InputVar<string>("Climate Library Variable Name");
             InputVar<string> sourceName = new InputVar<string>("Source Name");
-            InputVar<int> minMonth = new InputVar<int>("Min Month");
-            InputVar<int> maxMonth = new InputVar<int>("Max Month");
             InputVar<string> transform = new InputVar<string>("Tranformation");
            
             IClimateVariableDefinition climateVarDefn = null;
@@ -92,24 +90,6 @@ namespace Landis.Extension.BaseEDA
 
                 climateVarDefn = new ClimateVariableDefinition();
                 climateVarDefn.Name = climateVarName.Value;
-                
-                ReadValue(minMonth, currentLine);
-                climateVarDefn.MinMonth = minMonth.Value;
-
-                TextReader.SkipWhitespace(currentLine);
-                string currentWord = TextReader.ReadWord(currentLine);
-                if (currentWord != "to")
-                {
-                    StringBuilder message = new StringBuilder();
-                    message.AppendFormat("Expected \"to\" after the minimum month ({0})",
-                                         minMonth.Value.String);
-                    if (currentWord.Length > 0)
-                        message.AppendFormat(", but found \"{0}\" instead", currentWord);
-                    throw NewParseException(message.ToString());
-                }
-
-                ReadValue(maxMonth, currentLine);
-                climateVarDefn.MaxMonth = maxMonth.Value;
 
                 ReadValue(sourceName, currentLine);
                 climateVarDefn.SourceName = sourceName.Value;
@@ -133,7 +113,8 @@ namespace Landis.Extension.BaseEDA
             InputVar<string> time = new InputVar<string>("Time");
             InputVar<int> count = new InputVar<int>("Count");
             IDerivedClimateVariable derivedClimateVars = null;
-            while (!AtEndOfInput && (CurrentName != "TempIndex"))
+            Queue<string> formulaVars = new Queue<string>();
+            while (!AtEndOfInput && !(formulaVars.Contains(CurrentName)))
             {
                 StringReader currentLine = new StringReader(CurrentLine);
                 ReadValue(derivedClimateVarName, currentLine);
@@ -141,6 +122,10 @@ namespace Landis.Extension.BaseEDA
 
                 derivedClimateVars = new DerivedClimateVariable();
                 derivedClimateVars.Name = derivedClimateVarName.Value;
+                if(derivedClimateVars.Name == "Formula")
+                {
+                    formulaVars.Enqueue(derivedClimateVars.Name);
+                }
 
                 ReadValue(derSource, currentLine);
                 derivedClimateVars.Source = derSource.Value;
@@ -161,36 +146,41 @@ namespace Landis.Extension.BaseEDA
 
                 GetNextLine();
             }
-            // Read Temp Index model
-            ReadName("TempIndex");
-            lineNumbers.Clear();
-            InputVar<string> tempIndexVarName = new InputVar<string>("Temp Index Variable Name");
-            InputVar<string> tempIndexParamValue = new InputVar<string>("Parameter Value");
-            List<string> tempIndexParameters = new List<string>();
-            List<string> tempIndexParamValues = new List<string>();
-            ITempIndexModel tempIndexModel = new TempIndexModel();
 
-             while (!AtEndOfInput && (CurrentName != "WeatherIndexVariables"))
+            foreach (string formulaName in formulaVars)
             {
-                StringReader currentLine = new StringReader(CurrentLine);
-                ReadValue(tempIndexVarName, currentLine);
-                CheckForRepeatedName(tempIndexVarName.Value, "var name", lineNumbers);
-                tempIndexModel.Parameters.Add(tempIndexVarName.Value);
-                //agentParameters.TempIndexModel.Parameters.Add(tempIndexVarName.Value);
+                // Read Temp Index model
+                ReadName(formulaName);
+                formulaVars.Dequeue();
+               
+                lineNumbers.Clear();
+                InputVar<string> tempIndexVarName = new InputVar<string>("Temp Index Variable Name");
+                InputVar<string> tempIndexParamValue = new InputVar<string>("Parameter Value");
+                List<string> tempIndexParameters = new List<string>();
+                List<string> tempIndexParamValues = new List<string>();
+                IFormula tempIndexModel = new Formula();
 
-                ReadValue(tempIndexParamValue, currentLine);
-                tempIndexModel.Values.Add(tempIndexParamValue.Value);
-                //agentParameters.TempIndexModel.Values.Add(tempIndexParamValue.Value);
+                while (!AtEndOfInput && (CurrentName != "WeatherIndexVariables") && !(formulaVars.Contains(CurrentName)))
+                {
+                    StringReader currentLine = new StringReader(CurrentLine);
+                    ReadValue(tempIndexVarName, currentLine);
+                    CheckForRepeatedName(tempIndexVarName.Value, "var name", lineNumbers);
+                    tempIndexModel.Parameters.Add(tempIndexVarName.Value);
+                    //agentParameters.TempIndexModel.Parameters.Add(tempIndexVarName.Value);
 
-                GetNextLine();
+                    ReadValue(tempIndexParamValue, currentLine);
+                    tempIndexModel.Values.Add(tempIndexParamValue.Value);
+                    //agentParameters.TempIndexModel.Values.Add(tempIndexParamValue.Value);
+
+                    GetNextLine();
+                }
+                agentParameters.VarFormula = tempIndexModel;
             }
-             agentParameters.TempIndexModel = tempIndexModel;
-
              // Read Weather Index Variables
              ReadName("WeatherIndexVariables");
              lineNumbers.Clear();
              InputVar<string> weatherIndexVarName = new InputVar<string>("Weather Index Variable Name");
-             while (!AtEndOfInput && (CurrentName != "TransmissionRate"))
+             while (!AtEndOfInput && (CurrentName != "AnnualWeatherIndex"))
              {
                  StringReader currentLine = new StringReader(CurrentLine);
                  ReadValue(weatherIndexVarName, currentLine);
@@ -200,6 +190,35 @@ namespace Landis.Extension.BaseEDA
 
                  GetNextLine();
              }
+
+            //Read Annual Weather Index
+             ReadName("AnnualWeatherIndex");
+             WeatherIndex weatherIndex = new WeatherIndex();
+             StringReader annualWeatherLine = new StringReader(CurrentLine);
+             InputVar<int> minMonth = new InputVar<int>("Min Month");
+             InputVar<int> maxMonth = new InputVar<int>("Max Month");
+             InputVar<string> annualWeatherFunction = new InputVar<string>("Function");
+             ReadValue(minMonth, annualWeatherLine);
+             weatherIndex.MinMonth = minMonth.Value;
+             TextReader.SkipWhitespace(annualWeatherLine);
+             string currentWord = TextReader.ReadWord(annualWeatherLine);
+             if (currentWord != "to")
+             {
+                 StringBuilder message = new StringBuilder();
+                 message.AppendFormat("Expected \"to\" after the minimum month ({0})",
+                                      minMonth.Value.String);
+                 if (currentWord.Length > 0)
+                     message.AppendFormat(", but found \"{0}\" instead", currentWord);
+                 throw NewParseException(message.ToString());
+             }
+             ReadValue(maxMonth, annualWeatherLine);
+             weatherIndex.MaxMonth = maxMonth.Value;
+
+             ReadValue(annualWeatherFunction, annualWeatherLine);
+             weatherIndex.Function = annualWeatherFunction.Value;
+
+             agentParameters.AnnualWeatherIndex = weatherIndex;
+             GetNextLine();
 
             // - Transmission Input -
 

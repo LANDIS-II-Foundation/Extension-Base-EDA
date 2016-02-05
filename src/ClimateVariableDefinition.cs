@@ -46,25 +46,7 @@ namespace Landis.Extension.BaseEDA
             get;
             set;
         }
-        //---------------------------------------------------------------------
-        /// <summary>
-        /// Min Month
-        /// </summary>
-        int MinMonth
-        {
-            get;
-            set;
-        }
-        //---------------------------------------------------------------------
-        /// <summary>
-        /// Max Month
-        /// </summary>
-        int MaxMonth
-        {
-            get;
-            set;
-        }
-        //---------------------------------------------------------------------
+         //---------------------------------------------------------------------
         /// <summary>
         /// Climate Data
         /// </summary>
@@ -94,8 +76,6 @@ namespace Landis.Extension.BaseEDA
         private string name;
         private string climateLibVariable;
         private string sourceName;
-        private int minMonth;
-        private int maxMonth;
         private AnnualClimate_Monthly climateData;
         private string transform;
         //---------------------------------------------------------------------
@@ -149,43 +129,7 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-        /// <summary>
-        /// Min Month
-        /// </summary>
-        public int MinMonth
-        {
-            get
-            {
-                return minMonth;
-            }
-            set
-            {
-                if((value <1) || (value >12))
-                    throw new InputValueException(value.ToString(), "Value must be >=1 and <= 12.");
-                minMonth = value;
-            }
-        }
-
-        //---------------------------------------------------------------------
-        /// <summary>
-        /// Max Month
-        /// </summary>
-        public int MaxMonth
-        {
-            get
-            {
-                return maxMonth;
-            }
-            set
-            {
-                if ((value < 1) || (value > 12))
-                    throw new InputValueException(value.ToString(), "Value must be >=1 and <= 12.");
-                if(value < minMonth)
-                    throw new InputValueException(value.ToString(), "Value must be <= MinMonth.");
-                maxMonth = value;
-            }
-        }
-
+ 
         //---------------------------------------------------------------------
         /// <summary>
         /// Climate Data
@@ -246,15 +190,13 @@ namespace Landis.Extension.BaseEDA
             DerivedClimateVariable.CalculateDerivedClimateVariables(agent);
 
             // Calculate Climate Variables
-            
+            /*
             foreach (IClimateVariableDefinition climateVar in agent.ClimateVars)
             {
                 Dictionary<IEcoregion, Dictionary<string, double>> ecoClimateVars = new Dictionary<IEcoregion, Dictionary<string, double>>();
 
                 string varName = climateVar.Name;
                 string climateLibVar = climateVar.ClimateLibVariable;
-                int minMonth = climateVar.MinMonth;
-                int maxMonth = climateVar.MaxMonth;
                 string transform = climateVar.Transform;
 
                 int currentYear = PlugIn.ModelCore.CurrentTime;
@@ -418,7 +360,7 @@ namespace Landis.Extension.BaseEDA
                         SiteVars.ClimateVars[site][varName] = (float)transformValue;
                     }
                 }
-            }
+            }*/
         }
             
     }

@@ -32,9 +32,10 @@ namespace Landis.Extension.BaseEDA
         // - Climate - PLACEHOLDER FOR CLIMATE INPUTS
         List<IClimateVariableDefinition> ClimateVars { get; set; }
         List<IDerivedClimateVariable> DerivedClimateVars { get; set; }
-        ITempIndexModel TempIndexModel { get; set; }
+        IFormula VarFormula { get; set; }
         List<string> WeatherIndexVars { get; set; }
         DataTable ClimateDataTable { get; set; }
+        WeatherIndex AnnualWeatherIndex { get; set; }
 
         //- Transmission -
         double TransmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
@@ -77,9 +78,10 @@ namespace Landis.Extension.BaseEDA
         // - Climate - PLACEHOLDER FOR CLIMATE INPUTS
         private List<IClimateVariableDefinition> climateVarDefn;
         private List<IDerivedClimateVariable> derivedClimateVars;
-        private ITempIndexModel tempIndexModel;
+        private IFormula varFormula;
         private List<string> weatherIndexVars;
         private DataTable climateDataTable;
+        private WeatherIndex annualWeatherIndex;
 
         //-- Transmission -------------
         private double transmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
@@ -160,15 +162,15 @@ namespace Landis.Extension.BaseEDA
             set { derivedClimateVars = value; }
         }
         //---------------------------------------------------------------------
-        public ITempIndexModel TempIndexModel
+        public IFormula VarFormula
         {
             get
             {
-                return tempIndexModel;
+                return varFormula;
             }
             set
             {
-                tempIndexModel = value;
+                varFormula = value;
             }
         }
         //---------------------------------------------------------------------
@@ -192,7 +194,22 @@ namespace Landis.Extension.BaseEDA
                 climateDataTable = value;
             }
         }
-
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Weather Index.
+        /// </summary>
+        public WeatherIndex AnnualWeatherIndex
+        {
+            get
+            {
+                return annualWeatherIndex;
+            }
+            set
+            {
+                annualWeatherIndex = value;
+            }
+        }
+        //---------------------------------------------------------------------
         //-- Transmission -------------
         public double TransmissionRate
         {

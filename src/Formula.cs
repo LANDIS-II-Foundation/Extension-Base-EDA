@@ -8,10 +8,20 @@ using System.Collections.Generic;
 namespace Landis.Extension.BaseEDA
 {
     /// <summary>
-    /// The Temp Index equation
+    /// Climate variable formula
     /// </summary>
-    public interface ITempIndexModel
+    public interface IFormula
     {
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Name
+        /// </summary>
+        string Name
+        {
+            get;
+            set;
+        }
+
         //---------------------------------------------------------------------
         /// <summary>
         /// Parameters
@@ -34,11 +44,25 @@ namespace Landis.Extension.BaseEDA
     /// <summary>
     /// The definition of a species model.
     /// </summary>
-    public class TempIndexModel
-        : ITempIndexModel
+    public class Formula
+        : IFormula
     {
+        private string name;
         private List<string> parameters;
         private List<string> values;
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Name
+        /// </summary>
+        public string Name
+        {
+            get {
+                return name;
+            }
+            set{
+                name = value;
+            }
+        }
         //---------------------------------------------------------------------
         /// <summary>
         /// Parameters
@@ -66,7 +90,7 @@ namespace Landis.Extension.BaseEDA
         /// <summary>
         /// Initialize a new instance.
         /// </summary>
-        public TempIndexModel()
+        public Formula()
         {
             parameters = new List<string>();
             values = new List<string>();

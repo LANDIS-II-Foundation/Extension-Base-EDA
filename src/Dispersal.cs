@@ -64,7 +64,7 @@ namespace Landis.Extension.BaseEDA
                     }
 
                     //what IS THIS FOR?
-                    if (x == 0 && y == 0)
+                    /*if (x == 0 && y == 0)
                     {
                         total_p += prob;
                     }
@@ -76,6 +76,7 @@ namespace Landis.Extension.BaseEDA
                     {
                         total_p += 8 * prob;
                     }
+                     * */
                 } //end of y loop                
             }//end of x loop
 
