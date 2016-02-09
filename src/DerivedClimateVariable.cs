@@ -223,13 +223,13 @@ namespace Landis.Extension.BaseEDA
         }
         //---------------------------------------------------------------------
 
-        public static void CalculateDerivedClimateVariables(IAgent agent)
+        public static Dictionary<string, double[]> CalculateDerivedClimateVariables(IAgent agent, IEcoregion ecoregion)
         {
             
             // FIXME
 
-            foreach (IEcoregion ecoregion in PlugIn.ModelCore.Ecoregions)
-            {
+            //foreach (IEcoregion ecoregion in PlugIn.ModelCore.Ecoregions)
+            //{
                 int currentYear = PlugIn.ModelCore.CurrentTime;
                 int actualYear = currentYear;
                 AnnualClimate_Daily AnnualWeather = Climate.Future_DailyData[Climate.Future_DailyData.Keys.Min()][ecoregion.Index];
@@ -246,6 +246,8 @@ namespace Landis.Extension.BaseEDA
                 int numDailyRecords = AnnualWeather.DailyTemp.Length;
 
                 Dictionary<string,double[]> dailyDerivedClimate = new Dictionary<string,double[]>();
+                double[] blankRecords = new double[numDailyRecords];
+                dailyDerivedClimate.Add("JulianDay", blankRecords);
 
                 foreach (DerivedClimateVariable derClimVar in agent.DerivedClimateVars)
                 {
@@ -284,6 +286,7 @@ namespace Landis.Extension.BaseEDA
                             //tempIndex = a + b * exp(c[ln(Variable / d) / e] ^ f);
                             double tempIndex = a + b * Math.Exp(c * Math.Pow((Math.Log(variable / d) / e), f));
                             dailyDerivedClimate[derClimVar.Name][i] = tempIndex;
+                            dailyDerivedClimate["JulianDay"][i] = i;
                         }
                         
                         
@@ -337,8 +340,8 @@ namespace Landis.Extension.BaseEDA
                         // create monthly record of derived variable to mimic field on AnnualClimate_Monthly
                     }
                 }
-                dailyDerivedData[ecoregion.Index] = dailyDerivedClimate;
-            }
+                return dailyDerivedClimate;
+            //}
         }
     }
 }

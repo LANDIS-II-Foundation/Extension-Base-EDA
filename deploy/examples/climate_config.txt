@@ -2,10 +2,10 @@ LandisData  "Climate Config"
 
 >>-----monthly
 
-ClimateTimeSeries                 Monthly_RandomYears
-ClimateFile                       BS_future_climate.csv
-ClimateFileFormat                 Monthly_Temp-C_Precip-mmMonth
+ClimateTimeSeries                 Daily_SequencedYears
+ClimateFile                       BS_2015_2100_GFDLC3_rcp85_Wght.csv
+ClimateFileFormat                 Daily_Temp-C_Precip-mmDay
 
-SpinUpClimateTimeSeries           Monthly_SequencedYears
-SpinUpClimateFile                 BS_current_climate.csv
-SpinUpClimateFileFormat           Monthly_Temp-C_Precip-mmMonth
+SpinUpClimateTimeSeries           Daily_SequencedYears
+SpinUpClimateFile                 BS_1979_2014_wght.csv
+SpinUpClimateFileFormat           Daily_Temp-C_Precip-mmDay

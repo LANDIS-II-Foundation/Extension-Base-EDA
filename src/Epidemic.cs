@@ -187,7 +187,7 @@ namespace Landis.Extension.BaseEDA
                 double myRand = PlugIn.ModelCore.GenerateUniform();
 
                 //get weather index for the current site
-                double weatherIndex = CalculateWeatherIndex(agent, site);
+                double weatherIndex = SiteVars.ClimateVars[site]["AnnualWeatherIndex"];
 
                 //calculate force of infection for current site                
                 double FOI = ComputeSiteFOI(agent, site, weatherIndex, agentIndex); 
