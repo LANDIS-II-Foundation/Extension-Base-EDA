@@ -258,6 +258,7 @@ namespace Landis.Extension.BaseEDA
                 infStatus = value;
             }
         }
+        //---------------------------------------------------------------------
         public static ISiteVar<Dictionary<int, double>> PSusceptible
         {
             get
@@ -269,6 +270,7 @@ namespace Landis.Extension.BaseEDA
                 pSusceptible = value;
             }
         }
+        //---------------------------------------------------------------------
         public static ISiteVar<Dictionary<int, double>> PInfected
         {
             get
@@ -280,6 +282,7 @@ namespace Landis.Extension.BaseEDA
                 pInfected = value;
             }
         }
+        //---------------------------------------------------------------------
         public static ISiteVar<Dictionary<int, double>> PDiseased
         {
             get

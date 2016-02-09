@@ -19,6 +19,7 @@ namespace Landis.Extension.BaseEDA
 
         public static IEcoregionDataset EcoregionsDataset = PlugIn.ModelCore.Ecoregions;
         public static ISpeciesDataset SpeciesDataset = PlugIn.ModelCore.Species; //null;
+        private int agentIndex = -1;
 
         //---------------------------------------------------------------------
         public override string LandisDataValue
@@ -36,7 +37,7 @@ namespace Landis.Extension.BaseEDA
 
         protected override IAgent Parse()
         {
-
+            agentIndex++;
             InputVar<string> landisData = new InputVar<string>("LandisData");
             ReadVar(landisData);
             if (landisData.Value.Actual != LandisDataValue)
@@ -232,7 +233,7 @@ namespace Landis.Extension.BaseEDA
 
             InputVar<string> epiMap = new InputVar<string>("InitialEpidemMap");
             ReadVar(epiMap);
-            EpidemicRegions.ReadMap(epiMap.Value);
+            EpidemicRegions.ReadMap(epiMap.Value, agentIndex);
 
             InputVar<DispersalType> dt = new InputVar<DispersalType>("DispersalType");
             ReadVar(dt);

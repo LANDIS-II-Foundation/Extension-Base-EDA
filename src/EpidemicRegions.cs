@@ -12,7 +12,7 @@ namespace Landis.Extension.BaseEDA
     {
 
         //---------------------------------------------------------------------
-        public static void ReadMap(string path)
+        public static void ReadMap(string path, int agentIndex)
         {
             IInputRaster<BytePixel> map;
 
@@ -47,16 +47,16 @@ namespace Landis.Extension.BaseEDA
 
                     if (site.IsActive)
                     {
-                        SiteVars.InfStatus[site] = mapCode;
+                        SiteVars.InfStatus[site][agentIndex] = mapCode;
                         if (mapCode == 0)
                         {
-                            SiteVars.PSusceptible[site] = 1;
-                            SiteVars.PInfected[site] = mapCode;
+                            SiteVars.PSusceptible[site][agentIndex] = 1;
+                            SiteVars.PInfected[site][agentIndex] = mapCode;
                         }
                         else
                         {
-                            SiteVars.PSusceptible[site] = 0;
-                            SiteVars.PInfected[site] = mapCode;
+                            SiteVars.PSusceptible[site][agentIndex] = 0;
+                            SiteVars.PInfected[site][agentIndex] = mapCode;
                         }
                     }
                 }
