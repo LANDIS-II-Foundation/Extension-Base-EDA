@@ -1,0 +1,16 @@
+LandisData   "Initial Communities"
+
+>> inactive sites
+MapCode  0
+
+>> band 1 (bay laurel only)
+MapCode  1
+   Umbecali 20 50 70 
+
+>> band 2 (oaks only, dead end) 
+MapCode 2
+   Queragri 20 40 60
+
+>> band 3 (oaks only, dead end)
+MapCode 3
+   Queragri 20 40 60
