@@ -81,19 +81,25 @@ namespace Landis.Extension.BaseEDA
             statusMapName = parameters.StatusMapNames;
             mortMapNames = parameters.MortMapNames;
 
-            //initialize site variables
+            //initialize site variables:
             int numAgents = parameters.ManyAgentParameters.Count();
+            SiteVars.Initialize(modelCore, numAgents);
 
-            SiteVars.Initialize(modelCore, numAgents);  
-
+            Dispersal probdisp = new Dispersal();
             manyAgentParameters = parameters.ManyAgentParameters;
+            int agentIndex = 0;
+
             foreach (IAgent activeAgent in manyAgentParameters)
             {
                 if (activeAgent == null)
                     ModelCore.UI.WriteLine("Agent Parameters NOT loading correctly.");
 
-                //DO ANYTHING TO THE AGENT INITIALIZATION PHASE?
-
+                //read initial infection map and initialize cell status for each agent
+                EpidemicRegions.ReadMap(activeAgent.InitEpiMap, agentIndex);
+                agentIndex++;
+                
+                //initialize and populate dictionary with dispersal probabilities for current agent
+                probdisp.Initialize(activeAgent);
             }
 
         }
