@@ -19,8 +19,6 @@ namespace Landis.Extension.BaseEDA
         //declare a new dictionary to hold disp prob values for each distance 
         private Dictionary<double, double> dispersal_probability;
 
-        //public double total_p;
-
         //class constructor
         public Dispersal() { }
 
@@ -35,10 +33,12 @@ namespace Landis.Extension.BaseEDA
             //calculate how many pixels max dist in the moving window
             max_dispersal_distance_pixels = (int)(agent.DispersalMaxDist / PlugIn.ModelCore.CellLength);
 
-            //what IS THIS FOR?
-            //total_p = 0;
+            //define a variable to hold cumulative sum of probs inside the 2D spatial window
+            double total_p = 0.0;
 
-            for (int x = 0; x <= max_dispersal_distance_pixels; x++)
+            //not x=0 because kernel should be normalized to 1 excluding the area of the source cell
+            //this is an assumption for transmission via force of infection, i.e. conditional to spores being dispersed outside the source cell
+            for (int x = 0; x <= max_dispersal_distance_pixels; x++) 
             {
                 //use y=x calculates only half of a matrix
                 for (int y = x; y <= max_dispersal_distance_pixels; y++)
@@ -50,7 +50,8 @@ namespace Landis.Extension.BaseEDA
                     //calculate distance value for diagonal
                     dist = Math.Sqrt(dx * dx + dy * dy);
 
-                    prob = Kernel_prob(agent, dist);
+                    if (dist > agent.DispersalMaxDist) prob = 0;
+                    else prob = Kernel_prob(agent, dist);
 
                     if (dispersal_probability.ContainsKey(dist))
                     {
@@ -63,12 +64,12 @@ namespace Landis.Extension.BaseEDA
                         dispersal_prob_count.Add(dist, 1);
                     }
 
-                    //what IS THIS FOR?
-                    /*if (x == 0 && y == 0)
-                    {
-                        total_p += prob;
-                    }
-                    else if (x == y || x == 0 || y == 0)
+                    //if (x == 0 && y == 0) we don't need to cumulate for that since the area has to sum to 1, excluding the source cell area
+                    //{
+                    //    total_p += prob;
+                    //}
+                    //else if (x == y || x == 0 || y == 0)
+                    if (x == y || x == 0 || y == 0)
                     {
                         total_p += 4 * prob;
                     }
@@ -76,39 +77,46 @@ namespace Landis.Extension.BaseEDA
                     {
                         total_p += 8 * prob;
                     }
-                     * */
+                    
                 } //end of y loop                
             }//end of x loop
 
+            //normalize by cumulative sum (excluding source cell)
             foreach (double dist in dispersal_prob_count.Keys)
             {
-                dispersal_probability[dist] = dispersal_probability[dist] / dispersal_prob_count[dist];
+                //do we need this? 
+                //dispersal_probability[dist] = dispersal_probability[dist] / dispersal_prob_count[dist];
+                dispersal_probability[dist] = dispersal_probability[dist] / total_p;
             }
 
             Console.WriteLine("Dispersal Lookup Table Initialization Done.");
         }
 
+        //calculate a kernel prob value given an agent and a distance
         private double Kernel_prob(IAgent agent, double d)
         {
-            double c, prob = 0;
+            double prob = 0.0;
 
             if (agent.DispersalKernel == DispersalTemplate.PowerLaw)
             {
-            //need to set a value for x_min (e.g. = 1):
-            int x_min = 1;
+                //need to set a value for x_min (e.g. = 1):
+                //int x_min = 1;
+                //normalization constant
+                //c = (double) (agent.AlphaCoef - 1) * (Math.Pow(x_min, agent.AlphaCoef - 1));
+                //double func = (double) Math.Pow(d, -agent.AlphaCoef);
+                //prob = c * func;
 
-            //normalization constant
-            c = (double) (agent.AlphaCoef - 1) * (Math.Pow(x_min, agent.AlphaCoef - 1));
-            double func = (double) Math.Pow(d, -agent.AlphaCoef);
-            prob = c * func;
+                prob = (double)Math.Pow(d, -agent.AlphaCoef);
 
             }
             else if (agent.DispersalKernel == DispersalTemplate.NegExp)
             {
-                double mean = (double) 1 / agent.AlphaCoef;
-                c = (double) 1 / (2 * Math.PI * mean);
-                double func = (double) (1 / mean) * Math.Exp(-d / mean);
-                prob = c * func;
+                //double mean = (double) 1 / agent.AlphaCoef;
+                //c = (double) 1 / (2 * Math.PI * mean);
+                //double func = (double) (1 / mean) * Math.Exp(-d / mean);
+                //prob = c * func;
+
+                prob = (double) Math.Exp(-d / agent.AlphaCoef);
             }
 
             // ... additional kernels can be added here ...
