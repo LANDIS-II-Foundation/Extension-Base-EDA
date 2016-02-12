@@ -1,4 +1,4 @@
-//  Copyright 2016 North Carolina State University, Center for Geospatial Analytics & 
+﻿//  Copyright 2016 North Carolina State University, Center for Geospatial Analytics & 
 //  Forest Service Northern Research Station, Institute for Applied Ecosystem Studies
 //  Authors:  Francesco Tonini, Brian R. Miranda
 
@@ -95,13 +95,21 @@ namespace Landis.Extension.BaseEDA
         {
 
             PlugIn.ModelCore.UI.WriteLine("   Calculating EDA Modified Site Host Index.");
+
+            //we need to calculate a relative SHIM for each site by dividing absolute SHIM with the average SHIM_mean over the landscape
+            //The relative index allows us to compare the transmission rate β against homogeneous landscape conditions (where hi=1) 
+            //and to interpret β as the rate of secondary infection of typical cells by a single infected typical cell in a non-infected landscape 
+
+            //define a variable to store cumulative (running sum) SHIM over the landscape
+            double SHMI_CumSum = 0.0;
+
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape) {
 
                 if (SiteVars.SiteHostIndex[site] > 0.0)
                 {
                     int     lastDisturb = 0;
                     int     duration = 0;
-                    double  disturbMod = 0;
+                    double  disturbMod = 0.0;
                     double  sumDisturbMods = 0.0;
                     double  SHIM = 0.0;
 
@@ -246,9 +254,7 @@ namespace Landis.Extension.BaseEDA
                             }
                         }
                     }
-
-                    //PlugIn.ModelCore.Log.WriteLine("   Summation of Disturbance Modifiers = {0}.", sumMods);
-                    
+                
                     //---- APPLY ECOREGION MODIFIERS --------
                     IEcoregion ecoregion = PlugIn.ModelCore.Ecoregion[site];
                     
@@ -256,14 +262,34 @@ namespace Landis.Extension.BaseEDA
                            sumDisturbMods +
                            agent.EcoParameters[ecoregion.Index].EcoModifier;
 
+                    //constrain the absolute value of SHIM within range 0-1
                     SHIM = System.Math.Max(0.0, SHIM);
                     SHIM = System.Math.Min(1.0, SHIM);
 
                     SiteVars.SiteHostIndexMod[site] = SHIM;
+
+                    //add current site absolute index to the cumulative sum over the landscape
+                    SHMI_CumSum += SHIM;
+
                 }//end of one site
 
                 else SiteVars.SiteHostIndexMod[site] = 0.0;
             } //end Active sites
+
+            //Calculating Relative Modified Site Host Index Values for Active Sites
+            PlugIn.ModelCore.UI.WriteLine("   Calculating Relative Modified Site Host Index Values for Active Sites.");
+
+            double SHIM_mean = (double) SHMI_CumSum / PlugIn.ModelCore.Landscape.ActiveSiteCount;
+
+            foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
+            {
+                if (SiteVars.SiteHostIndexMod[site] > 0.0)
+                {
+                    //override index value with new relative (normalized) value by the landscape mean
+                    SiteVars.SiteHostIndexMod[site] = SiteVars.SiteHostIndexMod[site] / SHIM_mean;
+                }
+            }// end Active sites
+
         } //end Function
 
     }//End of SiteResources

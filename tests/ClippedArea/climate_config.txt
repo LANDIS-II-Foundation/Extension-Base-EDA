@@ -1,0 +1,11 @@
+LandisData  "Climate Config"
+
+>>-----daily
+
+ClimateTimeSeries                 Daily_SequencedYears
+ClimateFile                       BS_2015_2100_GFDLC3_rcp85_Wght.csv
+ClimateFileFormat                 Daily_Temp-C_Precip-mmDay
+
+SpinUpClimateTimeSeries           Daily_SequencedYears
+SpinUpClimateFile                 BS_1979_2014_Wght.csv
+SpinUpClimateFileFormat           Daily_Temp-C_Precip-mmDay

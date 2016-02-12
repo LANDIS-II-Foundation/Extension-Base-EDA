@@ -379,7 +379,7 @@ namespace Landis.Extension.BaseEDA
             double kernelProb, cumSum = 0, forceOfInf = 0, centroidDistance = 0, CellLength = PlugIn.ModelCore.CellLength;
             PlugIn.ModelCore.UI.WriteLine("Looking for infection sources within the chosen neighborhood...");
             int maxRadius = agent.DispersalMaxDist;
-            int numCellRadius = (int)((double) maxRadius / CellLength);
+            int numCellRadius = (int) (maxRadius / CellLength);
             Dispersal dsp = new Dispersal();
 
             PlugIn.ModelCore.UI.WriteLine("MaximumDistance={0}, CellSize={1}, MaxPixelDistance={2}",

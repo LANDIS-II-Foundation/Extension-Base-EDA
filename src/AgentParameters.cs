@@ -40,7 +40,7 @@ namespace Landis.Extension.BaseEDA
         //- Transmission -
         double TransmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
         double AcquisitionRate { get; set; }  //rD = Rate of acquisition of detectable symptoms (per time step)
-        //>>InitialEpidemMap? do I need to add this here?
+        string InitEpiMap { get; set; }   //initial map of infected cells (0=non infected, 1=infected)
         DispersalType DispersalType { get; set; }
         DispersalTemplate DispersalKernel { get; set; }
         int DispersalMaxDist { get; set; }
@@ -86,7 +86,7 @@ namespace Landis.Extension.BaseEDA
         //-- Transmission -------------
         private double transmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
         private double acquisitionRate { get; set; }  //rD = Rate of acquisition of detectable symptoms (per time step)
-        //>>InitialEpidemMap? do I need to add this here?
+        private string initEpiMap { get; set; }   //initial map of infected cells (0=non infected, 1=infected)
         private DispersalTemplate dispersalKernel { get; set; }
         private DispersalType dispersalType { get; set; }
         private int dispersalMaxDist { get; set; }
@@ -235,8 +235,11 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
-        //>>InitialEpidemMap? do I need to add this here?
-
+        public string InitEpiMap
+        {
+            get { return initEpiMap; }
+            set { initEpiMap = value; }
+        }
         //---------------------------------------------------------------------
         public DispersalType DispersalType
         {

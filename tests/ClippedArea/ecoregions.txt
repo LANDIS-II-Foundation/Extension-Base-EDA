@@ -1,0 +1,23 @@
+LandisData  Ecoregions
+
+>> Act	MapCode	names    	Description
+>> ---	-------	------------------------------	--------------------------------
+no	0	BS0	None
+yes	1	BS1	Water
+yes	2	BS2	Barren
+yes	3	BS3	CentralSouthernCaliforniaMixedEvergreenWoodland
+yes	4	BS4	CaliforniaCoastalRedwoodForest
+yes	5	BS5	MediterraneanCaliforniaDryMesicMixedConiferForestandWoodland
+yes	6	BS6	MediterraneanCaliforniaLowerMontaneBlackOakConiferForest
+yes	7	BS7	SoutherCaliforniaCoastalScrub
+yes	8	BS8	CaliforniaMaritimeChaparral
+yes	9	BS9	CaliforniaMesicChaparral
+yes	10	BS10	CaliforniaMontaneWoodlandandSavanna
+yes	11	BS11	NorthernandCentralCaliforniaDryMesicChaparral
+yes	12	BS12	CaliforniaCoastalLiveOakWoodland
+yes	13	BS13	NorthernCaliforniaCoastalScrub
+yes	14	BS14	CaliforniaCentralValleyandSouthernCoastalGrassland
+yes	15	BS15	CaliforniaNorthernCoastalGrassland
+yes	16	BS16	CaliforniaMontaneRiparian
+yes	17	BS17	CaliforniaCoatalClosedConeConiferForestandWoodland
+
