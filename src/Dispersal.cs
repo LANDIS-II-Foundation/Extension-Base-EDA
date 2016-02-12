@@ -47,28 +47,18 @@ namespace Landis.Extension.BaseEDA
 
                     dx = PlugIn.ModelCore.CellLength * x;
                     dy = PlugIn.ModelCore.CellLength * y;
-                    //calculate distance value for diagonal
+                    
+                    //calculate distance value 
                     dist = Math.Sqrt(dx * dx + dy * dy);
 
                     if (dist > agent.DispersalMaxDist) prob = 0;
                     else prob = Kernel_prob(agent, dist);
 
-                    if (dispersal_probability.ContainsKey(dist))
-                    {
-                        dispersal_probability[dist] += prob;
-                        dispersal_prob_count[dist]++;
-                    }
-                    else
-                    {
-                        dispersal_probability.Add(dist, prob);
-                        dispersal_prob_count.Add(dist, 1);
-                    }
+                    if (dist == 0)
+                        continue; //we do not want to include the source (central) cell 
 
-                    //if (x == 0 && y == 0) we don't need to cumulate for that since the area has to sum to 1, excluding the source cell area
-                    //{
-                    //    total_p += prob;
-                    //}
-                    //else if (x == y || x == 0 || y == 0)
+                    dispersal_probability.Add(dist, prob);
+
                     if (x == y || x == 0 || y == 0)
                     {
                         total_p += 4 * prob;
@@ -84,8 +74,6 @@ namespace Landis.Extension.BaseEDA
             //normalize by cumulative sum (excluding source cell)
             foreach (double dist in dispersal_prob_count.Keys)
             {
-                //do we need this? 
-                //dispersal_probability[dist] = dispersal_probability[dist] / dispersal_prob_count[dist];
                 dispersal_probability[dist] = dispersal_probability[dist] / total_p;
             }
 
