@@ -5,7 +5,6 @@
 using Landis.Core;
 using Landis.Library.AgeOnlyCohorts;
 using Landis.SpatialModeling;
-using System.Collections.Generic;
 using System;
 
 namespace Landis.Extension.BaseEDA

@@ -35,7 +35,7 @@ TempIndex
 
 AnnualWeatherIndex
 >>Months  Function
-  ------  --------
+>>------  --------
   4 to 6  Sum
 
 >>-------- Transmission Input ----------------------

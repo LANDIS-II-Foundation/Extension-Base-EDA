@@ -3,11 +3,10 @@
 //  Authors:  Francesco Tonini, Brian R. Miranda
 
 using Edu.Wisc.Forest.Flel.Util;
-using System.Collections.Generic;
-using Landis.Library.Climate;
-using System.Data;
-using System;
 using Landis.Core;
+using Landis.Library.Climate;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Landis.Extension.BaseEDA
@@ -149,11 +148,11 @@ namespace Landis.Extension.BaseEDA
             }
             set
             {
-                if ((value.Equals("sum", StringComparison.OrdinalIgnoreCase)) || (value.Equals("mean", StringComparison.OrdinalIgnoreCase)))
+                if ((value.Equals("sum", StringComparison.OrdinalIgnoreCase)) || (value.Equals("mean", StringComparison.OrdinalIgnoreCase))|| (value.Equals("none", StringComparison.OrdinalIgnoreCase)))
                     function = value;
                 else
                 {
-                    throw new InputValueException(value.ToString(), "Value must be 'sum' or 'mean'.");
+                    throw new InputValueException(value.ToString(), "Value must be 'Sum', 'Mean', or 'None'.");
                 }
 
             }
@@ -216,6 +215,11 @@ namespace Landis.Extension.BaseEDA
         /// </summary>
         public DerivedClimateVariable()
         {
+            //char[] charArray;
+            //charArray = new char[0];
+            //function = new string(charArray);
+            //time = new string(charArray);
+            dailyDerivedData = new Dictionary<string,double[]>[PlugIn.ModelCore.Ecoregions.Count];
             foreach (IEcoregion ecoregion in PlugIn.ModelCore.Ecoregions)
             {
                 dailyDerivedData[ecoregion.Index] = new Dictionary<string, double[]>();

@@ -2,15 +2,11 @@
 //  Forest Service Northern Research Station, Institute for Applied Ecosystem Studies
 //  Authors:  Francesco Tonini, Brian R. Miranda
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.IO;
 using Landis.Core;
 using Landis.Library.Metadata;
 using Landis.SpatialModeling;
-using Landis.Library.Climate;
-using System.Data;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Landis.Extension.BaseEDA
 {
