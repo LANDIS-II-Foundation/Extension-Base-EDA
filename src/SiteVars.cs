@@ -81,7 +81,7 @@ namespace Landis.Extension.BaseEDA
             //pSusceptible = modelCore.Landscape.NewSiteVar<double>();
             //pInfected = modelCore.Landscape.NewSiteVar<double>();
             //pDiseased = modelCore.Landscape.NewSiteVar<double>();
-            //agentName = modelCore.Landscape.NewSiteVar<string>();
+            agentName = modelCore.Landscape.NewSiteVar<string>();
             biomassInsectsAgent = modelCore.Landscape.NewSiteVar<string>();
 
             climateVars = modelCore.Landscape.NewSiteVar<Dictionary<string, float>>();
@@ -116,6 +116,7 @@ namespace Landis.Extension.BaseEDA
                 //with initial values for infection status and probs of being in each status
                 for (int i = 0; i < numAgents; i++){
                     //should I initialize infStatus here or within Epidemics region?
+                    infStatus[site].Add(i, 0);
                     pSusceptible[site].Add(i, 0);
                     pInfected[site].Add(i, 0);
                     pDiseased[site].Add(i, 0);

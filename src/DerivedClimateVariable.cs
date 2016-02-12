@@ -229,23 +229,20 @@ namespace Landis.Extension.BaseEDA
 
         public static Dictionary<string, double[]> CalculateDerivedClimateVariables(IAgent agent, IEcoregion ecoregion)
         {
-            
-            // FIXME
-
-            //foreach (IEcoregion ecoregion in PlugIn.ModelCore.Ecoregions)
-            //{
                 int currentYear = PlugIn.ModelCore.CurrentTime;
                 int actualYear = currentYear;
                 AnnualClimate_Daily AnnualWeather = Climate.Future_DailyData[Climate.Future_DailyData.Keys.Min()][ecoregion.Index];
                 int maxSpinUpYear = Climate.Spinup_DailyData.Keys.Max();
+                int minFutureYear = AnnualWeather.Year;
+                actualYear = minFutureYear + (currentYear - 1);
 
-                if (PlugIn.ModelCore.CurrentTime == 0)
+                if (currentYear == 0)
                 {
                     AnnualWeather = Climate.Spinup_DailyData[maxSpinUpYear][ecoregion.Index];
                 }
                 else
                 {
-                    AnnualWeather = Climate.Future_DailyData[currentYear][ecoregion.Index];
+                    AnnualWeather = Climate.Future_DailyData[actualYear][ecoregion.Index];
                 }
                 int numDailyRecords = AnnualWeather.DailyTemp.Length;
 
@@ -255,10 +252,10 @@ namespace Landis.Extension.BaseEDA
 
                 foreach (DerivedClimateVariable derClimVar in agent.DerivedClimateVars)
                 {
-                    double[] formulaRecords = new double[numDailyRecords];
-                    dailyDerivedClimate.Add(derClimVar.Name, formulaRecords);
+                    double[] records = new double[numDailyRecords];
+                    dailyDerivedClimate.Add(derClimVar.Name, records);
 
-                    if (derClimVar.Source == "Formula")
+                    if (derClimVar.Source.Equals("formula", StringComparison.OrdinalIgnoreCase))
                     {
                         int indexa = agent.VarFormula.Parameters.FindIndex(i => i == "a");
                         double a = Double.Parse(agent.VarFormula.Values[indexa]);
@@ -274,78 +271,124 @@ namespace Landis.Extension.BaseEDA
                         double f = Double.Parse(agent.VarFormula.Values[indexf]);
                         int indexVar = agent.VarFormula.Parameters.FindIndex(i => i == "Variable");
                         string variableName = agent.VarFormula.Values[indexVar];
-
-                        double variable = 0;
-                        for(int i = 0; i < numDailyRecords; i++)
+                        IClimateVariableDefinition selectClimateVar = new ClimateVariableDefinition();
+                        bool select = false;
+                        foreach(IClimateVariableDefinition climateVar in agent.ClimateVars)
                         {
-                             if (variableName.Equals("temp", StringComparison.OrdinalIgnoreCase))
-                             {
-                                 variable = AnnualWeather.DailyTemp[i];
-                             }
-                             else
-                             {
-                                 string mesg = string.Format("Only 'temp' supported for variable in formula");
-                                 throw new System.ApplicationException(mesg);
-                             }
-                            //tempIndex = a + b * exp(c[ln(Variable / d) / e] ^ f);
-                            double tempIndex = a + b * Math.Exp(c * Math.Pow((Math.Log(variable / d) / e), f));
-                            dailyDerivedClimate[derClimVar.Name][i] = tempIndex;
-                            dailyDerivedClimate["JulianDay"][i] = i;
+                            if (variableName.Equals(climateVar.Name, StringComparison.OrdinalIgnoreCase))
+                            {
+                                selectClimateVar = climateVar;
+                                select = true;
+                            }
                         }
-                        
-                        
+                        if(select)
+                        {
+                            double[] variableArray;
+                            if (selectClimateVar.ClimateLibVariable.Equals("DailyTemp", StringComparison.OrdinalIgnoreCase))
+                            {
+                                variableArray = AnnualWeather.DailyTemp;
+                            }
+                            else if(selectClimateVar.ClimateLibVariable.Equals("DailyPrecip", StringComparison.OrdinalIgnoreCase))
+                            {
+                                variableArray = AnnualWeather.DailyPrecip;
+                            }
+                            else
+                            {
+                                string mesg = string.Format("Only 'DailyTemp' and 'DailyPrecip' are supported for ClimateVar in ClimateVariables");
+                                throw new System.ApplicationException(mesg);
+                            }
+                            for (int i = 0; i < numDailyRecords; i++)
+                            {
+                                double variable = variableArray[i];
+                                //tempIndex = a + b * exp(c[ln(Variable / d) / e] ^ f);
+                                double tempIndex = a + b * Math.Exp(c * Math.Pow((Math.Log(variable / d) / e), f));
+                                dailyDerivedClimate[derClimVar.Name][i] = tempIndex;
+                                dailyDerivedClimate["JulianDay"][i] = i+1;
+                            }
+                        }
+                        else
+                        {
+                            string mesg = string.Format("Variable {1} is not included in ClimateVariables)",variableName);
+                            throw new System.ApplicationException(mesg);
+                        }
                     }
                     else  //Not Formula
                     {
-                        double[] records = new double[numDailyRecords];
-                        dailyDerivedClimate.Add(derClimVar.Name, records);
                         //if daily
                         // create daily record of derived variable to mimic fields of AnnualClimate_Daily
-                        if(derClimVar.Time == "Day")
+                        if (derClimVar.Time.Equals("day", StringComparison.OrdinalIgnoreCase))
                         {
-                            if(derClimVar.Count <= 1)
+                            if (derClimVar.Count <= 1)
                             {
-                                for(int i = 0; i < numDailyRecords; i++)
+                                for (int i = 0; i < numDailyRecords; i++)
                                 {
-                                    if (derClimVar.ClimateVariable.Equals("precip", StringComparison.OrdinalIgnoreCase))
+                                    if (derClimVar.ClimateVariable.Equals("DailyPecip", StringComparison.OrdinalIgnoreCase))
                                     {
                                         dailyDerivedClimate[derClimVar.Name][i] = AnnualWeather.DailyTemp[i];
+                                        dailyDerivedClimate["JulianDay"][i] = i+1;
+                                    }
+                                    else
+                                    {
+                                        // Add DailyTemp - FIXME
+                                        string mesg = string.Format("Only 'DailyPrecip' supported for ClimateVar in DerivedClimateVariables");
+                                        throw new System.ApplicationException(mesg);
                                     }
                                 }
                             }
                             else
                             {
-                                if (derClimVar.Function.Equals("sum", StringComparison.OrdinalIgnoreCase))
+                                for (int i = 0; i < numDailyRecords; i++)
                                 {
-                                    for(int i = 0; i < numDailyRecords; i++)
+                                    double varSum = 0;
+                                    double varCount = 0;
+                                    if (derClimVar.ClimateVariable.Equals("DailyPrecip", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        double varSum = 0;
-                                        if (derClimVar.ClimateVariable.Equals("precip", StringComparison.OrdinalIgnoreCase))
+                                        for (int n = 0; n < derClimVar.Count; n++)
                                         {
-                                            for (int n = 0; n < derClimVar.Count; n++)
+                                            int recIndex = i - n;
+                                            if (recIndex >= 0)
                                             {
-                                                int recIndex = i - n;
-                                                if(recIndex >= 0)
-                                                {
-                                                    varSum += AnnualWeather.DailyPrecip[recIndex];
-                                                }
+                                                varSum += AnnualWeather.DailyPrecip[recIndex];
+                                                varCount += 1;
                                             }
+                                        }
+                                        if (derClimVar.Function.Equals("sum", StringComparison.OrdinalIgnoreCase))
+                                        {
                                             dailyDerivedClimate[derClimVar.Name][i] = varSum;
                                         }
+                                        else if (derClimVar.Function.Equals("mean", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            dailyDerivedClimate[derClimVar.Name][i] = varSum/varCount;
+                                        }
+                                        else
+                                        {
+                                            string mesg = string.Format("Only 'Sum' and 'Mean' supported for Function in DerivedClimateVariables");
+                                            throw new System.ApplicationException(mesg);
+                                        }
+                                        dailyDerivedClimate["JulianDay"][i] = i+1;
+                                    }
+                                    else
+                                    {
+                                        // Add DailyTemp - FIXME
+                                        string mesg = string.Format("Only 'DailyPrecip' supported for ClimateVar in DerivedClimateVariables");
+                                        throw new System.ApplicationException(mesg);
                                     }
                                 }
-                                
                             }
                         }
-                        //if weekly
-                        //  create weekly record of derived variable.  Include min and max julian days and month assignment to each weekly record
+                        else
+                        {
+                            //if weekly - FIXME
+                            //  create weekly record of derived variable.  Include min and max julian days and month assignment to each weekly record
 
-                        //if monthly
-                        // create monthly record of derived variable to mimic field on AnnualClimate_Monthly
+                            //if monthly - FIXME
+                            // create monthly record of derived variable to mimic field on AnnualClimate_Monthly
+                            string mesg = string.Format("Only 'Day' supported for DerivedClimateVariable Time");
+                            throw new System.ApplicationException(mesg);
+                        }
                     }
                 }
                 return dailyDerivedClimate;
-            //}
         }
     }
 }
