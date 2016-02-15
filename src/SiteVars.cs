@@ -81,7 +81,7 @@ namespace Landis.Extension.BaseEDA
             //pSusceptible = modelCore.Landscape.NewSiteVar<double>();
             //pInfected = modelCore.Landscape.NewSiteVar<double>();
             //pDiseased = modelCore.Landscape.NewSiteVar<double>();
-            //agentName = modelCore.Landscape.NewSiteVar<string>();
+            agentName = modelCore.Landscape.NewSiteVar<string>();
             biomassInsectsAgent = modelCore.Landscape.NewSiteVar<string>();
 
             climateVars = modelCore.Landscape.NewSiteVar<Dictionary<string, float>>();
@@ -123,7 +123,11 @@ namespace Landis.Extension.BaseEDA
 
             }
             
+            //register site-level variable for other extensions to read/interact with:
             modelCore.RegisterSiteVar(NumberCFSconifersKilled, "EDA.NumCFSConifers");  // Enable interactions with CFS fuels extension.
+            
+            //FIXME??
+            //NOT SURE we need to register this site variable, since fire can read all species killed by EDA agent inside CFS above
             modelCore.RegisterSiteVar(NumberMortSppKilled, "EDA.NumMortSppKilled");  // Enable interactions with fire/fuel extension (B. Miranda add this please).
 
             modelCore.RegisterSiteVar(TimeOfLastEvent, "EDA.TimeOfLastEvent");
