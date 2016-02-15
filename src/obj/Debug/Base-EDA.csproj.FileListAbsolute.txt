@@ -1,0 +1,13 @@
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\bin\Debug\Landis.Extension.BaseEDA.dll
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\bin\Debug\Landis.Extension.BaseEDA.pdb
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\bin\Debug\Edu.Wisc.Forest.Flel.Util.dll
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\bin\Debug\Landis.Core.dll
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\bin\Debug\Landis.Library.AgeOnlyCohorts.dll
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\bin\Debug\Landis.Library.Climate.dll
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\bin\Debug\Landis.Library.Cohorts.dll
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\bin\Debug\Landis.Library.Metadata.dll
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\bin\Debug\Landis.SpatialModeling.dll
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\bin\Debug\Troschuetz.Random.dll
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\obj\Debug\Base-EDA.csprojResolveAssemblyReference.cache
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\obj\Debug\Landis.Extension.BaseEDA.dll
+C:\Users\ftonini\Dropbox\GITHUB-Projects\Extension-Base-EDA\src\obj\Debug\Landis.Extension.BaseEDA.pdb
