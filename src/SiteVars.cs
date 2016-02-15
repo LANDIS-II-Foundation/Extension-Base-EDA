@@ -116,6 +116,7 @@ namespace Landis.Extension.BaseEDA
                 //with initial values for infection status and probs of being in each status
                 for (int i = 0; i < numAgents; i++){
                     //should I initialize infStatus here or within Epidemics region?
+                    infStatus[site].Add(i, 0);
                     pSusceptible[site].Add(i, 0);
                     pInfected[site].Add(i, 0);
                     pDiseased[site].Add(i, 0);

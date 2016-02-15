@@ -122,13 +122,14 @@ namespace Landis.Extension.BaseEDA
 
                 derivedClimateVars = new DerivedClimateVariable();
                 derivedClimateVars.Name = derivedClimateVarName.Value;
-                if(derivedClimateVars.Name == "Formula")
+                
+                ReadValue(derSource, currentLine);
+                derivedClimateVars.Source = derSource.Value;
+
+                if (derivedClimateVars.Source == "Formula")
                 {
                     formulaVars.Enqueue(derivedClimateVars.Name);
                 }
-
-                ReadValue(derSource, currentLine);
-                derivedClimateVars.Source = derSource.Value;
 
                 ReadValue(derVariableName, currentLine);
                 derivedClimateVars.ClimateVariable = derVariableName.Value;
@@ -175,6 +176,10 @@ namespace Landis.Extension.BaseEDA
                     GetNextLine();
                 }
                 agentParameters.VarFormula = tempIndexModel;
+                if(formulaVars.Count == 0)
+                {
+                    break;
+                }
             }
              // Read Weather Index Variables
              ReadName("WeatherIndexVariables");

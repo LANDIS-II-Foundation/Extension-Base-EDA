@@ -9,12 +9,12 @@ SHIMode			mean     <<possibly add weighted by biomass!
 ClimateVariables
 >> Var Name	Source	  ClimateVar  Transform	
 >> --------	------	  ----------  ---------
-    temp	Library	  Temp		 none
+    temp	Library	  DailyTemp	 none
 
 DerivedClimateVariables
 >> Var Name	Source   ClimateVar  Function	Time	Count  << Function = Mean or Sum; Time = Day, Week or Month
 >> --------	------   ----------  --------	----	-----
-  Precip5DSum	Library  Precip		Sum	Day	  5
+  Precip5DSum	Library  DailyPrecip	Sum	Day	  5
   TempIndex	Formula  None		None	Day	  1
 
 TempIndex	<< a + b * exp(c[ln(Variable / d) / e] ^ f)
@@ -30,18 +30,18 @@ TempIndex	<< a + b * exp(c[ln(Variable / d) / e] ^ f)
 
 
 WeatherIndexVariables  << Var1 * Var2*...
-Precip5Dsum
+Precip5DSum
 TempIndex
 
 AnnualWeatherIndex
 >>Months  Function
-  ------  --------
+>>------  --------
   4 to 6  Sum
 
 >>-------- Transmission Input ----------------------
 TransmissionRate	1.8	 		<<beta0 = Mean rate at which an infected cell infects another cell (per time step)  
 AcquisitionRate		0.4	 		<<rD = Rate of acquisition of detectable symptoms (per time step)
-InitialEpidemMap        initEpidem1.img         <<OR initEpidem10.img     initial outbreak map (0=susceptible, 1=infected)
+InitialEpidemMap        initEpidem1.img   <<initial outbreak map (0=susceptible, 1=infected)
 DispersalType		STATIC         		<<STATIC, DYNAMIC (Dynamic = anisotropic, NOT implemented YET!)
 DispersalKernel		PowerLaw		<<PowerLaw, NegExp
 DispersalMaxDist	1000            	<< meters, cut-off distance to consider for dispersal kernel window               
