@@ -245,7 +245,7 @@ namespace Landis.Extension.BaseEDA
                             {
                                 foreach (string pName in disturbance.PrescriptionNames)
                                 {
-                                    if ((SiteVars.AgentName[site].Trim() == pName.Trim()) || (pName.Trim() == "BDA"))
+                                    if ((SiteVars.AgentName[site].Trim() == pName.Trim()) || (pName.Trim() == "EDA"))
                                     {
                                         disturbMod = disturbance.SHIModifier * System.Math.Max(0, (double)(PlugIn.ModelCore.CurrentTime - lastDisturb)) / duration;
                                         sumDisturbMods += disturbMod;
