@@ -232,7 +232,7 @@ namespace Landis.Extension.BaseEDA
                     siteCohortsKilled = cohortsKilled[0];
                     siteMortSppKilled = cohortsKilled[2];
 
-                    //check with Brian to better understand what this does... 
+                    
                     if (SiteVars.NumberCFSconifersKilled[site].ContainsKey(PlugIn.ModelCore.CurrentTime))
                     {
                         int prevKilled = SiteVars.NumberCFSconifersKilled[site][PlugIn.ModelCore.CurrentTime];
@@ -243,7 +243,7 @@ namespace Landis.Extension.BaseEDA
                         SiteVars.NumberCFSconifersKilled[site].Add(PlugIn.ModelCore.CurrentTime, cohortsKilled[1]);
                     }
 
-                    //check with Brian to better understand what this does... 
+                     
                     if (SiteVars.NumberMortSppKilled[site].ContainsKey(PlugIn.ModelCore.CurrentTime))
                     {
                         int prevKilled = SiteVars.NumberMortSppKilled[site][PlugIn.ModelCore.CurrentTime];
