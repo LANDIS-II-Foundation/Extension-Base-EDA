@@ -1,7 +1,7 @@
 LandisData   Extension
 
 Name         "Base EDA"
-Version      "0.1 (alpha release 2)"
+Version      "0.1 (alpha release 3)"
 Type         disturbance:EDA
 Assembly     Landis.Extension.BaseEDA
 Class        Landis.Extension.BaseEDA.PlugIn
