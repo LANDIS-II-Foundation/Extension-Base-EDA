@@ -41,7 +41,7 @@ AnnualWeatherIndex
 >>-------- Transmission Input ----------------------
 TransmissionRate	1.8	 		<<beta0 = Mean rate at which an infected cell infects another cell (per time step)  
 AcquisitionRate		0.4	 		<<rD = Rate of acquisition of detectable symptoms (per time step)
-InitialEpidemMap        initEpidem1.img   <<initial outbreak map (0=susceptible, 1=infected)
+InitialEpidemMap        initEpidem1.img		   <<initial outbreak map (0=susceptible, 1=infected)
 DispersalType		STATIC         		<<STATIC, DYNAMIC (Dynamic = anisotropic, NOT implemented YET!)
 DispersalKernel		PowerLaw		<<PowerLaw, NegExp
 DispersalMaxDist	1000            	<< meters, cut-off distance to consider for dispersal kernel window               
