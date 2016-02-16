@@ -27,7 +27,7 @@ namespace Landis.Extension.BaseEDA
         {
 
             dispersal_probability = new Dictionary<double, double>();
-            Dictionary<double, int> dispersal_prob_count = new Dictionary<double, int>();
+
             dispersal_probability.Clear();
 
             //calculate how many pixels max dist in the moving window
@@ -51,28 +51,35 @@ namespace Landis.Extension.BaseEDA
                     //calculate distance value 
                     dist = Math.Sqrt(dx * dx + dy * dy);
 
-                    if (dist > agent.DispersalMaxDist) prob = 0;
-                    else prob = Kernel_prob(agent, dist);
+                    if (dist > 0)
+                    {  //we do not want to include the source (central) cell 
 
-                    if (dist == 0)
-                        continue; //we do not want to include the source (central) cell 
+                        if (dist > agent.DispersalMaxDist)
+                        {
+                            prob = 0;
+                        }
+                        else
+                        {
+                            prob = Kernel_prob(agent, dist);
+                        }
 
-                    dispersal_probability.Add(dist, prob);
+                        dispersal_probability.Add(dist, prob);
 
-                    if (x == y || x == 0 || y == 0)
-                    {
-                        total_p += 4 * prob;
-                    }
-                    else
-                    {
-                        total_p += 8 * prob;
-                    }
+                        if (x == y || x == 0 || y == 0)
+                        {
+                            total_p += 4 * prob;
+                        }
+                        else
+                        {
+                            total_p += 8 * prob;
+                        }
+                    }// end dist>0 check!
                     
                 } //end of y loop                
             }//end of x loop
 
             //normalize by cumulative sum (excluding source cell)
-            foreach (double dist in dispersal_prob_count.Keys)
+            foreach (double dist in dispersal_probability.Keys)
             {
                 dispersal_probability[dist] = dispersal_probability[dist] / total_p;
             }
