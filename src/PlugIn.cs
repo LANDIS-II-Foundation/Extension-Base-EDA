@@ -7,6 +7,7 @@ using Landis.Library.Metadata;
 using Landis.SpatialModeling;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace Landis.Extension.BaseEDA
 {
@@ -123,58 +124,67 @@ namespace Landis.Extension.BaseEDA
             {
 
                 Epidemic.Initialize(activeAgent);
-                Epidemic currentEpic = Epidemic.Simulate(activeAgent, ModelCore.CurrentTime, agentIndex);
-                
-                if (currentEpic != null)
+
+                if (activeAgent.DispersalType == DispersalType.STATIC)
                 {
-                    LogEvent(ModelCore.CurrentTime, currentEpic, activeAgent);
-
-                    //----- Write Infection Status maps (SUSCEPTIBLE (0), INFECTED (cryptic-non symptomatic) (1), DISEASED (symptomatic) (2) --------
-                    string path = MapNames.ReplaceTemplateVars(statusMapName, activeAgent.AgentName, ModelCore.CurrentTime);
-                    using (IOutputRaster<BytePixel> outputRaster = modelCore.CreateRaster<BytePixel>(path, modelCore.Landscape.Dimensions))
+                    Epidemic currentEpic = Epidemic.Simulate(activeAgent, ModelCore.CurrentTime, agentIndex);
+                    if (currentEpic != null)
                     {
-                        BytePixel pixel = outputRaster.BufferPixel;
-                        foreach (Site site in ModelCore.Landscape.AllSites)
-                        {
-                            if (site.IsActive)
-                            {
-                                pixel.MapCode.Value = (byte)(SiteVars.InfStatus[site][agentIndex] + 1);
-                            }
-                            else
-                            {
-                                //Inactive site
-                                pixel.MapCode.Value = 0;
-                            }
-                            outputRaster.WriteBufferPixel();
-                        }
-                    }
+                        LogEvent(ModelCore.CurrentTime, currentEpic, activeAgent);
 
-                    if (!(mortMapNames == null))
-                    {
-
-                        //----- Write Cohort Mortality Maps (number dead cohorts for selected species) --------
-                        string path2 = MapNames.ReplaceTemplateVars(mortMapNames, activeAgent.AgentName, ModelCore.CurrentTime);
-                        using (IOutputRaster<ShortPixel> outputRaster = modelCore.CreateRaster<ShortPixel>(path2, modelCore.Landscape.Dimensions))
+                        //----- Write Infection Status maps (SUSCEPTIBLE (0), INFECTED (cryptic-non symptomatic) (1), DISEASED (symptomatic) (2) --------
+                        string path = MapNames.ReplaceTemplateVars(statusMapName, activeAgent.AgentName, ModelCore.CurrentTime);
+                        using (IOutputRaster<BytePixel> outputRaster = modelCore.CreateRaster<BytePixel>(path, modelCore.Landscape.Dimensions))
                         {
-                            ShortPixel pixel = outputRaster.BufferPixel;
+                            BytePixel pixel = outputRaster.BufferPixel;
                             foreach (Site site in ModelCore.Landscape.AllSites)
                             {
                                 if (site.IsActive)
                                 {
-                                    pixel.MapCode.Value = (short)(SiteVars.NumberMortSppKilled[site][ModelCore.CurrentTime]); //CurrentTime is the dict key
+                                    pixel.MapCode.Value = (byte)(SiteVars.InfStatus[site][agentIndex] + 1);
                                 }
                                 else
                                 {
                                     //Inactive site
-                                    pixel.MapCode.Value = 0;  //see comment above...can we make this NA(null) or how to account for 0 mortality?
+                                    pixel.MapCode.Value = 0;
                                 }
                                 outputRaster.WriteBufferPixel();
                             }
                         }
+
+                        if (!(mortMapNames == null))
+                        {
+
+                            //----- Write Cohort Mortality Maps (number dead cohorts for selected species) --------
+                            string path2 = MapNames.ReplaceTemplateVars(mortMapNames, activeAgent.AgentName, ModelCore.CurrentTime);
+                            using (IOutputRaster<ShortPixel> outputRaster = modelCore.CreateRaster<ShortPixel>(path2, modelCore.Landscape.Dimensions))
+                            {
+                                ShortPixel pixel = outputRaster.BufferPixel;
+                                foreach (Site site in ModelCore.Landscape.AllSites)
+                                {
+                                    if (site.IsActive)
+                                    {
+                                        pixel.MapCode.Value = (short)(SiteVars.NumberMortSppKilled[site][ModelCore.CurrentTime]); //CurrentTime is the dict key
+                                    }
+                                    else
+                                    {
+                                        //Inactive site
+                                        pixel.MapCode.Value = 0;  //see comment above...can we make this NA(null) or how to account for 0 mortality?
+                                    }
+                                    outputRaster.WriteBufferPixel();
+                                }
+                            }
+                        }
+
+                        eventCount++;
                     }
-                    
-                    eventCount++;
+                }                    
+                else if (activeAgent.DispersalType == DispersalType.DYNAMIC)
+                {
+                    /*****************TODO*******************/
+                    Console.WriteLine("Dynamic dispersal type has not been implemented yet!!");
                 }
+
                 agentIndex++;
             }
         }

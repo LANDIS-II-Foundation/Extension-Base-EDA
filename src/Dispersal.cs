@@ -18,6 +18,7 @@ namespace Landis.Extension.BaseEDA
 
         //declare a new dictionary to hold disp prob values for each distance 
         private Dictionary<double, double> dispersal_probability;
+        private Dictionary<double, int> dispersal_prob_count;
 
         //class constructor
         public Dispersal() { }
@@ -27,11 +28,15 @@ namespace Landis.Extension.BaseEDA
         {
 
             dispersal_probability = new Dictionary<double, double>();
+            dispersal_prob_count = new Dictionary<double, int>();
 
             dispersal_probability.Clear();
 
             //calculate how many pixels max dist in the moving window
             max_dispersal_distance_pixels = (int)(agent.DispersalMaxDist / PlugIn.ModelCore.CellLength);
+
+            PlugIn.ModelCore.UI.WriteLine("MaximumDistance={0}, CellSize={1}, MaxPixelDistance={2}",
+                                            agent.DispersalMaxDist, PlugIn.ModelCore.CellLength, max_dispersal_distance_pixels);
 
             //define a variable to hold cumulative sum of probs inside the 2D spatial window
             double total_p = 0.0;
@@ -62,10 +67,17 @@ namespace Landis.Extension.BaseEDA
                         {
                             prob = Kernel_prob(agent, dist);
                         }
-                        if (!dispersal_probability.ContainsKey(dist))
+
+                        if (dispersal_probability.ContainsKey(dist))
+                        {
+                            dispersal_probability[dist] += prob;
+                            dispersal_prob_count[dist]++;
+                        }
+                        else
                         {
                             dispersal_probability.Add(dist, prob);
-                        }
+                            dispersal_prob_count.Add(dist, 1);
+                        }                            
 
                         if (x == y || x == 0 || y == 0)
                         {
@@ -81,13 +93,12 @@ namespace Landis.Extension.BaseEDA
             }//end of x loop
 
             //normalize by cumulative sum (excluding source cell)
-            Dictionary<double, double> tempDictionary = new Dictionary<double, double>(dispersal_probability.Count);
-            foreach (double dist in dispersal_probability.Keys)
+            foreach (double dist in dispersal_prob_count.Keys)
             {
-                //dispersal_probability[dist] = dispersal_probability[dist] / total_p;
-                tempDictionary[dist] = dispersal_probability[dist] / total_p;
+                dispersal_probability[dist] = dispersal_probability[dist] / dispersal_prob_count[dist];
+                dispersal_probability[dist] = dispersal_probability[dist] / total_p;
             }
-            dispersal_probability = tempDictionary;
+
             Console.WriteLine("Dispersal Lookup Table Initialization Done.");
         }
 

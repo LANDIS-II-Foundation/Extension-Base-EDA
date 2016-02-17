@@ -337,7 +337,7 @@ namespace Landis.Extension.BaseEDA
         // check if the coordinates are inside the map 
         private bool isInside(int x, int y) 
         {
-            return (x >= 0 && y >= 0 && x <= PlugIn.ModelCore.Landscape.Dimensions.Columns && y <= PlugIn.ModelCore.Landscape.Dimensions.Rows); 
+            return (x >= 1 && y >= 1 && x <= PlugIn.ModelCore.Landscape.Dimensions.Columns && y <= PlugIn.ModelCore.Landscape.Dimensions.Rows); 
         }
 
         ////-------------------------------------------------------
@@ -362,82 +362,74 @@ namespace Landis.Extension.BaseEDA
         //-------------------------------------------------------
         //Calculate the distance from a location to a center
         //point (row and column = 0).
-        private static double DistanceFromCenter(double row, double column)
+        private static double DistanceFromCenter(Site site, double row, double column)
         {
             double CellLength = PlugIn.ModelCore.CellLength;
-            row = System.Math.Abs(row) * CellLength;
-            column = System.Math.Abs(column) * CellLength;
-            double aSq = System.Math.Pow(column, 2);
-            double bSq = System.Math.Pow(row, 2);
-            return System.Math.Sqrt(aSq + bSq);
+            //row = System.Math.Abs(row) * CellLength;
+            //column = System.Math.Abs(column) * CellLength;
+            double dx = (row - site.Location.Row) * CellLength;
+            double dy = (column - site.Location.Column) * CellLength;
+            //double aSq = System.Math.Pow(column, 2);
+            //double bSq = System.Math.Pow(row, 2);
+            //return System.Math.Sqrt(aSq + bSq);
+            return System.Math.Sqrt(System.Math.Pow(dx,2) + System.Math.Pow(dy,2));
         }
 
         //define func to calculate Force of Infection (FOI) for a given agent and site
         //force of infection depends on the dispersal kernel, weather index, SHI of neighboring sites and itself, pInfected & pDiseased of neighboring sites         
-        double ComputeSiteFOI(IAgent agent, Site site, double beta, int agentIndex)
+        double ComputeSiteFOI(IAgent agent, Site targetSite, double beta, int agentIndex)
         {
-            double kernelProb, cumSum = 0, forceOfInf = 0, centroidDistance = 0, CellLength = PlugIn.ModelCore.CellLength;
-            PlugIn.ModelCore.UI.WriteLine("Looking for infection sources within the chosen neighborhood...");
+            double kernelProb, cumSum = 0.0, forceOfInf = 0.0, centroidDistance = 0.0, CellLength = PlugIn.ModelCore.CellLength;
+            int source_x, source_y;            
             int maxRadius = agent.DispersalMaxDist;
             int numCellRadius = (int) (maxRadius / CellLength);
             Dispersal dsp = new Dispersal();
 
-            PlugIn.ModelCore.UI.WriteLine("MaximumDistance={0}, CellSize={1}, MaxPixelDistance={2}",
-                                            maxRadius, CellLength, numCellRadius);
+            PlugIn.ModelCore.UI.WriteLine("Looking for infection sources within the chosen neighborhood...");
 
-            if (agent.DispersalType == DispersalType.STATIC)
+            for (int row = (numCellRadius * -1); row <= numCellRadius; row++)
             {
-                int source_x, source_y;
-
-                for (int row = (numCellRadius * -1); row <= numCellRadius; row++)
+                for (int col = (numCellRadius * -1); col <= numCellRadius; col++)
                 {
-                    for (int col = (numCellRadius * -1); col <= numCellRadius; col++)
+
+                    if (row == 0 && col == 0) continue; //we do not want to consider source cells overlapping with target (current) cell
+
+                    //calculate location of source pixel 
+                    source_x = targetSite.Location.Row + row;
+                    source_y = targetSite.Location.Column + col;
+
+                    if (isInside(source_x, source_y))
                     {
-
-                        //calculate location of source pixel 
-                        source_x = site.Location.Row + row;
-                        source_y = site.Location.Column + col;
-
-                        //is source site inside landscape? FIXME: need to check dimensions of landscape
-                        if (isInside(source_x, source_y))
+                        Site sourceSite = PlugIn.ModelCore.Landscape[source_x, source_y];
+                        if (sourceSite != null && sourceSite.IsActive)
                         {
                             //distance of source pixel from current target site
-                            centroidDistance = DistanceFromCenter(row, col);
+                            centroidDistance = DistanceFromCenter(targetSite, source_x, source_y);
                             //check if source cell is within max disp dist
                             if (centroidDistance <= maxRadius && centroidDistance > 0)
                             {
-                                Site sourceSite = PlugIn.ModelCore.Landscape[source_x, source_y];
-                                if (sourceSite != null && sourceSite.IsActive)
+                                //check if source pixel is infectious (=infected or diseased):
+                                if (SiteVars.InfStatus[sourceSite][agentIndex] == 1 || SiteVars.InfStatus[sourceSite][agentIndex] == 2)
                                 {
-                                    //check if source pixel is infectious (=infected or diseased):
-                                    if (SiteVars.InfStatus[sourceSite][agentIndex] == 1 || SiteVars.InfStatus[sourceSite][agentIndex] == 2)
-                                    {
-                                        //read kernel prob
-                                        kernelProb = dsp.GetDispersalProbability(centroidDistance);
-                                        //A_j: site host index modified -source-
-                                        //B_i: site host index modified -target, current site-
-                                        
-                                        //sum(A_j * B_i * P_Ij * P_Dj * Kernel(d_ij))
-                                        cumSum =+ (double)SiteVars.SiteHostIndexMod[sourceSite] * SiteVars.SiteHostIndexMod[site] * 
-                                                         SiteVars.PInfected[sourceSite][agentIndex] * SiteVars.PDiseased[sourceSite][agentIndex] * kernelProb;
-
-                                    }//end check if source site is infectious
-                                }//end check if source site is NOT null AND Active
-                            
+                                    //read kernel prob
+                                    kernelProb = dsp.GetDispersalProbability(centroidDistance);
+                                    //A_j: site host index modified -source-
+                                    //B_i: site host index modified -target, current site-
+                                    
+                                    //sum(A_j * B_i * P_Ij * P_Dj * Kernel(d_ij))
+                                    cumSum =+ SiteVars.SiteHostIndexMod[sourceSite] * SiteVars.SiteHostIndexMod[targetSite] *
+                                                      SiteVars.PInfected[sourceSite][agentIndex] * SiteVars.PDiseased[sourceSite][agentIndex] * kernelProb;
+                                }//end check if source site is infectious
                             }//end check if distance < maxdist
-                        }//end check if source isInside
 
-                    }//end col loop                    
-                }//end row loop
+                        }//end check if source site is NOT null AND Active
+                    }//end check if source isInside
 
-                //calculate force of infection: beta * cumSum
-                forceOfInf = beta * cumSum;
-            }
-            else if (agent.DispersalType == DispersalType.DYNAMIC)
-            {
-                /*****************TODO*******************/
-                Console.WriteLine("Dynamic dispersal type has not been implemented yet.");
-            }
+                }//end col loop                    
+            }//end row loop
+
+            //calculate force of infection: beta * cumSum
+            forceOfInf = beta * cumSum;
 
             return forceOfInf;
         }
