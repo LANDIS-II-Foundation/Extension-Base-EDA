@@ -62,8 +62,10 @@ namespace Landis.Extension.BaseEDA
                         {
                             prob = Kernel_prob(agent, dist);
                         }
-
-                        dispersal_probability.Add(dist, prob);
+                        if (!dispersal_probability.ContainsKey(dist))
+                        {
+                            dispersal_probability.Add(dist, prob);
+                        }
 
                         if (x == y || x == 0 || y == 0)
                         {
@@ -79,11 +81,13 @@ namespace Landis.Extension.BaseEDA
             }//end of x loop
 
             //normalize by cumulative sum (excluding source cell)
+            Dictionary<double, double> tempDictionary = new Dictionary<double, double>(dispersal_probability.Count);
             foreach (double dist in dispersal_probability.Keys)
             {
-                dispersal_probability[dist] = dispersal_probability[dist] / total_p;
+                //dispersal_probability[dist] = dispersal_probability[dist] / total_p;
+                tempDictionary[dist] = dispersal_probability[dist] / total_p;
             }
-
+            dispersal_probability = tempDictionary;
             Console.WriteLine("Dispersal Lookup Table Initialization Done.");
         }
 

@@ -2,13 +2,11 @@
 //  Forest Service Northern Research Station, Institute for Applied Ecosystem Studies
 //  Authors:  Francesco Tonini, Brian R. Miranda
 
-//using System;
-using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-using Landis.Library.Metadata;
-//using Edu.Wisc.Forest.Flel.Util;
+
 using Landis.Core;
+using Landis.Library.Metadata;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Landis.Extension.BaseEDA
 {
@@ -42,31 +40,22 @@ namespace Landis.Extension.BaseEDA
             //---------------------------------------
             //          table outputs:   
             //---------------------------------------
-
-            //PlugIn.EventLog = new MetadataTable<EventsLog>(logFileName);
-            PlugIn.EventLog = new MetadataTable<EventsLog>("eda-log.csv");
-
-            OutputMetadata tblOut_events = new OutputMetadata()
+            if (logFileName != null)
             {
-                Type = OutputType.Table,
-                Name = "EventLog",
-                FilePath = PlugIn.EventLog.FilePath,
-                Visualize = false,
-            };
-            tblOut_events.RetriveFields(typeof(EventsLog));
-            Extension.OutputMetadatas.Add(tblOut_events);
+                System.IO.Directory.CreateDirectory(Path.GetDirectoryName(logFileName));
+                PlugIn.EventLog = new MetadataTable<EventsLog>(logFileName);
+                //PlugIn.EventLog = new MetadataTable<EventsLog>("eda-log.csv");
 
-            //PlugIn.PDSILog = new MetadataTable<PDSI_Log>("PDSI_log.csv");
-
-            //OutputMetadata tblOut_PDSI = new OutputMetadata()
-            //{
-            //    Type = OutputType.Table,
-            //    Name = "PDSILog",
-            //    FilePath = PlugIn.PDSILog.FilePath
-            //};
-            //tblOut_events.RetriveFields(typeof(PDSI_Log));
-            //Extension.OutputMetadatas.Add(tblOut_PDSI);
-
+                OutputMetadata tblOut_events = new OutputMetadata()
+                {
+                    Type = OutputType.Table,
+                    Name = "EventLog",
+                    FilePath = PlugIn.EventLog.FilePath,
+                    Visualize = false,
+                };
+                tblOut_events.RetriveFields(typeof(EventsLog));
+                Extension.OutputMetadatas.Add(tblOut_events);
+            }
 
             //---------------------------------------            
             //          map outputs:         
