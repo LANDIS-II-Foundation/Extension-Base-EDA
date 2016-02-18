@@ -196,19 +196,19 @@ namespace Landis.Extension.BaseEDA
                 deltaPDiseased = agent.AcquisitionRate * SiteVars.PInfected[site][agentIndex];
 
                 //update probs of being in each considered status (S, I, D)
-                SiteVars.PSusceptible[site][agentIndex] = + deltaPSusceptible;
+                SiteVars.PSusceptible[site][agentIndex] =+ deltaPSusceptible;
                 if (SiteVars.PSusceptible[site][agentIndex] > 1)
                     SiteVars.PSusceptible[site][agentIndex] = 1;
                 //if (SiteVars.PSusceptible[site] < 0)
                 //    SiteVars.PSusceptible[site] = 0;
 
-                SiteVars.PInfected[site][agentIndex] = + deltaPInfected;
+                SiteVars.PInfected[site][agentIndex] =+ deltaPInfected;
                 if (SiteVars.PInfected[site][agentIndex] > 1)
                     SiteVars.PInfected[site][agentIndex] = 1;
                 //if (SiteVars.PInfected[site] < 0)
                 //    SiteVars.PInfected[site] = 0;
 
-                SiteVars.PDiseased[site][agentIndex] = + deltaPDiseased;
+                SiteVars.PDiseased[site][agentIndex] =+ deltaPDiseased;
                 if (SiteVars.PDiseased[site][agentIndex] > 1)
                     SiteVars.PDiseased[site][agentIndex] = 1;
                 //if (SiteVars.PDiseased[site] < 0)
@@ -335,9 +335,9 @@ namespace Landis.Extension.BaseEDA
         }
 
         // check if the coordinates are inside the map 
-        private bool isInside(int x, int y) 
+        private bool isInside(int row, int col) 
         {
-            return (x >= 1 && y >= 1 && x <= PlugIn.ModelCore.Landscape.Dimensions.Columns && y <= PlugIn.ModelCore.Landscape.Dimensions.Rows); 
+            return (row >= 1 && col >= 1 && col <= PlugIn.ModelCore.Landscape.Dimensions.Columns && row <= PlugIn.ModelCore.Landscape.Dimensions.Rows); 
         }
 
         ////-------------------------------------------------------
@@ -380,31 +380,31 @@ namespace Landis.Extension.BaseEDA
         double ComputeSiteFOI(IAgent agent, Site targetSite, double beta, int agentIndex)
         {
             double kernelProb, cumSum = 0.0, forceOfInf = 0.0, centroidDistance = 0.0, CellLength = PlugIn.ModelCore.CellLength;
-            int source_x, source_y;            
+            int source_row, source_col;     
             int maxRadius = agent.DispersalMaxDist;
             int numCellRadius = (int) (maxRadius / CellLength);
-            Dispersal dsp = new Dispersal();
+            //Dispersal dsp = new Dispersal();
 
-            PlugIn.ModelCore.UI.WriteLine("Looking for infection sources within the chosen neighborhood...");
+            //PlugIn.ModelCore.UI.WriteLine("Looking for infection sources within the chosen neighborhood...");
 
             for (int row = (numCellRadius * -1); row <= numCellRadius; row++)
             {
-                for (int col = (numCellRadius * -1); col <= numCellRadius; col++)
+                for (int col = (numCellRadius * -1); col <= numCellRadius; col++) 
                 {
 
                     if (row == 0 && col == 0) continue; //we do not want to consider source cells overlapping with target (current) cell
 
                     //calculate location of source pixel 
-                    source_x = targetSite.Location.Row + row;
-                    source_y = targetSite.Location.Column + col;
+                    source_row = targetSite.Location.Row + row;
+                    source_col = targetSite.Location.Column + col;
 
-                    if (isInside(source_x, source_y))
+                    if (isInside(source_row, source_col))
                     {
-                        Site sourceSite = PlugIn.ModelCore.Landscape[source_x, source_y];
+                        Site sourceSite = PlugIn.ModelCore.Landscape[source_row, source_col];
                         if (sourceSite != null && sourceSite.IsActive)
                         {
                             //distance of source pixel from current target site
-                            centroidDistance = DistanceFromCenter(targetSite, source_x, source_y);
+                            centroidDistance = DistanceFromCenter(targetSite, source_row, source_col);
                             //check if source cell is within max disp dist
                             if (centroidDistance <= maxRadius && centroidDistance > 0)
                             {
@@ -412,13 +412,16 @@ namespace Landis.Extension.BaseEDA
                                 if (SiteVars.InfStatus[sourceSite][agentIndex] == 1 || SiteVars.InfStatus[sourceSite][agentIndex] == 2)
                                 {
                                     //read kernel prob
-                                    kernelProb = dsp.GetDispersalProbability(centroidDistance);
+                                    //kernelProb = dsp.GetDispersalProbability(centroidDistance);
+                                    kernelProb = Dispersal.dispersal_probability[centroidDistance];
+                                    
                                     //A_j: site host index modified -source-
                                     //B_i: site host index modified -target, current site-
-                                    
-                                    //sum(A_j * B_i * P_Ij * P_Dj * Kernel(d_ij))
+                                    //C_j_I+D_i_S: conditional prob of site j being infected or disease, given site i is susceptible
+                                    //to a first order of approximation this is ~= (P_Ij + P_Dj)
+                                    //cumsum = sum(A_j * B_i * C_j_I+D_i_S * Kernel(d_ij))
                                     cumSum =+ SiteVars.SiteHostIndexMod[sourceSite] * SiteVars.SiteHostIndexMod[targetSite] *
-                                                      SiteVars.PInfected[sourceSite][agentIndex] * SiteVars.PDiseased[sourceSite][agentIndex] * kernelProb;
+                                                      (SiteVars.PInfected[sourceSite][agentIndex] + SiteVars.PDiseased[sourceSite][agentIndex]) * kernelProb;
                                 }//end check if source site is infectious
                             }//end check if distance < maxdist
 
