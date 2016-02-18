@@ -82,7 +82,7 @@ namespace Landis.Extension.BaseEDA
             int numAgents = parameters.ManyAgentParameters.Count();
             SiteVars.Initialize(modelCore, numAgents);
 
-            Dispersal probdisp = new Dispersal();
+            //Dispersal probdisp = new Dispersal();
             manyAgentParameters = parameters.ManyAgentParameters;
             int agentIndex = 0;
 
@@ -94,9 +94,10 @@ namespace Landis.Extension.BaseEDA
                 //read initial infection map and initialize cell status for each agent
                 EpidemicRegions.ReadMap(activeAgent.InitEpiMap, agentIndex);
                 agentIndex++;
-                
+
                 //initialize and populate dictionary with dispersal probabilities for current agent
-                probdisp.Initialize(activeAgent);
+                //probdisp.Initialize(activeAgent);
+                Dispersal.Initialize(activeAgent);
             }
 
         }
