@@ -4,7 +4,7 @@ Timestep  10
 
 SeedingAlgorithm  WardSeedDispersal
 
-InitialCommunities      ./init_comm1.txt  << init_comm1.txt, init_comm2.txt, init_comm3.txt, init_comm4.txt
+InitialCommunities      ./init_comm2.txt  << init_comm1.txt, init_comm2.txt, init_comm3.txt, init_comm4.txt
 
 InitialCommunitiesMap   ./init_comm.img
 
