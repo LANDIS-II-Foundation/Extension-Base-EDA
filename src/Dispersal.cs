@@ -6,6 +6,7 @@ using Landis.Core;
 using Landis.SpatialModeling;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Landis.Extension.BaseEDA
 {
@@ -14,21 +15,21 @@ namespace Landis.Extension.BaseEDA
     {
 
         //max distance in pixels (use max dist param from spp param table)
-        public int max_dispersal_distance_pixels;
+        public static int max_dispersal_distance_pixels;
 
         //declare a new dictionary to hold disp prob values for each distance 
-        private Dictionary<double, double> dispersal_probability;
-        private Dictionary<double, int> dispersal_prob_count;
+        public static SortedDictionary<double, double> dispersal_probability;
+        public static SortedDictionary<double, int> dispersal_prob_count;
 
         //class constructor
         public Dispersal() { }
 
         //populating the dispersal probability lookup table for a given agent
-        public void Initialize(IAgent agent)
+        public static void Initialize(IAgent agent)
         {
 
-            dispersal_probability = new Dictionary<double, double>();
-            dispersal_prob_count = new Dictionary<double, int>();
+            dispersal_probability = new SortedDictionary<double, double>();
+            dispersal_prob_count = new SortedDictionary<double, int>();
 
             dispersal_probability.Clear();
 
@@ -92,6 +93,7 @@ namespace Landis.Extension.BaseEDA
                 } //end of y loop                
             }//end of x loop
 
+
             //normalize by cumulative sum (excluding source cell)
             foreach (double dist in dispersal_prob_count.Keys)
             {
@@ -103,7 +105,7 @@ namespace Landis.Extension.BaseEDA
         }
 
         //calculate a kernel prob value given an agent and a distance
-        private double Kernel_prob(IAgent agent, double d)
+        private static double Kernel_prob(IAgent agent, double d)
         {
             double prob = 0.0;
 
