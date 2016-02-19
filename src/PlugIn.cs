@@ -128,6 +128,7 @@ namespace Landis.Extension.BaseEDA
 
                 if (activeAgent.DispersalType == DispersalType.STATIC)
                 {
+                    ModelCore.UI.WriteLine("   Simulating spread of epidemic...");
                     Epidemic currentEpic = Epidemic.Simulate(activeAgent, ModelCore.CurrentTime, agentIndex);
                     if (currentEpic != null)
                     {
