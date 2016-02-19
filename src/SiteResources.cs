@@ -277,7 +277,7 @@ namespace Landis.Extension.BaseEDA
             } //end Active sites
 
             //Calculating Relative Modified Site Host Index Values for Active Sites
-            PlugIn.ModelCore.UI.WriteLine("   Calculating Relative Modified Site Host Index Values for Active Sites.");
+            PlugIn.ModelCore.UI.WriteLine("   Calculating EDA Relative Modified Site Host Index.");
 
             double SHIM_mean = (double) SHMI_CumSum / PlugIn.ModelCore.Landscape.ActiveSiteCount;
 
