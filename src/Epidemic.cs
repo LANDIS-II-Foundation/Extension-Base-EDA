@@ -126,6 +126,7 @@ namespace Landis.Extension.BaseEDA
             //.ActiveSiteValues allows you to reset all active site at once.
             SiteVars.SiteHostIndexMod.ActiveSiteValues = 0;
             SiteVars.SiteHostIndex.ActiveSiteValues = 0;
+            SiteVars.FOI.ActiveSiteValues = 0;
 
         }
 
@@ -169,10 +170,7 @@ namespace Landis.Extension.BaseEDA
         private void ComputeSiteInfStatus(IAgent agent, int agentIndex)
         {
 
-            double deltaPSusceptible = 0;  //do I need to initialize to 0 these?
-            double deltaPInfected = 0;     //do I need to initialize to 0 these?
-            double deltaPDiseased = 0;     //do I need to initialize to 0 these?
-
+            PlugIn.ModelCore.UI.WriteLine("   Computing weather index and force of infection for each cell...");
             int siteCohortsKilled = 0; //why initialize this here since you reset to 0 inside the foreach loop?
             int[] cohortsKilled = new int[3];
 
@@ -180,40 +178,45 @@ namespace Landis.Extension.BaseEDA
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
             {
 
-                siteCohortsKilled = 0; //see comment above...
-                random = 0;
-
-                double myRand = PlugIn.ModelCore.GenerateUniform();
-
                 //get weather index for the current site
                 double weatherIndex = SiteVars.ClimateVars[site]["AnnualWeatherIndex"];
 
                 //calculate force of infection for current site                
-                double FOI = ComputeSiteFOI(agent, site, weatherIndex, agentIndex); 
+                SiteVars.FOI[site] = ComputeSiteFOI(agent, site, weatherIndex, agentIndex);
 
-                deltaPSusceptible = -FOI * SiteVars.PSusceptible[site][agentIndex];
-                deltaPInfected = FOI * SiteVars.PSusceptible[site][agentIndex] - agent.AcquisitionRate * SiteVars.PInfected[site][agentIndex];  //rD = acquisition rate
+            }
+
+            PlugIn.ModelCore.UI.WriteLine("   Computing infection status and species mortality for each cell...");
+            foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
+            {
+
+                siteCohortsKilled = 0; 
+                random = 0;
+
+                double myRand = PlugIn.ModelCore.GenerateUniform();
+
+                double deltaPSusceptible = 0.0;  
+                double deltaPInfected = 0.0;     
+                double deltaPDiseased = 0.0;     
+
+                deltaPSusceptible = -SiteVars.FOI[site] * SiteVars.PSusceptible[site][agentIndex];
+                deltaPInfected = SiteVars.FOI[site] * SiteVars.PSusceptible[site][agentIndex] - agent.AcquisitionRate * SiteVars.PInfected[site][agentIndex];  //rD = acquisition rate
                 deltaPDiseased = agent.AcquisitionRate * SiteVars.PInfected[site][agentIndex];
 
                 //update probs of being in each considered status (S, I, D)
                 SiteVars.PSusceptible[site][agentIndex] =+ deltaPSusceptible;
-                if (SiteVars.PSusceptible[site][agentIndex] > 1)
-                    SiteVars.PSusceptible[site][agentIndex] = 1;
-                //if (SiteVars.PSusceptible[site] < 0)
-                //    SiteVars.PSusceptible[site] = 0;
+                if (SiteVars.PSusceptible[site][agentIndex] > 1) { SiteVars.PSusceptible[site][agentIndex] = 1; }
+                else if (SiteVars.PSusceptible[site][agentIndex] < 0) { SiteVars.PSusceptible[site][agentIndex] = 0; }
 
                 SiteVars.PInfected[site][agentIndex] =+ deltaPInfected;
-                if (SiteVars.PInfected[site][agentIndex] > 1)
-                    SiteVars.PInfected[site][agentIndex] = 1;
-                //if (SiteVars.PInfected[site] < 0)
-                //    SiteVars.PInfected[site] = 0;
+                if (SiteVars.PInfected[site][agentIndex] > 1) { SiteVars.PInfected[site][agentIndex] = 1; }
+                else if (SiteVars.PInfected[site][agentIndex] < 0) { SiteVars.PInfected[site][agentIndex] = 0; }
 
                 SiteVars.PDiseased[site][agentIndex] =+ deltaPDiseased;
-                if (SiteVars.PDiseased[site][agentIndex] > 1)
-                    SiteVars.PDiseased[site][agentIndex] = 1;
-                //if (SiteVars.PDiseased[site] < 0)
-                //    SiteVars.PDiseased[site] = 0;
+                if (SiteVars.PDiseased[site][agentIndex] > 1) { SiteVars.PDiseased[site][agentIndex] = 1; }
+                else if (SiteVars.PDiseased[site][agentIndex] < 0) { SiteVars.PDiseased[site][agentIndex] = 0; }
 
+                //update status of cell based on updated probabilities
                 // SUSCEPTIBLE --->> INFECTED
                 if (SiteVars.InfStatus[site][agentIndex] == 0 && SiteVars.PInfected[site][agentIndex] >= myRand)  //if site is Susceptible (S) 
                 {
@@ -231,7 +234,6 @@ namespace Landis.Extension.BaseEDA
                     siteCohortsKilled = cohortsKilled[0];
                     siteMortSppKilled = cohortsKilled[2];
 
-                    
                     if (SiteVars.NumberCFSconifersKilled[site].ContainsKey(PlugIn.ModelCore.CurrentTime))
                     {
                         int prevKilled = SiteVars.NumberCFSconifersKilled[site][PlugIn.ModelCore.CurrentTime];
@@ -242,7 +244,7 @@ namespace Landis.Extension.BaseEDA
                         SiteVars.NumberCFSconifersKilled[site].Add(PlugIn.ModelCore.CurrentTime, cohortsKilled[1]);
                     }
 
-                     
+
                     if (SiteVars.NumberMortSppKilled[site].ContainsKey(PlugIn.ModelCore.CurrentTime))
                     {
                         int prevKilled = SiteVars.NumberMortSppKilled[site][PlugIn.ModelCore.CurrentTime];
@@ -340,27 +342,7 @@ namespace Landis.Extension.BaseEDA
             return (row >= 1 && col >= 1 && col <= PlugIn.ModelCore.Landscape.Dimensions.Columns && row <= PlugIn.ModelCore.Landscape.Dimensions.Rows); 
         }
 
-        ////-------------------------------------------------------
-        /////<summary>
-        /////Calculate the distance between two Sites
-        /////</summary>
-        //public static double DistanceBetweenSites(Site a, Site b)
-        //{
-
-        //    int Col = (int)a.Location.Column - (int)b.Location.Column;
-        //    int Row = (int)a.Location.Row - (int)b.Location.Row;
-
-        //    double aSq = System.Math.Pow(Col, 2);
-        //    double bSq = System.Math.Pow(Row, 2);
-        //    //PlugIn.ModelCore.Log.WriteLine("Col={0}, Row={1}.", Col, Row);
-        //    //PlugIn.ModelCore.Log.WriteLine("aSq={0}, bSq={1}.", aSq, bSq);
-        //    //PlugIn.ModelCore.Log.WriteLine("Distance in Grid Units = {0}.", System.Math.Sqrt(aSq + bSq));
-        //    return (System.Math.Sqrt(aSq + bSq) * (double)PlugIn.ModelCore.CellLength);
-
-        //}
-
-        //-------------------------------------------------------
-        //Calculate the distance from a location to a center
+         //Calculate the distance from a location to a center
         //point (row and column = 0).
         private static double DistanceFromCenter(Site site, double row, double column)
         {
@@ -422,6 +404,7 @@ namespace Landis.Extension.BaseEDA
                                     //cumsum = sum(A_j * B_i * C_j_I+D_i_S * Kernel(d_ij))
                                     cumSum =+ SiteVars.SiteHostIndexMod[sourceSite] * SiteVars.SiteHostIndexMod[targetSite] *
                                                       (SiteVars.PInfected[sourceSite][agentIndex] + SiteVars.PDiseased[sourceSite][agentIndex]) * kernelProb;
+
                                 }//end check if source site is infectious
                             }//end check if distance < maxdist
 
