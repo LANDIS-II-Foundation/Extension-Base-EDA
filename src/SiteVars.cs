@@ -46,6 +46,7 @@ namespace Landis.Extension.BaseEDA
         private static ISiteVar<Dictionary<int, double>> pSusceptible;   //dictionary with keys corresponding to each agent
         private static ISiteVar<Dictionary<int, double>> pInfected;      //dictionary with keys corresponding to each agent
         private static ISiteVar<Dictionary<int, double>> pDiseased;      //dictionary with keys corresponding to each agent
+        private static ISiteVar<double> foi;   //force of infection
         //private static ISiteVar<double> pSusceptible;
         //private static ISiteVar<double> pInfected;
         //private static ISiteVar<double> pDiseased;
@@ -68,8 +69,6 @@ namespace Landis.Extension.BaseEDA
         public static void Initialize(ICore modelCore, int numAgents) //---->>> see PlugIn.cs
         {
 
-
-
             timeOfLastEDA = modelCore.Landscape.NewSiteVar<int>();
             siteHostIndexMod = modelCore.Landscape.NewSiteVar<double>();
             siteHostIndex = modelCore.Landscape.NewSiteVar<double>();
@@ -81,6 +80,7 @@ namespace Landis.Extension.BaseEDA
             //pSusceptible = modelCore.Landscape.NewSiteVar<double>();
             //pInfected = modelCore.Landscape.NewSiteVar<double>();
             //pDiseased = modelCore.Landscape.NewSiteVar<double>();
+            foi = modelCore.Landscape.NewSiteVar<double>();
             agentName = modelCore.Landscape.NewSiteVar<string>();
             biomassInsectsAgent = modelCore.Landscape.NewSiteVar<string>();
 
@@ -92,6 +92,7 @@ namespace Landis.Extension.BaseEDA
             TimeOfLastEvent.ActiveSiteValues = -10000; //why this?
             SiteHostIndexMod.ActiveSiteValues = 0.0;
             SiteHostIndex.ActiveSiteValues = 0.0;
+            FOI.ActiveSiteValues = 0.0;
             //PDiseased.ActiveSiteValues = 0; uncomment only if not using multi-agent 
             AgentName.ActiveSiteValues = "";
 
@@ -297,6 +298,14 @@ namespace Landis.Extension.BaseEDA
             set
             {
                 pDiseased = value;
+            }
+        }
+        //---------------------------------------------------------------------
+        public static ISiteVar<double> FOI
+        {
+            get
+            {
+                return foi;
             }
         }
         /*
