@@ -136,13 +136,14 @@ namespace Landis.Extension.BaseEDA
 
                         //----- Write Infection Status maps (SUSCEPTIBLE (0), INFECTED (cryptic-non symptomatic) (1), DISEASED (symptomatic) (2) --------
                         string path = MapNames.ReplaceTemplateVars(statusMapName, activeAgent.AgentName, ModelCore.CurrentTime);
+                        modelCore.UI.WriteLine("   Writing infection status map to {0} ...", path);
                         using (IOutputRaster<BytePixel> outputRaster = modelCore.CreateRaster<BytePixel>(path, modelCore.Landscape.Dimensions))
                         {
                             BytePixel pixel = outputRaster.BufferPixel;
                             foreach (Site site in ModelCore.Landscape.AllSites)
                             {
                                 if (site.IsActive)
-                                {
+                                {                                     
                                     pixel.MapCode.Value = (byte)(SiteVars.InfStatus[site][agentIndex] + 1);
                                 }
                                 else
@@ -156,9 +157,10 @@ namespace Landis.Extension.BaseEDA
 
                         if (!(mortMapNames == null))
                         {
-
+                   
                             //----- Write Cohort Mortality Maps (number dead cohorts for selected species) --------
                             string path2 = MapNames.ReplaceTemplateVars(mortMapNames, activeAgent.AgentName, ModelCore.CurrentTime);
+                            modelCore.UI.WriteLine("   Writing cohort mortality map to {0} ...", path2);
                             using (IOutputRaster<ShortPixel> outputRaster = modelCore.CreateRaster<ShortPixel>(path2, modelCore.Landscape.Dimensions))
                             {
                                 ShortPixel pixel = outputRaster.BufferPixel;
@@ -166,7 +168,12 @@ namespace Landis.Extension.BaseEDA
                                 {
                                     if (site.IsActive)
                                     {
-                                        pixel.MapCode.Value = (short)(SiteVars.NumberMortSppKilled[site][ModelCore.CurrentTime]); //CurrentTime is the dict key
+                                        //mortality by epidem agent (for spp. flagged as 'yes') only happens if 
+                                        //a site is "diseased" (inf. status == 2)
+                                        if (SiteVars.InfStatus[site][agentIndex] == 2)
+                                            pixel.MapCode.Value = (short)(SiteVars.NumberMortSppKilled[site][ModelCore.CurrentTime]); //CurrentTime is the dict key
+                                        else
+                                            pixel.MapCode.Value = 0;
                                     }
                                     else
                                     {
