@@ -186,7 +186,7 @@ namespace Landis.Extension.BaseEDA
 
             }
 
-            PlugIn.ModelCore.UI.WriteLine("   Computing infection status and species mortality for each cell...");
+            PlugIn.ModelCore.UI.WriteLine("   Computing infection status for each cell...");
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
             {
 
@@ -204,15 +204,15 @@ namespace Landis.Extension.BaseEDA
                 deltaPDiseased = agent.AcquisitionRate * SiteVars.PInfected[site][agentIndex];
 
                 //update probs of being in each considered status (S, I, D)
-                SiteVars.PSusceptible[site][agentIndex] =+ deltaPSusceptible;
+                SiteVars.PSusceptible[site][agentIndex] += deltaPSusceptible;
                 if (SiteVars.PSusceptible[site][agentIndex] > 1) { SiteVars.PSusceptible[site][agentIndex] = 1; }
                 else if (SiteVars.PSusceptible[site][agentIndex] < 0) { SiteVars.PSusceptible[site][agentIndex] = 0; }
 
-                SiteVars.PInfected[site][agentIndex] =+ deltaPInfected;
+                SiteVars.PInfected[site][agentIndex] += deltaPInfected;
                 if (SiteVars.PInfected[site][agentIndex] > 1) { SiteVars.PInfected[site][agentIndex] = 1; }
                 else if (SiteVars.PInfected[site][agentIndex] < 0) { SiteVars.PInfected[site][agentIndex] = 0; }
 
-                SiteVars.PDiseased[site][agentIndex] =+ deltaPDiseased;
+                SiteVars.PDiseased[site][agentIndex] += deltaPDiseased;
                 if (SiteVars.PDiseased[site][agentIndex] > 1) { SiteVars.PDiseased[site][agentIndex] = 1; }
                 else if (SiteVars.PDiseased[site][agentIndex] < 0) { SiteVars.PDiseased[site][agentIndex] = 0; }
 
@@ -220,15 +220,67 @@ namespace Landis.Extension.BaseEDA
                 // SUSCEPTIBLE --->> INFECTED
                 if (SiteVars.InfStatus[site][agentIndex] == 0 && SiteVars.PInfected[site][agentIndex] >= myRand)  //if site is Susceptible (S) 
                 {
-                    //update state of current site from S to I
-                    SiteVars.InfStatus[site][agentIndex] = 1;
-                    totalSitesInfected++;
+                   //update state of current site from S to I
+                   SiteVars.InfStatus[site][agentIndex] += 1;
+                   totalSitesInfected++;
                 }
-
-                // INFECTED --->> DISEASED -mortality-
-                if (SiteVars.InfStatus[site][agentIndex] == 1 && SiteVars.PDiseased[site][agentIndex] >= myRand) //if site is "diseased" then apply the mortality to affected cohorts 
+                // INFECTED --->> DISEASED
+                else if (SiteVars.InfStatus[site][agentIndex] == 1)  
                 {
+                    totalSitesInfected++;
+
+                    if (SiteVars.PDiseased[site][agentIndex] >= myRand)
+                    {
+                        //update state of current site from I to D
+                        SiteVars.InfStatus[site][agentIndex] += 1;
+                        totalSitesDiseased++;
+
+                        //check for cohort mortality against same random unif number
+                        random = myRand;
+                        cohortsKilled = KillSiteCohorts(site);
+                        siteCohortsKilled = cohortsKilled[0];
+                        siteMortSppKilled = cohortsKilled[2];
+
+                        if (SiteVars.NumberCFSconifersKilled[site].ContainsKey(PlugIn.ModelCore.CurrentTime))
+                        {
+                            int prevKilled = SiteVars.NumberCFSconifersKilled[site][PlugIn.ModelCore.CurrentTime];
+                            SiteVars.NumberCFSconifersKilled[site][PlugIn.ModelCore.CurrentTime] = prevKilled + cohortsKilled[1];
+                        }
+                        else
+                        {
+                            SiteVars.NumberCFSconifersKilled[site].Add(PlugIn.ModelCore.CurrentTime, cohortsKilled[1]);
+                        }
+
+                        if (SiteVars.NumberMortSppKilled[site].ContainsKey(PlugIn.ModelCore.CurrentTime))
+                        {
+                            int prevKilled = SiteVars.NumberMortSppKilled[site][PlugIn.ModelCore.CurrentTime];
+                            SiteVars.NumberMortSppKilled[site][PlugIn.ModelCore.CurrentTime] = prevKilled + cohortsKilled[2];
+                        }
+                        else
+                        {
+                            SiteVars.NumberMortSppKilled[site].Add(PlugIn.ModelCore.CurrentTime, cohortsKilled[2]);
+                        }
+
+                        //if there is at least one cohort killed by current epidemic event
+                        if (siteCohortsKilled > 0)
+                        {
+                            PlugIn.ModelCore.UI.WriteLine("   Computing cohort mortality for each cell...");
+                            totalCohortsKilled += siteCohortsKilled;  //cumulate number of cohorts killed
+                            totalSitesDamaged++; //cumulate number of sites damaged
+                            SiteVars.TimeOfLastEvent[site] = PlugIn.ModelCore.CurrentTime;
+
+                            //if there is at least one cohort killed by current epidemic event (among selected species of interest - FLAG YES)
+                            if (siteMortSppKilled > 0)
+                                totalMortSppCohortsKilled += siteMortSppKilled; //cumulate number of cohorts killed
+                        }
+                    }
+                }
+                else if (SiteVars.InfStatus[site][agentIndex] == 2)
+                {
+
                     totalSitesDiseased++;
+
+                    //check for cohort mortality against same random unif number
                     random = myRand;
                     cohortsKilled = KillSiteCohorts(site);
                     siteCohortsKilled = cohortsKilled[0];
@@ -244,7 +296,6 @@ namespace Landis.Extension.BaseEDA
                         SiteVars.NumberCFSconifersKilled[site].Add(PlugIn.ModelCore.CurrentTime, cohortsKilled[1]);
                     }
 
-
                     if (SiteVars.NumberMortSppKilled[site].ContainsKey(PlugIn.ModelCore.CurrentTime))
                     {
                         int prevKilled = SiteVars.NumberMortSppKilled[site][PlugIn.ModelCore.CurrentTime];
@@ -258,6 +309,7 @@ namespace Landis.Extension.BaseEDA
                     //if there is at least one cohort killed by current epidemic event
                     if (siteCohortsKilled > 0)
                     {
+                        PlugIn.ModelCore.UI.WriteLine("   Computing cohort mortality for each cell...");
                         totalCohortsKilled += siteCohortsKilled;  //cumulate number of cohorts killed
                         totalSitesDamaged++; //cumulate number of sites damaged
                         SiteVars.TimeOfLastEvent[site] = PlugIn.ModelCore.CurrentTime;
@@ -402,7 +454,7 @@ namespace Landis.Extension.BaseEDA
                                     //C_j_I+D_i_S: conditional prob of site j being infected or disease, given site i is susceptible
                                     //to a first order of approximation this is ~= (P_Ij + P_Dj)
                                     //cumsum = sum(A_j * B_i * C_j_I+D_i_S * Kernel(d_ij))
-                                    cumSum =+ SiteVars.SiteHostIndexMod[sourceSite] * SiteVars.SiteHostIndexMod[targetSite] *
+                                    cumSum += SiteVars.SiteHostIndexMod[sourceSite] * SiteVars.SiteHostIndexMod[targetSite] *
                                                       (SiteVars.PInfected[sourceSite][agentIndex] + SiteVars.PDiseased[sourceSite][agentIndex]) * kernelProb;
 
                                 }//end check if source site is infectious
