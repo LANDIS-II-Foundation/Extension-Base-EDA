@@ -19,5 +19,12 @@ CellLength   30 << meters
 
    DisturbancesRandomOrder  yes  << optional parameter; default = no
 
+
+>> Output Extensions       Initialization File
+>> ----------------------  -------------------
+   "Output Cohort Statistics"       outputcohortstatistics.txt
+   "Output Leaf Biomass"            outputleafbiomass.txt
+
+
 RandomNumberSeed  4,357  << optional parameter; default = the seed is
                          << randomly generated using the current time
