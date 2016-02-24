@@ -101,8 +101,8 @@ EcoregionParameters
 >>	Soil	Percent	Percent	Field	Wilting	StormF	BaseF	Drain	Atmos	Atmos	Lat-	Decay	Decay	Decay	Decay	Denit
 >>	Depth	Clay	Sand	Cap	Point	frac	frac		N	N	itude	Rate	Rate	Rate	Rate	slope
 >>	cm								slope	inter		surf	SOM1	SOM2	SOM3	
-eco1	78	0.148	0.615	0.123	0.097	0.3	0.3	0.8	0.0004	0.01	36	0.1	0.05	0.01	0.0001	0.001
-eco2	78	0.148	0.615	0.123	0.097	0.3	0.3	0.8	0.0004	0.01	36	0.1	0.05	0.01	0.0001	0.001
+eco1	50	0.198	0.489	0.142	0.117	0.3	0.3	0.8	0.0004	0.01	36	0.1	0.05	0.01	0.0001	0.001
+eco2	50	0.198	0.489	0.142	0.117	0.3	0.3	0.8	0.0004	0.01	36	0.1	0.05	0.01	0.0001	0.001
 
 FireReductionParameters
 >>	Severity	Wood	Litter
@@ -149,38 +149,39 @@ Sequsemp	150	150
 Umbecali	150	150	
 
 
-MaxBiomass
->> Species      Ecoregions
->> -------      -------------------
-        	eco1	eco2	
-Abiebrac	100	100	
-Abiegran	100	100	
-Acermacr	1163	1163	
-Aesccali	12258	12258	
-Alnurhom	100	100	
-Alnurubr	100	100	
-Arbumenz	27104	27104	
-Lithdens	40559	40559	
-Pinuatte	100	100	
-Pinucoul	16667	16667	
-Pinulamb	100	100	
-Pinumono	100	100	
-Pinupond	3167	3167	
-Pinuradi	63516	63516	
-Pinusabi	4809	4809	
-Platrace	3207	3207	
-Popubals	100	100	
-Pseumacr	100	100	
-Pseumenz	4307	4307	
-Queragri	46689	46689	
-Querchry	31704	31704	
-Querdoug	100	100	
-Quergarr	100	100	
-Querkell	14248	14248	
-Querloba	100	100	
-Querwisl	18057	18057	
-Sequsemp	152535	152535	
-Umbecali	21383	21383	
+MaxBiomass		
+>> Species      Ecoregions		
+>> -------      -------------------		
+        	eco1	eco2
+Abiebrac	6238	6238
+Abiegran	100	100
+Acermacr	14007	14007
+Aesccali	12258	12258
+Alnurhom	5664	5664
+Alnurubr	9013	9013
+Arbumenz	31310	31310
+Lithdens	65973	65973
+Pinuatte	4102	4102
+Pinucoul	16667	16667
+Pinulamb	1055	1055
+Pinumono	4240	4240
+Pinupond	13985	13985
+Pinuradi	7065	7065
+Pinusabi	9717	9717
+Platrace	10737	10737
+Popubals	8607	8607
+Pseumacr	6284	6284
+Pseumenz	33789	33789
+Queragri	64080	64080
+Querchry	44072	44072
+Querdoug	17040	17040
+Quergarr	12673	12673
+Querkell	18921	18921
+Querloba	15988	15988
+Querwisl	55159	55159
+Sequsemp	152535	152535
+Umbecali	32012	32012
+
 
 AgeOnlyDisturbances:BiomassParameters  bio-reductions-standard.txt
 
