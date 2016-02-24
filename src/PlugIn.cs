@@ -98,6 +98,9 @@ namespace Landis.Extension.BaseEDA
                 //initialize and populate dictionary with dispersal probabilities for current agent
                 //probdisp.Initialize(activeAgent);
                 Dispersal.Initialize(activeAgent);
+
+                //Initialize climate data to calculate historic average for normalization
+                ClimateVariableDefinition.CalculateHistoricClimateVariables(activeAgent);
             }
 
         }

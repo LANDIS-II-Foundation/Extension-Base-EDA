@@ -36,6 +36,7 @@ namespace Landis.Extension.BaseEDA
         List<string> WeatherIndexVars { get; set; }
         DataTable ClimateDataTable { get; set; }
         WeatherIndex AnnualWeatherIndex { get; set; }
+        double[] EcoWeatherIndexNormal { get; set; }
 
         //- Transmission -
         double TransmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
@@ -82,6 +83,7 @@ namespace Landis.Extension.BaseEDA
         private List<string> weatherIndexVars;
         private DataTable climateDataTable;
         private WeatherIndex annualWeatherIndex;
+        private double[] ecoWeatherIndexNormal;
 
         //-- Transmission -------------
         private double transmissionRate { get; set; }  //beta0 = Mean rate at which an infected cell infects another cell (per time step)
@@ -313,6 +315,18 @@ namespace Landis.Extension.BaseEDA
             }
         }
         //---------------------------------------------------------------------
+        public double[] EcoWeatherIndexNormal
+        {
+            get
+            {
+                return ecoWeatherIndexNormal;
+            }
+            set
+            {
+                ecoWeatherIndexNormal = value;
+            }
+        }
+        //---------------------------------------------------------------------
         /// <summary>
         /// Disturbances that can alter the SHI value
         /// </summary>
@@ -343,6 +357,7 @@ namespace Landis.Extension.BaseEDA
         {
             SppParameters = new ISppParameters[sppCount];
             EcoParameters = new IEcoParameters[ecoCount];
+            EcoWeatherIndexNormal = new double[ecoCount];
             disturbanceTypes = new List<IDisturbanceType>();
             negSppList = new List<ISpecies>();
             climateVarDefn = new List<IClimateVariableDefinition>();

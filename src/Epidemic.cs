@@ -181,8 +181,11 @@ namespace Landis.Extension.BaseEDA
                 //get weather index for the current site
                 double weatherIndex = SiteVars.ClimateVars[site]["AnnualWeatherIndex"];
 
+                //normalize by historic average weatherindex
+                double normalizedWI = weatherIndex / agent.EcoWeatherIndexNormal[PlugIn.ModelCore.Ecoregion[site].Index];
+
                 //calculate force of infection for current site                
-                SiteVars.FOI[site] = ComputeSiteFOI(agent, site, weatherIndex, agentIndex);
+                SiteVars.FOI[site] = ComputeSiteFOI(agent, site, normalizedWI, agentIndex);
 
             }
 
