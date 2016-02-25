@@ -2,9 +2,9 @@ LandisData "Base EDA"
 
 Timestep	1
 
-MapNames	eda/{agentName}-{timestep}.img
+MapNames	eda/{agentName}-{timestep}.gis
 
-MORTMapNames     eda/{agentName}-MORT-{timestep}.img
+MORTMapNames     eda/{agentName}-MORT-{timestep}.gis
 
 LogFile		eda/eda-log.csv
 
