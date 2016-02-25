@@ -254,15 +254,7 @@ namespace Landis.Extension.BaseEDA
                             SiteVars.NumberCFSconifersKilled[site].Add(PlugIn.ModelCore.CurrentTime, cohortsKilled[1]);
                         }
 
-                        if (SiteVars.NumberMortSppKilled[site].ContainsKey(PlugIn.ModelCore.CurrentTime))
-                        {
-                            int prevKilled = SiteVars.NumberMortSppKilled[site][PlugIn.ModelCore.CurrentTime];
-                            SiteVars.NumberMortSppKilled[site][PlugIn.ModelCore.CurrentTime] = prevKilled + cohortsKilled[2];
-                        }
-                        else
-                        {
-                            SiteVars.NumberMortSppKilled[site].Add(PlugIn.ModelCore.CurrentTime, cohortsKilled[2]);
-                        }
+                        SiteVars.NumberMortSppKilled[site][agentIndex] = cohortsKilled[2];
 
                         //if there is at least one cohort killed by current epidemic event
                         if (siteCohortsKilled > 0)
@@ -299,15 +291,7 @@ namespace Landis.Extension.BaseEDA
                         SiteVars.NumberCFSconifersKilled[site].Add(PlugIn.ModelCore.CurrentTime, cohortsKilled[1]);
                     }
 
-                    if (SiteVars.NumberMortSppKilled[site].ContainsKey(PlugIn.ModelCore.CurrentTime))
-                    {
-                        int prevKilled = SiteVars.NumberMortSppKilled[site][PlugIn.ModelCore.CurrentTime];
-                        SiteVars.NumberMortSppKilled[site][PlugIn.ModelCore.CurrentTime] = prevKilled + cohortsKilled[2];
-                    }
-                    else
-                    {
-                        SiteVars.NumberMortSppKilled[site].Add(PlugIn.ModelCore.CurrentTime, cohortsKilled[2]);
-                    }
+                    SiteVars.NumberMortSppKilled[site][agentIndex] = cohortsKilled[2];
 
                     //if there is at least one cohort killed by current epidemic event
                     if (siteCohortsKilled > 0)
@@ -470,7 +454,8 @@ namespace Landis.Extension.BaseEDA
             }//end row loop
 
             //calculate force of infection: beta * cumSum
-            forceOfInf = beta * cumSum;
+            double beta_t = beta * agent.TransmissionRate;   //beta_t = w(t) * beta_0
+            forceOfInf = beta_t * cumSum;
 
             return forceOfInf;
         }

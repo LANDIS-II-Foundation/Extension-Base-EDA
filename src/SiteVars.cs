@@ -121,6 +121,7 @@ namespace Landis.Extension.BaseEDA
                     pSusceptible[site].Add(i, 0);
                     pInfected[site].Add(i, 0);
                     pDiseased[site].Add(i, 0);
+                    numberMortSppKilled[site].Add(i, 0);
                 }
 
             }

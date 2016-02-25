@@ -171,17 +171,12 @@ namespace Landis.Extension.BaseEDA
                                 {
                                     if (site.IsActive)
                                     {
-                                        //mortality by epidem agent (for spp. flagged as 'yes') only happens if 
-                                        //a site is "diseased" (inf. status == 2)
-                                        if (SiteVars.InfStatus[site][agentIndex] == 2)
-                                            pixel.MapCode.Value = (short)(SiteVars.NumberMortSppKilled[site][ModelCore.CurrentTime]); //CurrentTime is the dict key
-                                        else
-                                            pixel.MapCode.Value = 0;
+                                        pixel.MapCode.Value = (short)(SiteVars.NumberMortSppKilled[site][agentIndex]); 
                                     }
                                     else
                                     {
                                         //Inactive site
-                                        pixel.MapCode.Value = 0;  //see comment above...can we make this NA(null) or how to account for 0 mortality?
+                                        pixel.MapCode.Value = -999; //should work with "short" type
                                     }
                                     outputRaster.WriteBufferPixel();
                                 }
