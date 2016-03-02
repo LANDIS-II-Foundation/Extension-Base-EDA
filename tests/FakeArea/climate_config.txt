@@ -2,10 +2,10 @@ LandisData  "Climate Config"
 
 >>-----daily
 
-ClimateTimeSeries                 Daily_SequencedYears
+ClimateTimeSeries                 Daily_RandomYears
 ClimateFile                       future_climate.csv
 ClimateFileFormat                 Daily_Temp-C_Precip-mmDay
 
-SpinUpClimateTimeSeries           Daily_SequencedYears
+SpinUpClimateTimeSeries           Daily_RandomYears
 SpinUpClimateFile                 historical_climate.csv
 SpinUpClimateFileFormat           Daily_Temp-C_Precip-mmDay
