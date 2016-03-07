@@ -233,7 +233,7 @@ namespace Landis.Extension.BaseEDA
                 int actualYear = currentYear;
                 AnnualClimate_Daily AnnualWeather = Climate.Future_DailyData[Climate.Future_DailyData.Keys.Min()][ecoregion.Index];
                 int maxSpinUpYear = Climate.Spinup_DailyData.Keys.Max();
-                int minFutureYear = AnnualWeather.Year;
+                int minFutureYear = Climate.Future_DailyData.Keys.Min();
                 actualYear = minFutureYear + (currentYear - 1);
 
                 if (currentYear == 0)
