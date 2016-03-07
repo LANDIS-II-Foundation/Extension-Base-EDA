@@ -2,7 +2,7 @@ LandisData  "Climate Config"
 
 >>-----daily
 
-ClimateTimeSeries                 Daily_RandomYears
+ClimateTimeSeries                 Daily_SequencedYears
 ClimateFile                       BS_2015_2100_GFDLC3_rcp85_Wght.csv
 ClimateFileFormat                 Daily_Temp-C_Precip-mmDay
 
