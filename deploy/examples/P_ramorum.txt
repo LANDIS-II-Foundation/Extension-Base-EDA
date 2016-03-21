@@ -41,10 +41,10 @@ AnnualWeatherIndex
 >>-------- Transmission Input ----------------------
 TransmissionRate	1.8	 		<<beta0 = Mean rate at which an infected cell infects another cell (per time step)  
 AcquisitionRate		0.4	 		<<rD = Rate of acquisition of detectable symptoms (per time step)
-InitialEpidemMap        SOD_positive_2015.img   <<initial outbreak map (0=susceptible, 1=infected)
+InitialEpidemMap        SOD_positive_1996_UINT8.img   <<initial outbreak map (0=susceptible, 1=infected)
 DispersalType		STATIC         		<<STATIC, DYNAMIC (Dynamic = anisotropic, NOT implemented YET!)
 DispersalKernel		PowerLaw		<<PowerLaw, NegExp
-DispersalMaxDist	1000            	<< meters, cut-off distance to consider for dispersal kernel window               
+DispersalMaxDist	10000            	<< meters, cut-off distance to consider for dispersal kernel window               
 AlphaCoef		3.55			<<Exponent of dispersal kernel
 
 >>Ecoregion Modifiers

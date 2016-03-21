@@ -6,18 +6,17 @@ SpeciesAgeStats
 
 MapNames   output/cohort-stats/{species}-{statistic}-{timestep}.img
 
-MAX     Lithdens Queragri Querwisl Querkell Querchry Querdoug Quergarr Querloba Umbecali
+MAX   Lithdens Queragri Querwisl Querkell Querchry Querdoug Quergarr Querloba Umbecali
 AVG   Lithdens Queragri Querwisl Querkell Querchry Querdoug Quergarr Querloba Umbecali
+MIN   Lithdens Queragri Querwisl Querkell Querchry Querdoug Quergarr Querloba Umbecali
 
 SiteAgeStats
 
 MapNames   output/cohort-stats/AGE-{statistic}-{timestep}.img
 
 MAX
-MED
-SD
-RICH
-EVEN
+AVG
+COUNT
 
 SiteSpeciesStats
 
