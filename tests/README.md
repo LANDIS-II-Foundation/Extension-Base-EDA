@@ -1,5 +1,3 @@
 #README: CONTENT OF THE FOLDER
 
-* **ClippedArea**: clipped portion of the Big Sur study area. The species files, climate, and all required LANDIS-II files contain definition for the full set of species/cohorts and ecoregions       identified for the entire study area. **However**, LANDIS-II will only read the species/cohorts and ecoregions that are defined in the raster files (.img) of the clipped area. **The clipped area is 212 x 207 (row x columns), with cell size = 30 m x 30 m.** Projected coordinate system is _NAD\_1983\_Albers_.
-
 * **FakeArea**: artificial area, created, as described in the .doc file, for the purpose of testing alternative combinations of initial communities and ecoregions, as well as initial sites of infection. These files were created to make sure the extension does not work improperly or have unexpected behaviors. For more details, please read the .doc file inside this folder. **This area is 100 x 100 (rows x columns), with cell size = 100 m x 100 m.** No coordinate system defined/needed.
