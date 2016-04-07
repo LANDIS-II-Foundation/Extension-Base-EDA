@@ -257,7 +257,7 @@ namespace Landis.Extension.BaseEDA
 
             }
 
-                foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
+                foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
                 {
                     IEcoregion ecoregion = PlugIn.ModelCore.Ecoregion[site];
                     double climateValue = 0;
