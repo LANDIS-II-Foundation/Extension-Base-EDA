@@ -6,6 +6,8 @@ using Landis.Core;
 using Landis.Library.AgeOnlyCohorts;
 using Landis.SpatialModeling;
 using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Landis.Extension.BaseEDA
 {
@@ -16,6 +18,15 @@ namespace Landis.Extension.BaseEDA
         private static IEcoregionDataset ecoregions;
         private IAgent epidemicParms;
         private double random;
+
+        // Grids that are precalculated to improve performance of ComputeSiteFOI
+        private double[,] siteHostIndexMod;
+        private double[,] pInfected;
+        private double[,] pDiseased;
+
+        // Kernel used to improve performance of ComputeSiteFOI
+        private double[,] kernel;
+        private int kernelCellRadius;
 
         // - TOTAL -
         private int totalSitesInfected;
@@ -169,15 +180,21 @@ namespace Landis.Extension.BaseEDA
         //probs of being S, I, D.
         private void ComputeSiteInfStatus(IAgent agent, int agentIndex)
         {
-
             PlugIn.ModelCore.UI.WriteLine("   Computing weather index and force of infection for each cell...");
             int siteCohortsKilled = 0; //why initialize this here since you reset to 0 inside the foreach loop?
             int[] cohortsKilled = new int[3];
 
-            //for each active site calculate the probability of changing status between S-I-D
-            foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
-            {
+            // Precalculate the grids and kernel once per time step to improve performance
+            PrepareGrids(agentIndex);
+            kernel = CreateKernel(agent);
 
+            // Uncomment the following line (and provide a legitimate path and grid) to see the grid
+            //LogGrid(pathOfOutputFile, grid);
+
+            // for each active site calculate the probability of changing status between S-I-D
+            // Perform in parallel to better utilize processors
+            Parallel.ForEach(PlugIn.ModelCore.Landscape, (site) =>
+            {
                 //get weather index for the current site
                 double weatherIndex = SiteVars.ClimateVars[site]["AnnualWeatherIndex"];
 
@@ -186,21 +203,19 @@ namespace Landis.Extension.BaseEDA
 
                 //calculate force of infection for current site                
                 SiteVars.FOI[site] = ComputeSiteFOI(agent, site, normalizedWI, agentIndex);
-
-            }
+            });
 
             PlugIn.ModelCore.UI.WriteLine("   Computing infection status for each cell...");
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
             {
-
-                siteCohortsKilled = 0; 
+                siteCohortsKilled = 0;
                 random = 0;
 
                 double myRand = PlugIn.ModelCore.GenerateUniform();
 
-                double deltaPSusceptible = 0.0;  
-                double deltaPInfected = 0.0;     
-                double deltaPDiseased = 0.0;     
+                double deltaPSusceptible = 0.0;
+                double deltaPInfected = 0.0;
+                double deltaPDiseased = 0.0;
 
                 deltaPSusceptible = -SiteVars.FOI[site] * SiteVars.PSusceptible[site][agentIndex];
                 deltaPInfected = SiteVars.FOI[site] * SiteVars.PSusceptible[site][agentIndex] - agent.AcquisitionRate * SiteVars.PInfected[site][agentIndex];  //rD = acquisition rate
@@ -223,12 +238,12 @@ namespace Landis.Extension.BaseEDA
                 // SUSCEPTIBLE --->> INFECTED
                 if (SiteVars.InfStatus[site][agentIndex] == 0 && SiteVars.PInfected[site][agentIndex] >= myRand)  //if site is Susceptible (S) 
                 {
-                   //update state of current site from S to I
-                   SiteVars.InfStatus[site][agentIndex] += 1;
-                   totalSitesInfected++;
+                    //update state of current site from S to I
+                    SiteVars.InfStatus[site][agentIndex] += 1;
+                    totalSitesInfected++;
                 }
                 // INFECTED --->> DISEASED
-                else if (SiteVars.InfStatus[site][agentIndex] == 1)  
+                else if (SiteVars.InfStatus[site][agentIndex] == 1)
                 {
                     totalSitesInfected++;
 
@@ -272,7 +287,6 @@ namespace Landis.Extension.BaseEDA
                 }
                 else if (SiteVars.InfStatus[site][agentIndex] == 2)
                 {
-
                     totalSitesDiseased++;
 
                     //check for cohort mortality against same random unif number
@@ -400,17 +414,35 @@ namespace Landis.Extension.BaseEDA
         //force of infection depends on the dispersal kernel, weather index, SHI of neighboring sites and itself, pInfected & pDiseased of neighboring sites         
         double ComputeSiteFOI(IAgent agent, Site targetSite, double beta, int agentIndex)
         {
-            double kernelProb, cumSum = 0.0, forceOfInf = 0.0, centroidDistance = 0.0, CellLength = PlugIn.ModelCore.CellLength;
-            int source_row, source_col;     
             int maxRadius = agent.DispersalMaxDist;
-            int numCellRadius = (int) (maxRadius / CellLength);
+
             //Dispersal dsp = new Dispersal();
 
             //PlugIn.ModelCore.UI.WriteLine("Looking for infection sources within the chosen neighborhood...");
 
+            // Different implementations for calculating site FOI
+            //double cumSum = SequentialLoop(targetSite, maxRadius, agentIndex);
+            //double cumSum = SequentialLoopWithChanges(targetSite, maxRadius, agentIndex);
+            double cumSum = KernelLoop(targetSite, agentIndex);
+
+            //calculate force of infection: beta * cumSum
+            double beta_t = beta * agent.TransmissionRate;   //beta_t = w(t) * beta_0
+            double forceOfInf = beta_t * cumSum;
+
+            return forceOfInf;
+        }
+
+        // Original implementation of ComputeSiteFOI
+        double SequentialLoop(Site targetSite, int maxRadius, int agentIndex)
+        {
+            double kernelProb, cumSum = 0.0, centroidDistance = 0.0, CellLength = PlugIn.ModelCore.CellLength;
+            int source_row, source_col;
+
+            int numCellRadius = (int)(maxRadius / CellLength);
+
             for (int row = (numCellRadius * -1); row <= numCellRadius; row++)
             {
-                for (int col = (numCellRadius * -1); col <= numCellRadius; col++) 
+                for (int col = (numCellRadius * -1); col <= numCellRadius; col++)
                 {
 
                     if (row == 0 && col == 0) continue; //we do not want to consider source cells overlapping with target (current) cell
@@ -435,7 +467,7 @@ namespace Landis.Extension.BaseEDA
                                     //read kernel prob
                                     //kernelProb = dsp.GetDispersalProbability(centroidDistance);
                                     kernelProb = Dispersal.dispersal_probability[centroidDistance];
-                                    
+
                                     //A_j: site host index modified -source-
                                     //B_i: site host index modified -target, current site-
                                     //C_j_I+D_i_S: conditional prob of site j being infected or disease, given site i is susceptible
@@ -450,14 +482,203 @@ namespace Landis.Extension.BaseEDA
                         }//end check if source site is NOT null AND Active
                     }//end check if source isInside
 
-                }//end col loop                    
+                }//end col loop 
             }//end row loop
 
-            //calculate force of infection: beta * cumSum
-            double beta_t = beta * agent.TransmissionRate;   //beta_t = w(t) * beta_0
-            forceOfInf = beta_t * cumSum;
+            return cumSum;
+        }
 
-            return forceOfInf;
+        // Implementation of ComputeSiteFOI tweaked to remove redundant calls and improve performance
+        double SequentialLoopImproved(Site targetSite, int maxRadius, int agentIndex)
+        {
+            double kernelProb, cumSum = 0.0, centroidDistance = 0.0, CellLength = PlugIn.ModelCore.CellLength;
+            int numCellRadius = (int)(maxRadius / CellLength);
+            int maxRadiusSquared = maxRadius * maxRadius;
+            double cellLengthSquared = CellLength * CellLength;
+
+            int targetRow = targetSite.Location.Row;
+            int targetColumn = targetSite.Location.Column;
+
+            int minRowIndex = (targetRow - numCellRadius > 0) ? targetRow - numCellRadius : 0;
+            int minColumnIndex = (targetColumn - numCellRadius > 0) ? targetColumn - numCellRadius : 0;
+            int maxRowIndex = (targetRow + numCellRadius < PlugIn.ModelCore.Landscape.Dimensions.Rows) 
+                ? targetRow + numCellRadius : PlugIn.ModelCore.Landscape.Dimensions.Rows;
+            int maxColumnIndex = (targetColumn + numCellRadius < PlugIn.ModelCore.Landscape.Dimensions.Columns)
+               ? targetColumn + numCellRadius : PlugIn.ModelCore.Landscape.Dimensions.Columns;
+
+            for (int row = minRowIndex; row <= maxRowIndex; row++)
+            {
+                bool withinRange = false;
+                for (int col = minColumnIndex; col <= maxColumnIndex; col++)
+                {
+                    if (row == targetRow && col == targetColumn) continue; //we do not want to consider source cells overlapping with target (current) cell
+
+                    double centroidSquared = ((targetRow - row) * (targetRow - row) + (targetColumn - col) * (targetColumn - col)) * cellLengthSquared;
+                    if (centroidSquared > maxRadiusSquared)
+                    {
+                        if (withinRange) break;
+                        else continue;
+                    }
+                    else
+                    {
+                        withinRange = true;
+                    }
+
+                    Site sourceSite = PlugIn.ModelCore.Landscape[row, col];
+                    if (sourceSite.IsActive && (SiteVars.InfStatus[sourceSite][agentIndex] == 1 || SiteVars.InfStatus[sourceSite][agentIndex] == 2))
+                    {
+                        //distance of source pixel from current target site
+                        centroidDistance = System.Math.Sqrt(centroidSquared);
+                        //read kernel prob
+                        //kernelProb = dsp.GetDispersalProbability(centroidDistance);
+                        kernelProb = Dispersal.dispersal_probability[centroidDistance];
+
+                        //A_j: site host index modified -source-
+                        //B_i: site host index modified -target, current site-
+                        //C_j_I+D_i_S: conditional prob of site j being infected or disease, given site i is susceptible
+                        //to a first order of approximation this is ~= (P_Ij + P_Dj)
+                        //cumsum = sum(A_j * B_i * C_j_I+D_i_S * Kernel(d_ij))
+                        cumSum += SiteVars.SiteHostIndexMod[sourceSite] * SiteVars.SiteHostIndexMod[targetSite] *
+                                            (SiteVars.PInfected[sourceSite][agentIndex] + SiteVars.PDiseased[sourceSite][agentIndex]) * kernelProb;
+
+                    }//end check if source site is NOT null AND Active
+                }//end col loop 
+            }//end row loop
+
+            return cumSum;
+        }
+
+        // Currently the fastest implementation available for ComputeSiteFOI
+        double KernelLoop(Site targetSite, int agentIndex)
+        {
+            double cumSum = 0.0, targetHostIndexModValue;
+
+            // Only need to get the target site info once since it doesn't change
+            // If its value is 0, we can short circuit this function since the sum is always multiplied by this value
+            targetHostIndexModValue = SiteVars.SiteHostIndexMod[targetSite];
+            if (targetHostIndexModValue == 0.0)
+            {
+                return cumSum;
+            }
+
+            // Get the target site row and column
+            int tr = targetSite.Location.Row, tc = targetSite.Location.Column;
+
+            // Calculate the row and column indices for the kernel loop
+            // If any index would be outside of the map, change that index to be the edge of the map instead
+            int minRowIndex = (tr - kernelCellRadius > 0) ? -kernelCellRadius : 1 - tr;
+            int minColumnIndex = (tc - kernelCellRadius > 0) ? -kernelCellRadius : 1 - tc;
+            int maxRowIndex = (tr + kernelCellRadius < PlugIn.ModelCore.Landscape.Dimensions.Rows)
+                ? kernelCellRadius : PlugIn.ModelCore.Landscape.Dimensions.Rows - tr;
+            int maxColumnIndex = (tc + kernelCellRadius < PlugIn.ModelCore.Landscape.Dimensions.Columns)
+               ? kernelCellRadius : PlugIn.ModelCore.Landscape.Dimensions.Columns - tc;
+
+            // Loop over the kernel and calculate the cumulative sum
+            // Since the values for SiteHostIndexMod, PInfected, and PDiseased were precalculated at the beginning of the
+            // time step, we can now simply retrieve those values and perform simple (and very fast) multiplication
+            for (int y = minRowIndex; y <= maxRowIndex; y++)
+            {
+                for (int x = minColumnIndex; x <= maxColumnIndex; x++)
+                {
+                    int fr = y + kernelCellRadius, fc = x + kernelCellRadius, sr = tr + y, sc = tc + x;
+                    cumSum += kernel[fr, fc] * siteHostIndexMod[sr, sc] * targetHostIndexModValue * (pInfected[sr, sc] + pDiseased[sr, sc]);
+                }
+            }
+
+            return cumSum;
+        }
+
+        // Pre-calculate grids containing relevant values for SiteHostIndexMod, PInfected, and PDiseased,
+        // which are the three values needed to calculate the FOI
+        // This allows us to later do extremely fast lookups for these values
+        void PrepareGrids(int agentIndex)
+        {
+            int rows = PlugIn.ModelCore.Landscape.Dimensions.Rows + 1;
+            int columns = PlugIn.ModelCore.Landscape.Dimensions.Columns + 1;
+
+            PlugIn.ModelCore.UI.WriteLine("   Initializing grids of {0} x {1} cells", rows, columns);
+
+            siteHostIndexMod = new double[rows, columns];
+            pInfected = new double[rows, columns];
+            pDiseased = new double[rows, columns];
+
+            foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
+            {
+                double siteHostIndexValue = 0.0;
+                double pInfectedValue = 0.0;
+                double pDiseasedValue = 0.0;
+
+                int row = site.Location.Row;
+                int col = site.Location.Column;
+
+                if (SiteVars.InfStatus[site][agentIndex] == 1 || SiteVars.InfStatus[site][agentIndex] == 2) {
+                    siteHostIndexValue = SiteVars.SiteHostIndexMod[site];
+                    pInfectedValue = SiteVars.PInfected[site][agentIndex];
+                    pDiseasedValue = SiteVars.PDiseased[site][agentIndex];
+                }
+
+                siteHostIndexMod[row, col] = siteHostIndexValue;
+                pInfected[row, col] = pInfectedValue;
+                pDiseased[row, col] = pDiseasedValue;
+            }
+        }
+
+        // Precalculate a "kernel" based on the agent DispersalMaxDist
+        // This allows us to only perform relatively costly centroid distance calculations once, after
+        // which we can quickly loop up the value during calculations in the KernelLoop function
+        // See https://en.wikipedia.org/wiki/Kernel_(image_processing)
+        double[,] CreateKernel(IAgent agent)
+        {
+            int maxRadius = agent.DispersalMaxDist;
+            double CellLength = PlugIn.ModelCore.CellLength;
+            kernelCellRadius = (int)(maxRadius / CellLength);
+
+            int width = 2 * kernelCellRadius + 1;
+            double[,] kernel = new double[width, width];
+
+            PlugIn.ModelCore.UI.WriteLine("   Initializing new filter of {0}x{1} cells", width, width);
+
+            for (int row = (kernelCellRadius * -1); row <= kernelCellRadius; row++)
+            {
+                for (int col = (kernelCellRadius * -1); col <= kernelCellRadius; col++)
+                {
+                    double kernelProb = 0.0;
+                    if (!(row == 0 && col == 0))
+                    {
+                        double centroidDistance = System.Math.Sqrt(System.Math.Pow(row * CellLength, 2) + System.Math.Pow(col * CellLength, 2));
+                        if (centroidDistance <= maxRadius)
+                        {
+                            kernelProb = Dispersal.dispersal_probability[centroidDistance];
+                        }
+                    }
+
+                    kernel[row + kernelCellRadius, col + kernelCellRadius] = kernelProb;
+                }
+            }
+
+            return kernel;
+        }
+
+        // Logs out a grid using the path of the file provided
+        void LogGrid(string path, double[,] grid)
+        {
+            // Change 'false' to 'true' to append grids in the output rather than overriding on each call
+            using (StreamWriter writer = new StreamWriter(path, false))
+            {
+                int rowLength = grid.GetLength(0);
+                int colLength = grid.GetLength(1);
+
+                PlugIn.ModelCore.UI.WriteLine("   Logging grid {0} of size {1} x {2} ", path, rowLength, colLength);
+
+                for (int row = 0; row < rowLength; row++)
+                {
+                    for (int col = 0; col < colLength; col++)
+                    {
+                        writer.Write(string.Format("{0:N6} ", grid[row, col]));
+                    }
+                    writer.Write(Environment.NewLine + Environment.NewLine);
+                }
+            }
         }
 
         //define function to calculate weather index for a given agent and site
@@ -507,13 +728,8 @@ namespace Landis.Extension.BaseEDA
                 }
             }
 
-
             return weatherIndex;
         }
-
     }
-
-
-
 }
 
