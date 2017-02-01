@@ -1,4 +1,4 @@
-#include GetEnv("LANDIS_SDK") + '\packaging\initialize.iss'
+#include GetEnv("LANDIS_SDK") + 'G:\LANDIS-II\SDK\v6-r06\packaging\initialize.iss'
 
 #define ExtInfoFile "Base EDA.txt"
 
@@ -24,6 +24,9 @@
 
 ; The extension's assembly
 Source: {#ConfigOutDir}\{#ExtensionAssembly}.dll; DestDir: {app}\bin\extensions
+
+; Added System.Threading.dll
+Source: {#ConfigOutDir}\System.Threading.dll; DestDir: {app}\bin\extensions
 
 ; The user guide
 ;#define UserGuideSrc "LANDIS-II " + ExtensionName + " vX.Y User Guide.pdf"
