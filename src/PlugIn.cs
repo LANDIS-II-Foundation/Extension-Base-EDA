@@ -21,6 +21,7 @@ namespace Landis.Extension.BaseEDA
         public static readonly ExtensionType type = new ExtensionType("disturbance:eda");
         public static readonly string ExtensionName = "Base EDA";
         public static MetadataTable<EventsLog> EventLog;
+        public static ExternalClimateData loadedClimateData;
 
         private string statusMapName; 
         private string mortMapNames;
@@ -29,6 +30,7 @@ namespace Landis.Extension.BaseEDA
         private static IInputParameters parameters;
         private static ICore modelCore;
         private bool reinitialized;
+        
 
         //---------------------------------------------------------------------
 
@@ -85,6 +87,9 @@ namespace Landis.Extension.BaseEDA
             //Dispersal probdisp = new Dispersal();
             manyAgentParameters = parameters.ManyAgentParameters;
             int agentIndex = 0;
+
+            //Initialize non-library climate data
+            loadedClimateData = ClimateData.ReadClimateData(manyAgentParameters);
 
             foreach (IAgent activeAgent in manyAgentParameters)
             {
