@@ -1,0 +1,21 @@
+LandisData  "Output Cohort Statistics"
+
+Timestep  10
+
+SpeciesAgeStats
+
+MapNames   output/cohort-stats/{species}-{statistic}-{timestep}.img
+
+MAX     Queragri Umbecali
+AVG     Queragri Umbecali
+MIN	Queragri Umbecali
+
+SiteAgeStats
+
+MapNames   output/cohort-stats/AGE-{statistic}-{timestep}.img
+
+MAX
+AVG
+COUNT
+
+

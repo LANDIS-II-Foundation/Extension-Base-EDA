@@ -1,0 +1,12 @@
+LandisData "Base EDA"
+
+Timestep	1
+
+MapNames	eda/{agentName}-{timestep}.gis
+
+MORTMapNames     eda/{agentName}-MORT-{timestep}.gis
+
+LogFile		eda/eda-log.csv
+
+EDAInputFiles	P_ramorum.txt	
+
