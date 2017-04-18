@@ -42,7 +42,7 @@
     </Reference>
     <Reference Include="Landis.Library.Climate, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Support-Library-Dlls\Landis.Library.Climate.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\LANDIS-II\v6\bin\extensions\Landis.Library.Climate.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.Cohorts, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -58,6 +58,9 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Threading">
+      <HintPath>..\..\..\..\..\Program Files\LANDIS-II\v6\bin\extensions\System.Threading.dll</HintPath>
+    </Reference>
     <Reference Include="System.XML" />
     <Reference Include="Troschuetz.Random">
       <HintPath>..\..\..\..\..\..\Program Files\LANDIS-II\v6\bin\6.1\Troschuetz.Random.dll</HintPath>
