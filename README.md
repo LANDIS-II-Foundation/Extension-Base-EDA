@@ -9,7 +9,7 @@ The Base-EDA (Base Epidemiological Disturbance Agent) extention is created and m
 
 © 2017 Center for Geospatial Analytics, North Carolina State University 
 
-Francesco Tonini: <ftonini@msu.edu>
+Francesco Tonini: <ftonini84@gmail.com>
 
 Chris Jones: <cjones21@live.unc.edu>
 
