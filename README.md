@@ -11,7 +11,7 @@ The Base-EDA (Base Epidemiological Disturbance Agent) extention is created and m
 
 Francesco Tonini: <ftonini84@gmail.com>
 
-Chris Jones: <cjones21@live.unc.edu>
+Chris Jones: <cjones1688@gmail.com>
 
 Brian Miranda: <brmiranda@fs.fed.us>
 
