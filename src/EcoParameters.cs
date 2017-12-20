@@ -31,10 +31,12 @@ namespace Landis.Extension.BaseEDA
                 return ecoModifier;
             }
             set {
+                if (value < -10.0 || value > 10.0)
+                    throw new InputValueException(value.ToString(),
+                        "Value must be > -10 and < 10.");
                 ecoModifier = value;
             }
         }
-
         //---------------------------------------------------------------------
         public EcoParameters()
         {

@@ -264,7 +264,7 @@ namespace Landis.Extension.BaseEDA
 
                     //constrain the absolute value of SHIM within range 0-1
                     SHIM = System.Math.Max(0.0, SHIM);
-                    SHIM = System.Math.Min(1.0, SHIM);
+                    SHIM = System.Math.Min(10.0, SHIM);
 
                     SiteVars.SiteHostIndexMod[site] = SHIM;
 
