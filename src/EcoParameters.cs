@@ -2,8 +2,7 @@
 //  Forest Service Northern Research Station, Institute for Applied Ecosystem Studies
 //  Authors:  Francesco Tonini, Brian R. Miranda, Chris Jones
 
-using Edu.Wisc.Forest.Flel.Util;
-
+using Landis.Utilities;
 namespace Landis.Extension.BaseEDA
 {
     /// <summary>
