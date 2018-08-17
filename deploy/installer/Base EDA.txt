@@ -3,7 +3,7 @@ LandisData   Extension
 Name         "Base EDA"
 Version      "2.0"
 Type         disturbance:EDA
-Assembly     Landis.Extension.BaseEDA
+Assembly     Landis.Extension.BaseEDA-v2
 Class        Landis.Extension.BaseEDA.PlugIn
 Description  "Epidemiological disturbance agents"
 CoreVersion  7.0
