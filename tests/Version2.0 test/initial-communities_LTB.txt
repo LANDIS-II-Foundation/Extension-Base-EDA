@@ -1,0 +1,29 @@
+LandisData   "Initial Communities"
+
+MapCode  3
+	Umbecali   20 (1000) 50 (1000) 70 (1000)
+
+MapCode  1
+	Umbecali   20 (1000) 50 (1000) 70 (1000)
+	Queragri   70 (1000)
+
+MapCode 2
+	Umbecali   20 (1000) 
+	Queragri   20 (1000) 70 (1000)
+
+MapCode 0
+ 	Queragri   20 (1000) 50 (1000) 70 (1000)
+
+MapCode 4 
+	Umbecali   70 (1000)
+	Queragri   20 (1000) 50 (1000) 70 (1000)
+
+MapCode 5
+        Umbecali   20 (1000) 50 (1000) 70 (1000)
+	Queragri   20 (1000) 50 (1000)
+
+MapCode 6
+        Umbecali   20 (1000) 50 (1000) 70 (1000)
+	Queragri   20 (1000) 50 (1000) 70 (1000)
+
+
