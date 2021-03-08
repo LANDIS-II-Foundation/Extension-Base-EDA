@@ -32,7 +32,7 @@ Tonini, F., C. Jones, B.R. Miranda, R.C. Cobb, B.R. Sturtevant, and R.K. Meentem
 
 LANDIS-II requires a global parameter file for your scenario, and separate parameter files for each extension.
 
-Example files are [here](NEEDS LINK TO ZIP FILE).
+Example files are [here](https://downgit.github.io/#/home?url=https://github.com/LANDIS-II-Foundation/Extension-Base-EDA/tree/master/tests/Version2.0%20test).
 
 # Support
 
