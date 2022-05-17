@@ -36,7 +36,7 @@ Example files are [here](https://downgit.github.io/#/home?url=https://github.com
 
 # Support
 
-If you have a question, please contact Chris Jones at cjones1688@gmail.com 
+If you have a question, please contact Chris Jones at cmjone25@ncsu.edu. 
 You can also ask for help in the [LANDIS-II users group](http://www.landis-ii.org/users).
 
 If you come across any issue or suspected bug, please post about it in the [issue section of the Github repository](https://github.com/LANDIS-II-Foundation/Extension-Base-EDA/issues).
