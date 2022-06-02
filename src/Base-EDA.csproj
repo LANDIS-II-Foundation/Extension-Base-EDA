@@ -33,8 +33,8 @@
     <Reference Include="Landis.Library.AgeOnlyCohorts-v3">
       <HintPath>lib\Landis.Library.AgeOnlyCohorts-v3.dll</HintPath>
     </Reference>
-    <Reference Include="Landis.Library.Climate-v3">
-      <HintPath>lib\Landis.Library.Climate-v3.dll</HintPath>
+    <Reference Include="Landis.Library.Climate-v4">
+      <HintPath>lib\Landis.Library.Climate-v4.3.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.Cohorts-v2">
       <HintPath>lib\Landis.Library.Cohorts-v2.dll</HintPath>
