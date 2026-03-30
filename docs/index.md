@@ -4,7 +4,7 @@ The EDA (Epidemiological Disturbance Agent) extention is created and maintained 
 
 # Release Notes
 
-- Latest official release: Version 3.0 — July 2025
+- Latest official release: Version 3.1 — April 2026
 - [View User Guide](https://github.com/LANDIS-II-Foundation/Extension-Base-EDA/blob/master/docs/LANDIS-II%20Epidemiological%20Disturbance%20Agent%20v3%20User%20Guide.pdf).
 - [View User Guide for Climate Library](https://github.com/LANDIS-II-Foundation/Library-Climate/blob/master/docs/LANDIS-II%20Climate%20Library%20v5.0%20User%20Guide.pdf)
 - Full release details found in the User Guide and on GitHub.
@@ -18,7 +18,7 @@ To use BDA, you need:
 
 # Download and Install the Extension
 
-The latest version can be downloaded [here](https://github.com/LANDIS-II-Foundation/Extension-Base-EDA/blob/master/deploy/installer/LANDIS-II-V8%20EDA%203.0-setup.exe). To install it on your computer, launch the installer.
+The latest version can be downloaded [here](https://github.com/LANDIS-II-Foundation/Extension-Base-EDA/blob/master/deploy/installer/LANDIS-II-V8%20EDA%203.1-setup.exe). To install it on your computer, launch the installer.
 
 # Example Files
 
