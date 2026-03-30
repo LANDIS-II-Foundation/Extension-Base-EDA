@@ -349,7 +349,7 @@ namespace Landis.Extension.EDA
         // This is a filter to determine which cohorts are removed.
         // Each cohort is passed into the function and tested whether it should
         // be killed.
-        int IDisturbance.ReduceOrKillMarkedCohort(ICohort cohort)
+        double IDisturbance.ReduceOrKillMarkedCohort(ICohort cohort)
         {
             
             bool killCohort = false;
@@ -384,11 +384,11 @@ namespace Landis.Extension.EDA
                 if (sppParms.MortSppFlag)
                     siteMortSppKilled++;
 
-                return cohort.Data.Biomass;
+                return 1.0; // indicates total cohort mortality
 
             }
 
-            return 0;
+            return 0.0;  // indicates no cohort mortality
         }
 
         // check if the coordinates are inside the map 

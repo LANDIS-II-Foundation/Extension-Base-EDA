@@ -5,9 +5,9 @@
     <RootNamespace>Landis.Extension.EDA</RootNamespace>
     <AssemblyName>Landis.Extension.EDA-v3</AssemblyName>
     <AssemblyTitle>Landis.Extension.EDA-v3</AssemblyTitle>
-    <AssemblyVersion>3.0</AssemblyVersion>
-    <Version>3.0</Version>
-    <FileVersion>3.0</FileVersion>
+    <AssemblyVersion>3.1</AssemblyVersion>
+    <Version>3.1</Version>
+    <FileVersion>3.1</FileVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-Base-EDA</RepositoryUrl>
@@ -20,7 +20,7 @@
     <Copyright>Landis-II-Foundation</Copyright>
     <PackageTags>LANDIS-II;Landis;Extension;EDA</PackageTags>
     <Description></Description>
-    <PackageReleaseNotes>LANDIS-II Core v8 updates</PackageReleaseNotes>
+    <PackageReleaseNotes>Universal Cohort Library updates</PackageReleaseNotes>
     <Company>LANDIS-II Foundation</Company>
   </PropertyGroup>
 
@@ -29,7 +29,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Reference Include="Landis.Library.UniversalCohorts-v1">
+    <Reference Include="Landis.Library.UniversalCohorts-v2">
     </Reference>
     <Reference Include="Landis.Library.Climate-v5">
     </Reference>
